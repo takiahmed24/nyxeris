@@ -75,7 +75,7 @@
     <button onclick="document.getElementById('add-mapping-modal').style.display='none'" class="btn btn-secondary btn-sm">Close</button>
   </div>
 
-  <form id="mapping-form" onsubmit="saveMapping(event)">
+  <form id="mapping-form" onsubmit="saveMapping(event, '{{ company_id }}')">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
       <div class="form-group">
         <label class="form-label">Whop Product Title</label>

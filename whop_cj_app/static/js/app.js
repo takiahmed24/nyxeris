@@ -1,10 +1,18 @@
 /**
- * CJ Dropshipping for Whop - Tactical Frontend Controller
+ * CJ Dropshipping for Whop - Tactical Multi-Tenant Frontend Controller
  */
 
-async function triggerTrackingSync() {
+function switchCompany(newCompanyId) {
+  document.cookie = `active_company_id=${newCompanyId}; path=/; max-age=31536000`;
+  const url = new URL(window.location.href);
+  url.searchParams.set("company_id", newCompanyId);
+  window.location.href = url.toString();
+}
+
+async function triggerTrackingSync(companyId) {
   try {
-    const res = await fetch("/api/sync/tracking", { method: "POST" });
+    const url = companyId ? `/api/sync/tracking?company_id=${encodeURIComponent(companyId)}` : "/api/sync/tracking";
+    const res = await fetch(url, { method: "POST" });
     const data = await res.json();
     alert(`Tracking Sync Complete: Checked ${data.checked} orders, updated ${data.updated} tracking records.`);
     window.location.reload();
@@ -13,12 +21,13 @@ async function triggerTrackingSync() {
   }
 }
 
-async function simulateTestOrder() {
+async function simulateTestOrder(companyId) {
   try {
-    const res = await fetch("/api/test/simulate-order", { method: "POST" });
+    const url = companyId ? `/api/test/simulate-order?company_id=${encodeURIComponent(companyId)}` : "/api/test/simulate-order";
+    const res = await fetch(url, { method: "POST" });
     const data = await res.json();
     if (data.success) {
-      alert(`Test Whop Order Placed: ${data.whop_order_id} -> CJ Order: ${data.cj_order_id || 'Submitted'}`);
+      alert(`Test Whop Order Placed for ${companyId}: ${data.whop_order_id} -> CJ Order: ${data.cj_order_id || 'Submitted'}`);
       window.location.reload();
     } else {
       alert("Simulation failed: " + (data.error || "Unknown error"));
@@ -28,9 +37,10 @@ async function simulateTestOrder() {
   }
 }
 
-async function saveMapping(e) {
+async function saveMapping(e, companyId) {
   e.preventDefault();
   const payload = {
+    company_id: companyId,
     whop_product_title: document.getElementById("whop_title").value,
     whop_variant_title: document.getElementById("whop_variant").value,
     whop_product_id: document.getElementById("whop_id").value,
@@ -68,9 +78,11 @@ async function deleteMapping(id) {
   }
 }
 
-async function saveSettings(e) {
+async function saveSettings(e, companyId) {
   e.preventDefault();
   const payload = {
+    company_id: companyId,
+    account_name: document.getElementById("account_name").value,
     cj_email: document.getElementById("cj_email").value,
     cj_api_key: document.getElementById("cj_api_key").value,
     whop_api_key: document.getElementById("whop_api_key").value,

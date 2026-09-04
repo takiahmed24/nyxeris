@@ -4,41 +4,112 @@
 
 {% block content %}
 
-<!-- Notice Banner -->
+<!-- Store Notice & Action Bar -->
 <div class="tactical-alert alert-info">
   <div>
-    <strong>Shopify Bridge Bypassed:</strong> Your orders from Whop flow directly to CJ Dropshipping. You are currently saving <strong>$39.00/month</strong>.
+    <strong>Multi-Tenant Active Store:</strong> <code style="color: var(--status-cyan);">{{ current_merchant.account_name }}</code> (ID: <code>{{ company_id }}</code>).
+    {% if not metrics.is_cj_connected %}
+      <span style="color: var(--status-orange); font-weight: 600; margin-left: 6px;">[!] Please add your CJ API Key in Settings to connect your store.</span>
+    {% else %}
+      <span style="color: var(--status-green); margin-left: 6px;">&bull; CJ Dropshipping Connected</span>
+    {% endif %}
   </div>
   <div style="display: flex; gap: 10px;">
-    <button onclick="triggerTrackingSync()" class="btn btn-primary btn-sm">Sync Tracking Now</button>
-    <button onclick="simulateTestOrder()" class="btn btn-secondary btn-sm">Simulate Test Order</button>
+    <button onclick="triggerTrackingSync('{{ company_id }}')" class="btn btn-primary btn-sm">Sync Tracking Now</button>
+    <button onclick="simulateTestOrder('{{ company_id }}')" class="btn btn-secondary btn-sm">Simulate Test Order</button>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     INTERACTIVE LIVE PIPELINE FLOW VISUALIZER
+     ========================================================================== -->
+<div class="pipeline-flow-container">
+  <div class="pipeline-nodes-wrapper">
+    <!-- Node 1: Whop Ingestion -->
+    <div class="pipeline-node active">
+      <div class="node-step">Stage 01</div>
+      <div class="node-title">Whop Ingestion</div>
+      <div class="node-metric">
+        <span class="node-pulse"></span>
+        <span>Webhook Active</span>
+      </div>
+    </div>
+
+    <div class="pipeline-arrow">&rarr;</div>
+
+    <!-- Node 2: SKU Resolution -->
+    <div class="pipeline-node {% if metrics.mapped_skus > 0 %}active{% endif %}">
+      <div class="node-step">Stage 02</div>
+      <div class="node-title">SKU Translation</div>
+      <div class="node-metric">
+        <span>{{ metrics.mapped_skus }} Mapped Items</span>
+      </div>
+    </div>
+
+    <div class="pipeline-arrow">&rarr;</div>
+
+    <!-- Node 3: CJ Sourcing -->
+    <div class="pipeline-node {% if metrics.is_cj_connected %}active{% endif %}">
+      <div class="node-step">Stage 03</div>
+      <div class="node-title">CJ Dispatch</div>
+      <div class="node-metric">
+        {% if metrics.is_cj_connected %}
+          <span class="node-pulse"></span>
+          <span>API 2.0 Ready</span>
+        {% else %}
+          <span style="color: var(--status-orange);">Needs Key</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="pipeline-arrow">&rarr;</div>
+
+    <!-- Node 4: Logistics -->
+    <div class="pipeline-node">
+      <div class="node-step">Stage 04</div>
+      <div class="node-title">Carrier Transit</div>
+      <div class="node-metric">
+        <span>USPS / YunExpress</span>
+      </div>
+    </div>
+
+    <div class="pipeline-arrow">&rarr;</div>
+
+    <!-- Node 5: Whop Fulfillment -->
+    <div class="pipeline-node active">
+      <div class="node-step">Stage 05</div>
+      <div class="node-title">Whop Fulfill</div>
+      <div class="node-metric">
+        <span>{{ metrics.fulfilled_orders }} Shipped</span>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Metrics Overview -->
 <div class="metrics-row">
   <div class="metric-box">
-    <div class="metric-label">Total Whop Orders</div>
+    <div class="metric-label">Whop Orders Ingested</div>
     <div class="metric-value">{{ metrics.total_orders }}</div>
-    <div class="metric-sub">Direct Ingestion</div>
+    <div class="metric-sub">Direct to {{ current_merchant.account_name }}</div>
   </div>
 
   <div class="metric-box">
     <div class="metric-label">Fulfilled by CJ</div>
-    <div class="metric-value" style="color: var(--accent-green);">{{ metrics.fulfilled_orders }}</div>
-    <div class="metric-sub">Tracking Synced</div>
+    <div class="metric-value" style="color: var(--status-green);">{{ metrics.fulfilled_orders }}</div>
+    <div class="metric-sub">Carrier Tracking Synced</div>
   </div>
 
   <div class="metric-box">
-    <div class="metric-label">Pending Fulfillment</div>
-    <div class="metric-value" style="color: var(--accent-orange);">{{ metrics.pending_orders }}</div>
-    <div class="metric-sub">In Warehouse / Processing</div>
+    <div class="metric-label">Pending Warehouse</div>
+    <div class="metric-value" style="color: var(--status-orange);">{{ metrics.pending_orders }}</div>
+    <div class="metric-sub">In Processing Queue</div>
   </div>
 
   <div class="metric-box">
-    <div class="metric-label">Shopify Fees Saved</div>
-    <div class="metric-value" style="color: var(--accent-cyan);">$39.00</div>
-    <div class="metric-sub">Every 30 days</div>
+    <div class="metric-label">Shopify Fees Eliminated</div>
+    <div class="metric-value" style="color: var(--status-cyan);">$39.00</div>
+    <div class="metric-sub">Billed at $5/mo (Saved $34/mo)</div>
   </div>
 </div>
 
@@ -46,11 +117,11 @@
 <div class="tactical-card">
   <div class="card-header">
     <div class="card-title-group">
-      <h2>Live Order Fulfillment Feed</h2>
-      <p>Real-time pipeline: Whop Payment &rarr; CJ Order Creation &rarr; Carrier Tracking Sync</p>
+      <h2>Live Order Fulfillment Feed &bull; {{ current_merchant.account_name }}</h2>
+      <p>Multi-tenant isolated order log: Whop Payment &rarr; CJ Dropshipping Order &rarr; Carrier Tracking</p>
     </div>
     <div>
-      <span class="badge badge-success">Auto-Sync Active</span>
+      <span class="badge badge-success">Pipeline Active</span>
     </div>
   </div>
 
@@ -74,7 +145,7 @@
           {% for order in orders %}
           <tr>
             <td>
-              <strong style="color: var(--text-pure); font-family: var(--font-heading);">{{ order.whop_order_id }}</strong>
+              <strong style="color: var(--text-bright); font-family: var(--font-mono);">{{ order.whop_order_id }}</strong>
             </td>
             <td>
               <div>{{ order.customer_name }}</div>
@@ -84,12 +155,12 @@
               <span class="badge badge-info">{{ order.shipping_country }}</span>
             </td>
             <td>
-              <span style="font-size: 12px; color: var(--text-pure);">{{ order.items_summary }}</span>
+              <span style="font-size: 12px; color: var(--text-bright);">{{ order.items_summary }}</span>
             </td>
             <td>${{ "%.2f"|format(order.total_amount) }}</td>
             <td>
               {% if order.cj_order_id %}
-                <code style="color: var(--accent-cyan);">{{ order.cj_order_id }}</code>
+                <code style="color: var(--status-cyan);">{{ order.cj_order_id }}</code>
               {% else %}
                 <span style="color: var(--text-dim);">&mdash;</span>
               {% endif %}
@@ -108,13 +179,13 @@
             <td>
               {% if order.tracking_number %}
                 <div>
-                  <a href="{{ order.tracking_url }}" target="_blank" style="color: var(--accent-cyan); text-decoration: underline; font-weight: 500;">
+                  <a href="{{ order.tracking_url }}" target="_blank" style="color: var(--status-cyan); text-decoration: underline; font-weight: 500; font-family: var(--font-mono);">
                     {{ order.tracking_number }}
                   </a>
                 </div>
                 <div style="font-size: 11px; color: var(--text-muted);">{{ order.tracking_carrier }}</div>
               {% else %}
-                <span style="color: var(--text-dim); font-size: 12px;">Awaiting Carrier</span>
+                <span style="color: var(--text-dim); font-size: 11px;">Awaiting Carrier</span>
               {% endif %}
             </td>
             <td>
@@ -129,7 +200,7 @@
         {% else %}
           <tr>
             <td colspan="9" style="text-align: center; padding: 36px; color: var(--text-muted);">
-              No orders ingested yet. Click <strong>"Simulate Test Order"</strong> above to test the automated CJ pipeline!
+              No orders ingested for this store yet. Click <strong>"Simulate Test Order"</strong> above to test the automated CJ pipeline!
             </td>
           </tr>
         {% endif %}
@@ -138,12 +209,12 @@
   </div>
 </div>
 
-<!-- Activity Log -->
+<!-- Operational Diagnostic Logs -->
 <div class="tactical-card">
   <div class="card-header">
     <div class="card-title-group">
-      <h2>Operational Audit Logs</h2>
-      <p>Diagnostic event feed of API transactions, webhook ingestion, and tracking callbacks</p>
+      <h2>Store Audit Logs &bull; {{ current_merchant.account_name }}</h2>
+      <p>Diagnostic event feed of API transactions and webhook callbacks for this workspace</p>
     </div>
   </div>
 
@@ -162,9 +233,9 @@
         {% if logs %}
           {% for log in logs %}
           <tr>
-            <td style="font-size: 12px; color: var(--text-muted);">{{ log.created_at }}</td>
-            <td><code style="color: var(--accent-cyan);">{{ log.event_type }}</code></td>
-            <td>{{ log.order_id or '&mdash;' }}</td>
+            <td style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">{{ log.created_at }}</td>
+            <td><code style="color: var(--status-cyan);">{{ log.event_type }}</code></td>
+            <td><code>{{ log.order_id or '&mdash;' }}</code></td>
             <td>
               {% if log.status in ('success', 'simulated') %}
                 <span class="badge badge-success">{{ log.status }}</span>
@@ -174,13 +245,13 @@
                 <span class="badge badge-info">{{ log.status }}</span>
               {% endif %}
             </td>
-            <td style="font-size: 12px; color: var(--text-main);">{{ log.message }}</td>
+            <td style="font-size: 12px; color: var(--text-body);">{{ log.message }}</td>
           </tr>
           {% endfor %}
         {% else %}
           <tr>
             <td colspan="5" style="text-align: center; padding: 24px; color: var(--text-muted);">
-              No sync log entries recorded.
+              No sync log entries recorded for this store.
             </td>
           </tr>
         {% endif %}

@@ -6,7 +6,15 @@
 
 <!-- Success Alert Box -->
 <div id="save-alert" class="tactical-alert alert-success" style="display: none;">
-  <div>Settings successfully updated and verified.</div>
+  <div>Store credentials successfully verified and saved for this workspace.</div>
+</div>
+
+<div class="tactical-alert alert-info">
+  <div>
+    <strong>Multi-Tenant Private Credentials:</strong> You are configuring credentials for 
+    <code style="color: var(--status-cyan);">{{ current_merchant.account_name }}</code> (Company ID: <code>{{ company_id }}</code>). 
+    Each merchant who installs this app connects their own private CJ Dropshipping account.
+  </div>
 </div>
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
@@ -15,41 +23,47 @@
   <div class="tactical-card">
     <div class="card-header">
       <div class="card-title-group">
-        <h2>CJ Dropshipping API 2.0</h2>
-        <p>Connect your CJ Dropshipping developer credentials</p>
+        <h2>Your CJ Dropshipping Account</h2>
+        <p>Connect your personal/business CJ Dropshipping developer credentials</p>
       </div>
       <div>
-        {% if settings.cj_access_token %}
-          <span class="badge badge-success">Authenticated</span>
+        {% if settings.cj_access_token or settings.cj_api_key %}
+          <span class="badge badge-success">Connected</span>
         {% else %}
-          <span class="badge badge-warning">Sandbox / Pending</span>
+          <span class="badge badge-warning">Needs Setup</span>
         {% endif %}
       </div>
     </div>
 
-    <form id="settings-form" onsubmit="saveSettings(event)">
+    <form id="settings-form" onsubmit="saveSettings(event, '{{ company_id }}')">
       <div class="form-group">
-        <label class="form-label">CJ Account Email</label>
-        <input type="email" id="cj_email" class="form-control" value="{{ settings.cj_email or '' }}" placeholder="your-email@example.com">
-        <span class="form-sublabel">The email address used to log in to cjdropshipping.com</span>
+        <label class="form-label">Store / Brand Name</label>
+        <input type="text" id="account_name" class="form-control" value="{{ settings.account_name or '' }}" placeholder="e.g. My Luxury Store">
+        <span class="form-sublabel">Your internal workspace or brand name</span>
       </div>
 
       <div class="form-group">
-        <label class="form-label">CJ Open API Key</label>
-        <input type="password" id="cj_api_key" class="form-control" value="{{ settings.cj_api_key or '' }}" placeholder="Enter CJ Developer API Key">
+        <label class="form-label">Your CJ Account Email</label>
+        <input type="email" id="cj_email" class="form-control" value="{{ settings.cj_email or '' }}" placeholder="your-email@example.com" required>
+        <span class="form-sublabel">The email address you use to log in to cjdropshipping.com</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your CJ Open API Key</label>
+        <input type="password" id="cj_api_key" class="form-control" value="{{ settings.cj_api_key or '' }}" placeholder="Enter your CJ API Key" required>
         <span class="form-sublabel">Obtained from developers.cjdropshipping.com &rarr; My API</span>
       </div>
 
       <div class="form-group">
         <label class="form-label">Auto-Order Placement</label>
         <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
-          <input type="checkbox" id="auto_order" {% if settings.auto_order_enabled %}checked{% endif %} style="width: 18px; height: 18px; accent-color: var(--accent-cyan);">
-          <span style="color: var(--text-pure); font-size: 13px;">Automatically submit orders to CJ upon Whop payment</span>
+          <input type="checkbox" id="auto_order" {% if settings.auto_order_enabled %}checked{% endif %} style="width: 18px; height: 18px; accent-color: var(--status-cyan);">
+          <span style="color: var(--text-bright); font-size: 13px;">Automatically submit orders to your CJ account upon customer payment</span>
         </div>
       </div>
 
       <div style="margin-top: 20px;">
-        <button type="submit" class="btn btn-primary">Save Settings</button>
+        <button type="submit" class="btn btn-primary">Save My CJ Credentials</button>
       </div>
     </form>
   </div>
@@ -58,36 +72,42 @@
   <div class="tactical-card">
     <div class="card-header">
       <div class="card-title-group">
-        <h2>Whop Developer Integration</h2>
-        <p>Configure webhooks and order fulfillment sync</p>
+        <h2>Your Whop Store Connection</h2>
+        <p>Your unique webhook endpoint for receiving customer orders</p>
       </div>
-      <span class="badge badge-info">Whop App Native</span>
+      <span class="badge badge-info">Tenant: {{ company_id[:10] }}</span>
     </div>
 
     <div class="form-group">
-      <label class="form-label">Whop Webhook Endpoint URL</label>
-      <input type="text" class="form-control" value="{{ webhook_url }}" readonly style="background-color: #081414; color: var(--accent-cyan); font-family: monospace;">
-      <span class="form-sublabel">Add this URL in Whop Dashboard &rarr; Developer &rarr; Webhooks (Events: payment.succeeded)</span>
+      <label class="form-label">Whop Company ID</label>
+      <input type="text" class="form-control" value="{{ company_id }}" readonly style="background-color: #061111; color: var(--status-cyan); font-family: monospace;">
+      <span class="form-sublabel">Identifies your store inside this SaaS instance</span>
     </div>
 
     <div class="form-group">
-      <label class="form-label">Whop API Key (Optional)</label>
+      <label class="form-label">Your Store's Dedicated Webhook URL</label>
+      <input type="text" class="form-control" value="{{ webhook_url }}" readonly style="background-color: #061111; color: var(--status-cyan); font-family: monospace;">
+      <span class="form-sublabel">Add this URL into your Whop Dashboard &rarr; Developer &rarr; Webhooks (Events: payment.succeeded)</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Your Whop API Key (Optional)</label>
       <input type="password" id="whop_api_key" class="form-control" value="{{ settings.whop_api_key or '' }}" placeholder="Enter Whop API Key to push live tracking">
-      <span class="form-sublabel">Required to push carrier tracking links directly back into customer Whop orders</span>
+      <span class="form-sublabel">Used by our sync worker to attach carrier tracking numbers back into customer Whop orders</span>
     </div>
 
     <div class="form-group">
-      <label class="form-label">Whop Webhook Secret</label>
+      <label class="form-label">Your Whop Webhook Secret (Optional)</label>
       <input type="password" id="whop_secret" class="form-control" value="{{ settings.whop_webhook_secret or '' }}" placeholder="whsec_xxxxxxxx">
-      <span class="form-sublabel">Used for HMAC SHA-256 payload verification</span>
+      <span class="form-sublabel">Used to verify that webhook calls originate from your Whop account</span>
     </div>
 
     <!-- Monetization & Trial Status -->
-    <div style="background-color: var(--bg-surface); border: 1px solid var(--border-strong); padding: 14px; border-radius: var(--radius-sm); margin-top: 14px;">
+    <div style="background-color: #061111; border: 1px solid var(--border-line); padding: 14px; margin-top: 14px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <div style="font-weight: 600; color: var(--text-pure); font-size: 13px;">Plan: CJ Dropshipping Pro Bridge</div>
-          <div style="font-size: 11px; color: var(--text-muted);">$5.00/month after 60-day free trial</div>
+          <div style="font-weight: 600; color: var(--text-bright); font-size: 13px;">Billed through Whop: $5.00/month</div>
+          <div style="font-size: 11px; color: var(--text-muted);">First 60 days free &bull; Eliminates $39/mo Shopify fee</div>
         </div>
         <span class="badge badge-success">Trial Active</span>
       </div>
