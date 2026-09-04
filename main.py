@@ -11,7 +11,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from config import settings, STATIC_DIR, TEMPLATES_DIR
+from config import settings, STATIC_DIR, TEMPLATES_DIR, DATA_DIR
 from database import init_db, get_db_connection
 from routes.store_routes import router as store_router
 from routes.webhook_routes import router as webhook_router
@@ -57,13 +57,16 @@ def on_startup():
 @app.get("/", response_class=HTMLResponse)
 async def storefront_page(request: Request):
     """Renders the official Nyxeris Pipeline storefront."""
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "store_name": settings.STORE_NAME,
-        "tagline": settings.STORE_TAGLINE,
-        "currency_symbol": settings.STORE_CURRENCY_SYMBOL,
-        "free_shipping_threshold": settings.FREE_SHIPPING_THRESHOLD
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "store_name": settings.STORE_NAME,
+            "tagline": settings.STORE_TAGLINE,
+            "currency_symbol": settings.STORE_CURRENCY_SYMBOL,
+            "free_shipping_threshold": settings.FREE_SHIPPING_THRESHOLD
+        }
+    )
 
 
 @app.get("/home-05", response_class=HTMLResponse)
@@ -83,13 +86,16 @@ async def home_01_page(request: Request):
 @app.get("/nyxeris", response_class=HTMLResponse)
 async def nyxeris_original_storefront(request: Request):
     """Renders the original Nyxeris Hardware storefront."""
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "store_name": settings.STORE_NAME,
-        "tagline": settings.STORE_TAGLINE,
-        "currency_symbol": settings.STORE_CURRENCY_SYMBOL,
-        "free_shipping_threshold": settings.FREE_SHIPPING_THRESHOLD
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "store_name": settings.STORE_NAME,
+            "tagline": settings.STORE_TAGLINE,
+            "currency_symbol": settings.STORE_CURRENCY_SYMBOL,
+            "free_shipping_threshold": settings.FREE_SHIPPING_THRESHOLD
+        }
+    )
 
 
 @app.api_route("/api/wc-ajax", methods=["GET", "POST"])
@@ -127,13 +133,16 @@ async def order_confirmation_page(request: Request, order_id: str):
     order = dict(order_row)
     conn.close()
 
-    return templates.TemplateResponse("order_confirmation.html", {
-        "request": request,
-        "order": order,
-        "items": items,
-        "store_name": settings.STORE_NAME,
-        "support_email": settings.STORE_SUPPORT_EMAIL
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="order_confirmation.html",
+        context={
+            "order": order,
+            "items": items,
+            "store_name": settings.STORE_NAME,
+            "support_email": settings.STORE_SUPPORT_EMAIL
+        }
+    )
 
 
 @app.get("/checkout/pay/{order_id}", response_class=HTMLResponse)
@@ -155,12 +164,15 @@ async def checkout_payment_gateway_page(request: Request, order_id: str):
     items = [dict(r) for r in cursor.fetchall()]
     conn.close()
 
-    return templates.TemplateResponse("payment_gateway.html", {
-        "request": request,
-        "order": order,
-        "items": items,
-        "store_name": settings.STORE_NAME
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="payment_gateway.html",
+        context={
+            "order": order,
+            "items": items,
+            "store_name": settings.STORE_NAME
+        }
+    )
 
 
 @app.get("/admin", response_class=HTMLResponse)
@@ -168,16 +180,19 @@ async def admin_page(request: Request):
     """Renders the Nyxeris Store Owner Cockpit for physical order fulfillment,
     tracking number dispatch, and Whop white-labeling management.
     """
-    return templates.TemplateResponse("admin.html", {
-        "request": request,
-        "store_name": settings.STORE_NAME
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="admin.html",
+        context={
+            "store_name": settings.STORE_NAME
+        }
+    )
 
 
 @app.get("/themes", response_class=HTMLResponse)
 async def themes_showcase_page(request: Request):
     """Renders the interactive Glassmorphic Shopify Theme Showcase & Selector."""
-    catalog_file = Path("C:/Nyxeris/data/shopify_themes_catalog.json")
+    catalog_file = DATA_DIR / "shopify_themes_catalog.json"
     themes = []
     if catalog_file.exists():
         with open(catalog_file, "r", encoding="utf-8") as f:
@@ -185,7 +200,7 @@ async def themes_showcase_page(request: Request):
             
     # Load selected theme if exists
     selected_theme = "Motion"
-    sel_file = Path("C:/Nyxeris/data/selected_theme.json")
+    sel_file = DATA_DIR / "selected_theme.json"
     if sel_file.exists():
         try:
             with open(sel_file, "r", encoding="utf-8") as f:
@@ -193,19 +208,22 @@ async def themes_showcase_page(request: Request):
         except Exception:
             pass
 
-    return templates.TemplateResponse("theme_showcase.html", {
-        "request": request,
-        "themes": themes,
-        "selected_theme": selected_theme,
-        "store_name": settings.STORE_NAME
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="theme_showcase.html",
+        context={
+            "themes": themes,
+            "selected_theme": selected_theme,
+            "store_name": settings.STORE_NAME
+        }
+    )
 
 
 @app.post("/api/themes/select")
 async def select_theme(payload: dict):
     """Selects an active theme for Nyxeris."""
     theme_name = payload.get("theme_name", "Motion")
-    data_dir = Path("C:/Nyxeris/data")
+    data_dir = DATA_DIR
     data_dir.mkdir(parents=True, exist_ok=True)
     with open(data_dir / "selected_theme.json", "w", encoding="utf-8") as f:
         json.dump({
