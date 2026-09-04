@@ -16,6 +16,7 @@ from database import init_db, get_db_connection
 from routes.store_routes import router as store_router
 from routes.webhook_routes import router as webhook_router
 from routes.admin_routes import router as admin_router
+from routes.auth_routes import router as auth_router
 
 app = FastAPI(
     title="Nyxeris Storefront & Payment Engine",
@@ -46,6 +47,7 @@ templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 app.include_router(store_router)
 app.include_router(webhook_router)
 app.include_router(admin_router)
+app.include_router(auth_router)
 
 
 @app.on_event("startup")

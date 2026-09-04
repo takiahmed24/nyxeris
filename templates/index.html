@@ -67,8 +67,9 @@
         </div>
 
         <div class="pipeline-actions-right">
-          <button type="button" class="pipeline-action-btn" onclick="NyxerisStore.promptTrackOrder()">
-            <span class="pipeline-action-label">My Account</span>
+          <button type="button" class="pipeline-action-btn" id="btn-header-account" onclick="NyxerisStore.openAccountModal()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="pipeline-action-label" id="pipeline-account-label">My Account</span>
           </button>
           <button type="button" class="pipeline-action-btn" onclick="NyxerisStore.openSearchModal()">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -532,6 +533,9 @@
             <p class="pipeline-cart-shipping-note">Taxes and shipping calculated at checkout</p>
           </div>
 
+          <!-- Customer Auth Strip in Cart -->
+          <div id="cart-auth-strip" class="cart-auth-strip"></div>
+
           <button type="button" class="btn-checkout-now" id="btn-open-checkout" onclick="NyxerisStore.openCheckoutModal()">
             CHECKOUT
           </button>
@@ -759,7 +763,7 @@
           <div class="pipeline-footer-col">
             <h4 class="pipeline-footer-heading">CUSTOMER CARE</h4>
             <ul class="pipeline-footer-links">
-              <li><a href="javascript:void(0)" onclick="NyxerisStore.promptTrackOrder()">Track Your Order (USPS / CJ)</a></li>
+              <li><a href="javascript:void(0)" onclick="NyxerisStore.openAccountModal('lookup')">Track Your Order (USPS / CJ)</a></li>
               <li><a href="#signature-collection">30-Day Satisfaction Guarantee</a></li>
               <li><a href="/admin">Raydrim Dropshipping Cockpit</a></li>
               <li><a href="/themes">Shopify Themes Engine</a></li>
@@ -858,6 +862,170 @@
         <div class="quickview-content-grid" id="quickview-content">
           <!-- Populated dynamically via store.js -->
         </div>
+      </div>
+    </div>
+
+    <!-- Pipeline Customer Account & Authentication Modal -->
+    <div class="pipeline-account-modal-overlay" id="pipeline-account-modal" style="display: none;">
+      <div class="pipeline-account-modal-card">
+        
+        <!-- Modal Header -->
+        <div class="pipeline-account-modal-header">
+          <div class="account-header-title-group">
+            <span class="account-brand-kicker">NYXERIS CLIENT PRIVILEGES</span>
+            <h3 id="account-modal-title">Client Account</h3>
+          </div>
+          <button type="button" class="btn-close-account" onclick="NyxerisStore.closeAccountModal()">✕</button>
+        </div>
+
+        <!-- 1. GUEST VIEW (Unauthenticated) -->
+        <div id="account-guest-view">
+          <!-- Navigation Tabs -->
+          <div class="account-tab-bar">
+            <button type="button" class="account-tab-btn active" id="tab-btn-signin" onclick="NyxerisStore.switchAccountTab('signin')">Sign In</button>
+            <button type="button" class="account-tab-btn" id="tab-btn-register" onclick="NyxerisStore.switchAccountTab('register')">Create Account</button>
+            <button type="button" class="account-tab-btn" id="tab-btn-lookup" onclick="NyxerisStore.switchAccountTab('lookup')">Track Order</button>
+          </div>
+
+          <!-- Alert Container -->
+          <div id="account-auth-alert" class="account-alert" style="display: none;"></div>
+
+          <!-- Sign In Pane -->
+          <div id="account-pane-signin" class="account-tab-pane">
+            <form id="signin-form" onsubmit="NyxerisStore.handleSignIn(event)">
+              <div class="account-input-group">
+                <label for="signin-email">Email Address</label>
+                <input type="email" id="signin-email" placeholder="name@example.com" required autocomplete="email" />
+              </div>
+              <div class="account-input-group">
+                <label for="signin-password">Password</label>
+                <input type="password" id="signin-password" placeholder="••••••••" required autocomplete="current-password" />
+              </div>
+              <button type="submit" class="account-submit-btn" id="signin-submit-btn">Sign In to Nyxeris</button>
+            </form>
+            <div class="account-pane-footer">
+              <span>New client?</span>
+              <a href="javascript:void(0)" onclick="NyxerisStore.switchAccountTab('register')">Create an account</a>
+            </div>
+          </div>
+
+          <!-- Register Pane -->
+          <div id="account-pane-register" class="account-tab-pane" style="display: none;">
+            <form id="register-form" onsubmit="NyxerisStore.handleRegister(event)">
+              <div class="account-input-group">
+                <label for="register-name">Full Name</label>
+                <input type="text" id="register-name" placeholder="Alexander Vance" required autocomplete="name" />
+              </div>
+              <div class="account-input-group">
+                <label for="register-email">Email Address</label>
+                <input type="email" id="register-email" placeholder="alex@example.com" required autocomplete="email" />
+              </div>
+              <div class="account-input-group">
+                <label for="register-password">Password (minimum 6 characters)</label>
+                <input type="password" id="register-password" placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+              </div>
+              <div class="account-input-group">
+                <label for="register-phone">Phone Number (optional for delivery SMS)</label>
+                <input type="tel" id="register-phone" placeholder="+1 (555) 000-0000" autocomplete="tel" />
+              </div>
+              <button type="submit" class="account-submit-btn" id="register-submit-btn">Create Nyxeris Account</button>
+            </form>
+            <div class="account-pane-footer">
+              <span>Already registered?</span>
+              <a href="javascript:void(0)" onclick="NyxerisStore.switchAccountTab('signin')">Sign in here</a>
+            </div>
+          </div>
+
+          <!-- Instant Order Lookup Pane (Replaces crude prompt) -->
+          <div id="account-pane-lookup" class="account-tab-pane" style="display: none;">
+            <p class="account-pane-desc">Track any Nyxeris order instantly with your Order Confirmation ID.</p>
+            <form id="lookup-form" onsubmit="NyxerisStore.handleOrderLookup(event)">
+              <div class="account-input-group">
+                <label for="lookup-order-id">Nyxeris Order Number</label>
+                <input type="text" id="lookup-order-id" placeholder="e.g. NYX-2026-4F427F" required />
+              </div>
+              <div class="account-input-group">
+                <label for="lookup-order-email">Customer Email (Optional verification)</label>
+                <input type="email" id="lookup-order-email" placeholder="alex@example.com" />
+              </div>
+              <button type="submit" class="account-submit-btn" id="lookup-submit-btn">Track Order</button>
+            </form>
+            <div id="lookup-result-container" class="lookup-result-card" style="display: none;"></div>
+          </div>
+        </div>
+
+        <!-- 2. MEMBER VIEW (Authenticated Customer Dashboard) -->
+        <div id="account-member-view" style="display: none;">
+          <!-- Member Greeting Card -->
+          <div class="account-member-badge-card">
+            <div class="member-avatar">
+              <span id="member-avatar-initials">AV</span>
+            </div>
+            <div class="member-meta">
+              <h4 id="member-display-name">Alexander Vance</h4>
+              <span id="member-display-email" class="member-email-sub">alex@example.com</span>
+              <span class="member-vip-pill">★ Verified Client</span>
+            </div>
+            <button type="button" class="btn-signout" onclick="NyxerisStore.handleLogout()">Sign Out</button>
+          </div>
+
+          <!-- Member Tabs -->
+          <div class="account-tab-bar member-tabs">
+            <button type="button" class="account-tab-btn active" id="member-tab-orders" onclick="NyxerisStore.switchMemberTab('orders')">Order History (<span id="member-orders-count">0</span>)</button>
+            <button type="button" class="account-tab-btn" id="member-tab-address" onclick="NyxerisStore.switchMemberTab('address')">Saved Shipping Details</button>
+          </div>
+
+          <!-- Orders Pane -->
+          <div id="member-pane-orders" class="account-tab-pane">
+            <div id="member-orders-list" class="member-orders-stream">
+              <!-- Rendered via store.js -->
+            </div>
+          </div>
+
+          <!-- Saved Address Pane -->
+          <div id="member-pane-address" class="account-tab-pane" style="display: none;">
+            <form id="member-address-form" onsubmit="NyxerisStore.handleSaveProfile(event)">
+              <div class="account-input-row">
+                <div class="account-input-group flex-1">
+                  <label for="prof-name">Full Name</label>
+                  <input type="text" id="prof-name" required />
+                </div>
+                <div class="account-input-group flex-1">
+                  <label for="prof-phone">Phone</label>
+                  <input type="tel" id="prof-phone" />
+                </div>
+              </div>
+              <div class="account-input-group">
+                <label for="prof-address1">Street Address</label>
+                <input type="text" id="prof-address1" placeholder="123 Luxury Lane" />
+              </div>
+              <div class="account-input-group">
+                <label for="prof-address2">Apartment / Suite (optional)</label>
+                <input type="text" id="prof-address2" placeholder="Apt 4B" />
+              </div>
+              <div class="account-input-row">
+                <div class="account-input-group flex-2">
+                  <label for="prof-city">City</label>
+                  <input type="text" id="prof-city" />
+                </div>
+                <div class="account-input-group flex-1">
+                  <label for="prof-state">State / Province</label>
+                  <input type="text" id="prof-state" />
+                </div>
+                <div class="account-input-group flex-1">
+                  <label for="prof-zip">Postal Code</label>
+                  <input type="text" id="prof-zip" />
+                </div>
+              </div>
+              <div class="account-input-group">
+                <label for="prof-country">Country</label>
+                <input type="text" id="prof-country" value="United States" />
+              </div>
+              <button type="submit" class="account-submit-btn" id="save-address-btn">Save Shipping Address</button>
+            </form>
+          </div>
+        </div>
+
       </div>
     </div>
 

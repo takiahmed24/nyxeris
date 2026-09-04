@@ -142,17 +142,23 @@ async def create_checkout_order(req: CheckoutRequestSchema):
     short_uuid = uuid.uuid4().hex[:6].upper()
     order_id = f"NYX-{datetime.datetime.now().year}-{short_uuid}"
 
+    # Check if customer exists to associate order
+    cursor.execute("SELECT id FROM customers WHERE LOWER(email) = LOWER(?)", (req.shipping.email.strip(),))
+    cust_row = cursor.fetchone()
+    customer_id = cust_row[0] if cust_row else None
+
     # Insert into orders table
     cursor.execute("""
         INSERT INTO orders (
-            order_id, customer_name, customer_email, customer_phone,
+            order_id, customer_id, customer_name, customer_email, customer_phone,
             shipping_address_line1, shipping_address_line2, shipping_city,
             shipping_state, shipping_postal_code, shipping_country,
             shipping_method, packaging_tier, packaging_fee, subtotal, shipping_fee, tax, total_amount,
             currency, payment_method, payment_status, fulfillment_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'unfulfilled')
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', 'unfulfilled')
     """, (
         order_id,
+        customer_id,
         req.shipping.full_name,
         req.shipping.email,
         req.shipping.phone or "",

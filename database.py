@@ -84,13 +84,34 @@ def init_db():
         )
     """)
 
-    # Safe migration for packaging_tier and packaging_fee columns in orders
+    # Safe migration for packaging_tier, packaging_fee, and customer_id columns in orders
     cursor.execute("PRAGMA table_info(orders)")
     order_columns = [col[1] for col in cursor.fetchall()]
     if "packaging_tier" not in order_columns:
         cursor.execute("ALTER TABLE orders ADD COLUMN packaging_tier TEXT DEFAULT 'standard'")
     if "packaging_fee" not in order_columns:
         cursor.execute("ALTER TABLE orders ADD COLUMN packaging_fee REAL DEFAULT 0.0")
+    if "customer_id" not in order_columns:
+        cursor.execute("ALTER TABLE orders ADD COLUMN customer_id TEXT")
+
+    # Create Customers table for store user authentication & accounts
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS customers (
+            id TEXT PRIMARY KEY,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            full_name TEXT NOT NULL,
+            phone TEXT,
+            address_line1 TEXT,
+            address_line2 TEXT,
+            city TEXT,
+            state TEXT,
+            postal_code TEXT,
+            country TEXT DEFAULT 'United States',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
 
     # Create Order Items table
     cursor.execute("""

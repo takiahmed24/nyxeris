@@ -7,6 +7,7 @@
 const NyxerisStore = {
   cart: [],
   products: [],
+  currentUser: null,
   freeShippingThreshold: 150.00,
   taxRate: 0.08,
   defaultShippingFee: 14.99,
@@ -52,6 +53,7 @@ const NyxerisStore = {
     this.updateCartUI();
     this.initMotionEngine();
     this.initPipelineEngine();
+    this.initAuth();
   },
 
   loadCartFromStorage() {
@@ -1036,6 +1038,25 @@ const NyxerisStore = {
     const overlay = document.getElementById('checkout-modal-overlay');
     if (overlay) overlay.classList.add('open');
     this.updateCheckoutBreakdown();
+
+    // Pre-fill customer address and contact if logged in
+    if (this.currentUser) {
+      const form = document.getElementById('checkout-shipping-form');
+      if (form) {
+        if (this.currentUser.full_name && form.elements['full_name']) form.elements['full_name'].value = this.currentUser.full_name;
+        if (this.currentUser.email && form.elements['email']) form.elements['email'].value = this.currentUser.email;
+        if (this.currentUser.phone && form.elements['phone']) form.elements['phone'].value = this.currentUser.phone;
+        if (this.currentUser.address_line1 && form.elements['address_line1']) form.elements['address_line1'].value = this.currentUser.address_line1;
+        if (this.currentUser.address_line2 && form.elements['address_line2']) form.elements['address_line2'].value = this.currentUser.address_line2;
+        if (this.currentUser.city && form.elements['city']) form.elements['city'].value = this.currentUser.city;
+        if (this.currentUser.state && form.elements['state']) form.elements['state'].value = this.currentUser.state;
+        if (this.currentUser.postal_code && form.elements['postal_code']) form.elements['postal_code'].value = this.currentUser.postal_code;
+        if (this.currentUser.country && form.elements['country']) {
+          form.elements['country'].value = this.currentUser.country;
+          this.handleCountryChange(this.currentUser.country);
+        }
+      }
+    }
   },
 
   handleCountryChange(country) {
@@ -1124,11 +1145,365 @@ const NyxerisStore = {
     }
   },
 
-  promptTrackOrder() {
-    const orderId = prompt("Enter your Nyxeris Order Number (e.g., NYX-2026-XXXX):");
-    if (orderId && orderId.trim()) {
-      window.location.href = `/order-confirmation/${orderId.trim().toUpperCase()}`;
+  // -------------------------------------------------------------------------
+  // Customer Authentication & Client Portal Management
+  // -------------------------------------------------------------------------
+  async initAuth() {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated && data.customer) {
+          this.currentUser = data.customer;
+        } else {
+          this.currentUser = null;
+        }
+      }
+    } catch (e) {
+      console.warn('Auth check error:', e);
+      this.currentUser = null;
     }
+    this.updateAuthUI();
+  },
+
+  updateAuthUI() {
+    const accountLabel = document.getElementById('pipeline-account-label');
+    const cartAuthStrip = document.getElementById('cart-auth-strip');
+
+    if (this.currentUser) {
+      const firstName = (this.currentUser.full_name || 'Client').split(' ')[0];
+      if (accountLabel) {
+        accountLabel.textContent = `Hi, ${firstName}`;
+      }
+      if (cartAuthStrip) {
+        cartAuthStrip.className = 'cart-auth-strip logged-in';
+        cartAuthStrip.style.display = 'flex';
+        cartAuthStrip.innerHTML = `
+          <span>✓ Signed in as <strong>${firstName}</strong></span>
+          <a href="javascript:void(0)" onclick="NyxerisStore.openAccountModal()">View Orders</a>
+        `;
+      }
+    } else {
+      if (accountLabel) {
+        accountLabel.textContent = 'My Account';
+      }
+      if (cartAuthStrip) {
+        cartAuthStrip.className = 'cart-auth-strip guest';
+        cartAuthStrip.style.display = 'flex';
+        cartAuthStrip.innerHTML = `
+          <span>Returning client?</span>
+          <a href="javascript:void(0)" onclick="NyxerisStore.openAccountModal('signin')">Sign in for 1-click checkout</a>
+        `;
+      }
+    }
+  },
+
+  openAccountModal(initialTab = 'signin') {
+    const modal = document.getElementById('pipeline-account-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+
+    if (this.currentUser) {
+      const guestView = document.getElementById('account-guest-view');
+      const memberView = document.getElementById('account-member-view');
+      if (guestView) guestView.style.display = 'none';
+      if (memberView) memberView.style.display = 'block';
+      this.renderMemberProfile();
+      this.loadMemberOrders();
+      this.switchMemberTab('orders');
+    } else {
+      const guestView = document.getElementById('account-guest-view');
+      const memberView = document.getElementById('account-member-view');
+      if (guestView) guestView.style.display = 'block';
+      if (memberView) memberView.style.display = 'none';
+      this.switchAccountTab(initialTab);
+    }
+  },
+
+  closeAccountModal() {
+    const modal = document.getElementById('pipeline-account-modal');
+    if (modal) modal.style.display = 'none';
+    const alertBox = document.getElementById('account-auth-alert');
+    if (alertBox) {
+      alertBox.style.display = 'none';
+      alertBox.textContent = '';
+    }
+  },
+
+  switchAccountTab(tabName) {
+    const tabs = ['signin', 'register', 'lookup'];
+    tabs.forEach(t => {
+      const btn = document.getElementById(`tab-btn-${t}`);
+      const pane = document.getElementById(`account-pane-${t}`);
+      if (btn) btn.classList.toggle('active', t === tabName);
+      if (pane) pane.style.display = t === tabName ? 'flex' : 'none';
+    });
+    const alertBox = document.getElementById('account-auth-alert');
+    if (alertBox) {
+      alertBox.style.display = 'none';
+      alertBox.textContent = '';
+    }
+  },
+
+  switchMemberTab(tabName) {
+    const tabs = ['orders', 'address'];
+    tabs.forEach(t => {
+      const btn = document.getElementById(`member-tab-${t}`);
+      const pane = document.getElementById(`member-pane-${t}`);
+      if (btn) btn.classList.toggle('active', t === tabName);
+      if (pane) pane.style.display = t === tabName ? 'block' : 'none';
+    });
+  },
+
+  showAuthAlert(msg, type = 'error') {
+    const alertBox = document.getElementById('account-auth-alert');
+    if (alertBox) {
+      alertBox.className = `account-alert ${type}`;
+      alertBox.textContent = msg;
+      alertBox.style.display = 'block';
+    }
+  },
+
+  async handleSignIn(e) {
+    e.preventDefault();
+    const email = document.getElementById('signin-email').value.trim();
+    const password = document.getElementById('signin-password').value;
+    const btn = document.getElementById('signin-submit-btn');
+
+    try {
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Sign in failed');
+
+      this.currentUser = data.customer;
+      this.updateAuthUI();
+      this.showToast(`Welcome back, ${data.customer.full_name}!`);
+      this.openAccountModal(); // Switches to member view
+    } catch (err) {
+      this.showAuthAlert(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Sign In to Nyxeris';
+    }
+  },
+
+  async handleRegister(e) {
+    e.preventDefault();
+    const full_name = document.getElementById('register-name').value.trim();
+    const email = document.getElementById('register-email').value.trim();
+    const password = document.getElementById('register-password').value;
+    const phone = document.getElementById('register-phone').value.trim();
+    const btn = document.getElementById('register-submit-btn');
+
+    try {
+      btn.disabled = true;
+      btn.textContent = 'Creating account...';
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ full_name, email, password, phone })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Registration failed');
+
+      this.currentUser = data.customer;
+      this.updateAuthUI();
+      this.showToast(`Account created! Welcome to Nyxeris, ${data.customer.full_name}`);
+      this.openAccountModal();
+    } catch (err) {
+      this.showAuthAlert(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Create Nyxeris Account';
+    }
+  },
+
+  async handleLogout() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) {}
+    this.currentUser = null;
+    this.updateAuthUI();
+    this.closeAccountModal();
+    this.showToast('Signed out successfully.');
+  },
+
+  renderMemberProfile() {
+    if (!this.currentUser) return;
+    const initials = (this.currentUser.full_name || 'NY').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'NY';
+    const avatarInitials = document.getElementById('member-avatar-initials');
+    const displayName = document.getElementById('member-display-name');
+    const displayEmail = document.getElementById('member-display-email');
+    if (avatarInitials) avatarInitials.textContent = initials;
+    if (displayName) displayName.textContent = this.currentUser.full_name;
+    if (displayEmail) displayEmail.textContent = this.currentUser.email;
+
+    // Pre-fill profile form fields
+    const profName = document.getElementById('prof-name');
+    const profPhone = document.getElementById('prof-phone');
+    const profAdd1 = document.getElementById('prof-address1');
+    const profAdd2 = document.getElementById('prof-address2');
+    const profCity = document.getElementById('prof-city');
+    const profState = document.getElementById('prof-state');
+    const profZip = document.getElementById('prof-zip');
+    const profCountry = document.getElementById('prof-country');
+
+    if (profName) profName.value = this.currentUser.full_name || '';
+    if (profPhone) profPhone.value = this.currentUser.phone || '';
+    if (profAdd1) profAdd1.value = this.currentUser.address_line1 || '';
+    if (profAdd2) profAdd2.value = this.currentUser.address_line2 || '';
+    if (profCity) profCity.value = this.currentUser.city || '';
+    if (profState) profState.value = this.currentUser.state || '';
+    if (profZip) profZip.value = this.currentUser.postal_code || '';
+    if (profCountry) profCountry.value = this.currentUser.country || 'United States';
+  },
+
+  async loadMemberOrders() {
+    const listContainer = document.getElementById('member-orders-list');
+    const countSpan = document.getElementById('member-orders-count');
+    if (!listContainer) return;
+
+    listContainer.innerHTML = '<div style="text-align: center; padding: 24px; color: #888;">Loading your order history...</div>';
+
+    try {
+      const res = await fetch('/api/auth/orders');
+      if (!res.ok) throw new Error('Could not load orders');
+      const data = await res.json();
+      const orders = data.orders || [];
+
+      if (countSpan) countSpan.textContent = orders.length;
+
+      if (orders.length === 0) {
+        listContainer.innerHTML = `
+          <div style="text-align: center; padding: 36px 16px; color: #767676;">
+            <p style="margin-bottom: 8px; font-weight: 500;">No orders found under this account.</p>
+            <p style="font-size: 12px; color: #999;">Any physical orders you place will be recorded here with real-time tracking.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listContainer.innerHTML = orders.map(ord => {
+        const itemsSummary = (ord.items || []).map(it => `${it.quantity}x ${it.product_title}`).join(', ') || 'Physical Products';
+        const isPaid = ord.payment_status === 'paid';
+        const isShipped = ord.fulfillment_status === 'shipped';
+        const trackingBadge = ord.tracking_number
+          ? `<a href="${ord.tracking_url || 'https://cjpacket.com'}" target="_blank" class="btn-order-action track">CJ Tracking: ${ord.tracking_number} ↗</a>`
+          : `<span class="status-badge ${isShipped ? 'shipped' : 'unfulfilled'}">${isShipped ? 'In Transit' : 'Processing'}</span>`;
+
+        return `
+          <div class="member-order-card">
+            <div class="order-card-header">
+              <div>
+                <span class="order-card-id">${ord.order_id}</span>
+                <span class="order-card-date"> • ${new Date(ord.created_at).toLocaleDateString()}</span>
+              </div>
+              <div class="order-status-badges">
+                <span class="status-badge ${isPaid ? 'paid' : 'pending'}">${ord.payment_status}</span>
+              </div>
+            </div>
+            <div class="order-items-preview">${itemsSummary}</div>
+            <div class="order-card-footer">
+              <span class="order-card-total">$${parseFloat(ord.total_amount).toFixed(2)}</span>
+              <div class="order-card-actions">
+                ${ord.tracking_number ? trackingBadge : ''}
+                <a href="/order-confirmation/${ord.order_id}" class="btn-order-action receipt">Order & Receipt ↗</a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      listContainer.innerHTML = `<div style="color: #cf1322; padding: 16px;">Failed to load orders: ${err.message}</div>`;
+    }
+  },
+
+  async handleSaveProfile(e) {
+    e.preventDefault();
+    const btn = document.getElementById('save-address-btn');
+    const updates = {
+      full_name: document.getElementById('prof-name').value.trim(),
+      phone: document.getElementById('prof-phone').value.trim(),
+      address_line1: document.getElementById('prof-address1').value.trim(),
+      address_line2: document.getElementById('prof-address2').value.trim(),
+      city: document.getElementById('prof-city').value.trim(),
+      state: document.getElementById('prof-state').value.trim(),
+      postal_code: document.getElementById('prof-zip').value.trim(),
+      country: document.getElementById('prof-country').value.trim()
+    };
+
+    try {
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+      const res = await fetch('/api/auth/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Save failed');
+
+      this.currentUser = data.customer;
+      this.updateAuthUI();
+      this.showToast('Shipping address saved to your client profile!');
+    } catch (err) {
+      alert(`Error saving address: ${err.message}`);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save Shipping Address';
+    }
+  },
+
+  async handleOrderLookup(e) {
+    e.preventDefault();
+    const orderId = document.getElementById('lookup-order-id').value.trim();
+    const email = document.getElementById('lookup-order-email').value.trim();
+    const resultBox = document.getElementById('lookup-result-container');
+    const btn = document.getElementById('lookup-submit-btn');
+
+    try {
+      btn.disabled = true;
+      btn.textContent = 'Searching...';
+      const q = new URLSearchParams({ order_id: orderId });
+      if (email) q.append('email', email);
+
+      const res = await fetch(`/api/auth/lookup-order?${q.toString()}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Order not found');
+
+      const ord = data.order;
+      const itemsList = (ord.items || []).map(i => `${i.quantity}x ${i.product_title}`).join(', ');
+
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <strong>Order ${ord.order_id}</strong>
+          <span class="status-badge ${ord.payment_status === 'paid' ? 'paid' : 'pending'}">${ord.payment_status}</span>
+        </div>
+        <div style="font-size: 12px; color: #555; margin-bottom: 8px;">Items: ${itemsList}</div>
+        <div style="font-size: 12px; color: #555; margin-bottom: 12px;">Total: <strong>$${parseFloat(ord.total_amount).toFixed(2)}</strong> (${ord.currency})</div>
+        <div style="display: flex; gap: 8px;">
+          ${ord.tracking_number ? `<a href="${ord.tracking_url || 'https://cjpacket.com'}" target="_blank" class="btn-order-action track">Track Courier: ${ord.tracking_number} ↗</a>` : ''}
+          <a href="/order-confirmation/${ord.order_id}" class="btn-order-action receipt">View Full Receipt ↗</a>
+        </div>
+      `;
+    } catch (err) {
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = `<div style="color: #cf1322; font-size: 12.5px;">${err.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Track Order';
+    }
+  },
+
+  promptTrackOrder() {
+    this.openAccountModal('lookup');
   },
 
   showToast(message) {
