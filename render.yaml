@@ -1,0 +1,15 @@
+﻿services:
+  - type: web
+    name: nyxeris-storefront
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: STORE_NAME
+        value: Nyxeris
+      - key: STORE_SUPPORT_EMAIL
+        value: ahmedmuhammadtaki@gmail.com
+      - key: WHOP_SANDBOX_MODE
+        value: "false"

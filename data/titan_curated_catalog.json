@@ -1,0 +1,110 @@
+[
+  {
+    "id": "prod_nyxeris_horizon_screenbar",
+    "title": "Precision Desk Lighting Module",
+    "slug": "nyxeris-horizon-screenbar-light",
+    "category": "Workspace & Studio",
+    "price": 49.99,
+    "cost_price": 16.36,
+    "profit_margin": 67.3,
+    "sku": "CJ-140179564451",
+    "supplier_url": "https://cjdropshipping.com/product/monitor-hanging-light-zhirui-screen-light-bedroom-dormitory-desk-p-1401795644515028992.html",
+    "image_url": "/static/images/products/nyxeris-horizon-screenbar-light.jpg",
+    "badge": "Top Rated",
+    "tagline": "",
+    "description": "",
+    "features": [
+      "Aerospace-grade aluminum frame",
+      "Optical-grade glass diffuser",
+      "Tactile, precision-engineered design",
+      "Intentional desk setup facilitator"
+    ],
+    "specs": {
+      "Materials": "Aerospace-grade aluminum, optical-grade glass",
+      "Dimensions": "12 x 12 x 10 inches",
+      "Compatibility": "Universal desk surface",
+      "In The Box": "Precision Desk Lighting Module, installation manual"
+    }
+  },
+  {
+    "id": "prod_nyxeris_matrix_magsafe",
+    "title": "Precision Foldable Wireless Charging Hub",
+    "slug": "nyxeris-matrix-magsafe-station",
+    "category": "Smart Gear & Power",
+    "price": 49.99,
+    "cost_price": 15.77,
+    "profit_margin": 68.5,
+    "sku": "CJ-161952525684",
+    "supplier_url": "https://cjdropshipping.com/product/3-in-1-magnetic-foldable-wireless-charger-charging-station-multi-device-folding-cell-phone-wireless-charger-gadgets-p-1619525256841015296.html",
+    "image_url": "/static/images/products/nyxeris-matrix-magsafe-station.jpg",
+    "badge": "Qi2 Fast Wireless",
+    "tagline": "Aerospace-grade precision in your workspace.",
+    "description": "The Precision Foldable Wireless Charging Hub is an architectural marvel, blending tactile build quality with intentional design for a seamless desk setup.",
+    "features": [
+      "Aerospace-grade aluminum construction for durability and elegance.",
+      "Foldable design for compact storage and easy access.",
+      "Intelligent charging hub compatible with multiple devices.",
+      "Tactile, precision-engineered finish for a premium user experience."
+    ],
+    "specs": {
+      "Materials": "Aerospace-grade aluminum",
+      "Dimensions": "10 x 10 x 1.5 inches (closed) / 10 x 10 x 4 inches (expanded)",
+      "Compatibility": "Wireless Qi chargers, smartphones, and wearables",
+      "In The Box": "Precision Foldable Wireless Charging Hub, user manual, microfiber cleaning cloth"
+    }
+  },
+  {
+    "id": "prod_nyxeris_lumina_deskmat",
+    "title": "Precision Crafted Thickened Seaming Workstation Mat",
+    "slug": "nyxeris-lumina-desk-mat",
+    "category": "Workspace & Studio",
+    "price": 14.99,
+    "cost_price": 3.5,
+    "profit_margin": 76.7,
+    "sku": "CJ-138692818928",
+    "supplier_url": "https://cjdropshipping.com/product/oversized-thickened-precision-seaming-computer-desk-mat-p-1386928189288353792.html",
+    "image_url": "/static/images/products/nyxeris-lumina-desk-mat.jpg",
+    "badge": "Waterproof",
+    "tagline": "Architectural precision for your workspace.",
+    "description": "Engineered from aerospace-grade materials, the Precision Crafted Thickened Seaming Workstation Mat offers a superior, tactile surface for your most demanding projects.",
+    "features": [
+      "Aerospace-grade materials for unparalleled durability and precision.",
+      "Thickened surface for enhanced comfort and support during extended use.",
+      "Intentional design for an optimal desk setup, promoting ergonomic efficiency.",
+      "Tactile build ensures a premium feel, elevating your workspace experience."
+    ],
+    "specs": {
+      "Materials": "Aerospace-grade",
+      "Dimensions": "Custom fit to your desk",
+      "Compatibility": "Universal fit for most desks",
+      "In The Box": "Precision Crafted Thickened Seaming Workstation Mat, installation guide"
+    }
+  },
+  {
+    "id": "prod_nyxeris_vektor_titanium",
+    "title": "Aerospace Precision Mini Tactical Pen & Tool",
+    "slug": "nyxeris-vektor-titanium-tool",
+    "category": "Accessories & EDC",
+    "price": 29.99,
+    "cost_price": 9.0,
+    "profit_margin": 70.0,
+    "sku": "CJ-240629081511",
+    "supplier_url": "https://cjdropshipping.com/product/titanium-alloy-portable-edc-tactical-pen-mini-self-defense-p-2406290815111615200.html",
+    "image_url": "/static/images/products/nyxeris-vektor-titanium-tool.jpg",
+    "badge": "Grade 5 Titanium",
+    "tagline": "",
+    "description": "",
+    "features": [
+      "Aerospace-grade aluminum exterior",
+      "Tactile titanium alloy tip",
+      "Intentional design for precision tasks",
+      "Perfect for any desk setup"
+    ],
+    "specs": {
+      "Materials": "Aerospace-grade aluminum and titanium alloy",
+      "Dimensions": "4.5 inches in length, 0.5 inches in diameter",
+      "Compatibility": "Universal compatibility with any desk or briefcase",
+      "In The Box": "Precision Mini Tactical Pen & Tool, microfiber cleaning cloth"
+    }
+  }
+]

@@ -1,0 +1,22 @@
+﻿# Large and local cache directories
+browser_profile/
+nexteuv/
+data/shopify_themes/
+data/screenshots/
+data/receipts/*.pdf
+scratch/
+
+# Python & Environment
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.vscode/
+.idea/
+*.log
+.DS_Store
+Thumbs.db

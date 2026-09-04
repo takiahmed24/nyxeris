@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CJ Dropshipping for Whop{% endblock %}</title>
+  
+  <!-- Offline Necyron Google Fonts -->
+  <link rel="stylesheet" href="/assets/fonts/google/google_font_1.css">
+  <link rel="stylesheet" href="/assets/fonts/google/google_font_2.css">
+  <link rel="stylesheet" href="/assets/fonts/google/google_font_3.css">
+  
+  <!-- Tactical Schematic Pipeline Theme -->
+  <link rel="stylesheet" href="/static/css/necyron_theme.css">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header class="app-header">
+    <a href="/?company_id={{ company_id }}" class="brand-wrap">
+      <span class="brand-badge">CJ &times; WHOP</span>
+      <span class="brand-title">CJ Fulfillment Bridge</span>
+      <span class="brand-sub">SaaS v1.0</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="/?company_id={{ company_id }}" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">Dashboard</a>
+      <a href="/sku-mapping?company_id={{ company_id }}" class="nav-item {% if active_page == 'sku_mapping' %}active{% endif %}">SKU Mappings</a>
+      <a href="/settings?company_id={{ company_id }}" class="nav-item {% if active_page == 'settings' %}active{% endif %}">Settings</a>
+    </nav>
+
+    <!-- Multi-Tenant Workspace Selector -->
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <div class="workspace-selector-wrap">
+        <span class="workspace-label">Store:</span>
+        <select class="workspace-select" onchange="switchCompany(this.value)">
+          {% for m in all_merchants %}
+          <option value="{{ m.company_id }}" {% if m.company_id == company_id %}selected{% endif %}>
+            {{ m.account_name }} ({{ m.company_id[:12] }}...)
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px; color: var(--status-green);">
+        <span class="node-pulse"></span>
+        <span>$5/mo (60-Day Trial)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Solid Tactical Footer -->
+  <footer class="app-footer">
+    <div>CJ Dropshipping for Whop &bull; Dedicated Multi-Tenant Fulfillment Engine &bull; Eliminating Shopify Fees</div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

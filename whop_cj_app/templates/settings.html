@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - CJ Dropshipping for Whop{% endblock %}
+
+{% block content %}
+
+<!-- Success Alert Box -->
+<div id="save-alert" class="tactical-alert alert-success" style="display: none;">
+  <div>Settings successfully updated and verified.</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+  <!-- CJ Dropshipping Credentials -->
+  <div class="tactical-card">
+    <div class="card-header">
+      <div class="card-title-group">
+        <h2>CJ Dropshipping API 2.0</h2>
+        <p>Connect your CJ Dropshipping developer credentials</p>
+      </div>
+      <div>
+        {% if settings.cj_access_token %}
+          <span class="badge badge-success">Authenticated</span>
+        {% else %}
+          <span class="badge badge-warning">Sandbox / Pending</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <form id="settings-form" onsubmit="saveSettings(event)">
+      <div class="form-group">
+        <label class="form-label">CJ Account Email</label>
+        <input type="email" id="cj_email" class="form-control" value="{{ settings.cj_email or '' }}" placeholder="your-email@example.com">
+        <span class="form-sublabel">The email address used to log in to cjdropshipping.com</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">CJ Open API Key</label>
+        <input type="password" id="cj_api_key" class="form-control" value="{{ settings.cj_api_key or '' }}" placeholder="Enter CJ Developer API Key">
+        <span class="form-sublabel">Obtained from developers.cjdropshipping.com &rarr; My API</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Auto-Order Placement</label>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
+          <input type="checkbox" id="auto_order" {% if settings.auto_order_enabled %}checked{% endif %} style="width: 18px; height: 18px; accent-color: var(--accent-cyan);">
+          <span style="color: var(--text-pure); font-size: 13px;">Automatically submit orders to CJ upon Whop payment</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button type="submit" class="btn btn-primary">Save Settings</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Whop Webhook & App Info -->
+  <div class="tactical-card">
+    <div class="card-header">
+      <div class="card-title-group">
+        <h2>Whop Developer Integration</h2>
+        <p>Configure webhooks and order fulfillment sync</p>
+      </div>
+      <span class="badge badge-info">Whop App Native</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Whop Webhook Endpoint URL</label>
+      <input type="text" class="form-control" value="{{ webhook_url }}" readonly style="background-color: #081414; color: var(--accent-cyan); font-family: monospace;">
+      <span class="form-sublabel">Add this URL in Whop Dashboard &rarr; Developer &rarr; Webhooks (Events: payment.succeeded)</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Whop API Key (Optional)</label>
+      <input type="password" id="whop_api_key" class="form-control" value="{{ settings.whop_api_key or '' }}" placeholder="Enter Whop API Key to push live tracking">
+      <span class="form-sublabel">Required to push carrier tracking links directly back into customer Whop orders</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Whop Webhook Secret</label>
+      <input type="password" id="whop_secret" class="form-control" value="{{ settings.whop_webhook_secret or '' }}" placeholder="whsec_xxxxxxxx">
+      <span class="form-sublabel">Used for HMAC SHA-256 payload verification</span>
+    </div>
+
+    <!-- Monetization & Trial Status -->
+    <div style="background-color: var(--bg-surface); border: 1px solid var(--border-strong); padding: 14px; border-radius: var(--radius-sm); margin-top: 14px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-weight: 600; color: var(--text-pure); font-size: 13px;">Plan: CJ Dropshipping Pro Bridge</div>
+          <div style="font-size: 11px; color: var(--text-muted);">$5.00/month after 60-day free trial</div>
+        </div>
+        <span class="badge badge-success">Trial Active</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

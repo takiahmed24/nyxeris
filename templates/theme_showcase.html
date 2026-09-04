@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nyxeris — Shopify Themes Studio & Architecture Hub</title>
+  <style>
+    :root {
+      --bg-dark: #121214;
+      --bg-surface: #18181c;
+      --bg-glass: rgba(24, 24, 28, 0.75);
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(0, 255, 204, 0.4);
+      --cyan: #00ffcc;
+      --cyan-glow: rgba(0, 255, 204, 0.2);
+      --blue: #3b82f6;
+      --blue-glow: rgba(59, 130, 246, 0.25);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient dynamic backdrop glow */
+    .ambient-glow {
+      position: fixed;
+      top: -20%;
+      left: 10%;
+      width: 60vw;
+      height: 50vh;
+      background: radial-gradient(circle, rgba(0, 255, 204, 0.04) 0%, rgba(59, 130, 246, 0.03) 40%, transparent 70%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header Bar */
+    header.hub-header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-glass);
+      flex-shrink: 0;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-logo {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(0, 255, 204, 0.12);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 255, 204, 0.3);
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      border: 1px solid var(--border-glass);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .active-pill-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0, 255, 204, 0.08);
+      border: 1px solid rgba(0, 255, 204, 0.25);
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+    }
+
+    .active-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    /* Main Hub Layout */
+    .hub-container {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 65px);
+      overflow: hidden;
+    }
+
+    /* Left Sidebar / Filter Drawer */
+    aside.hub-sidebar {
+      width: 290px;
+      flex-shrink: 0;
+      background: rgba(20, 20, 24, 0.6);
+      backdrop-filter: blur(16px);
+      border-right: 1px solid var(--border-glass);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1.25rem;
+      gap: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      padding: 0.65rem 0.85rem 0.65rem 2.25rem;
+      font-size: 0.84rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--border-focus);
+      background: rgba(0, 255, 204, 0.04);
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+    }
+
+    .filter-section h4 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 0.55rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+    }
+
+    .filter-btn.active {
+      background: rgba(0, 255, 204, 0.1);
+      border-color: rgba(0, 255, 204, 0.3);
+      color: var(--cyan);
+      font-weight: 600;
+    }
+
+    .filter-count {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-dim);
+    }
+
+    .filter-btn.active .filter-count {
+      background: rgba(0, 255, 204, 0.2);
+      color: var(--cyan);
+    }
+
+    .sidebar-stats-card {
+      margin-top: auto;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .sidebar-stats-card strong {
+      color: #fff;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Content Area: Grid of Themes */
+    main.hub-grid-wrapper {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .catalog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .catalog-header h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .catalog-header p {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin-top: 0.25rem;
+    }
+
+    .theme-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 1.25rem;
+      padding-bottom: 3rem;
+    }
+
+    /* Individual Theme Card */
+    .theme-card {
+      background: rgba(24, 24, 28, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .theme-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(0, 255, 204, 0.3);
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 204, 0.05);
+    }
+
+    .theme-card.is-active-theme {
+      border-color: var(--cyan);
+      box-shadow: 0 0 25px rgba(0, 255, 204, 0.15);
+      background: linear-gradient(180deg, rgba(0, 255, 204, 0.04) 0%, rgba(24, 24, 28, 0.85) 100%);
+    }
+
+    /* Card Image Thumbnail */
+    .card-preview-thumb {
+      width: 100%;
+      height: 180px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: #0d0d0f;
+      border: 1px solid var(--border-glass);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .card-preview-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      transition: transform 0.4s ease;
+    }
+
+    .card-preview-thumb:hover img {
+      transform: scale(1.04);
+    }
+
+    .thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .card-preview-thumb:hover .thumb-overlay {
+      opacity: 1;
+    }
+
+    .btn-thumb-action {
+      background: rgba(24, 24, 28, 0.9);
+      border: 1px solid var(--cyan);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .card-category-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(59, 130, 246, 0.12);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .tag-kinetic { background: rgba(0, 255, 204, 0.12); color: var(--cyan); border-color: rgba(0, 255, 204, 0.3); }
+    .tag-luxury { background: rgba(245, 158, 11, 0.12); color: #fde047; border-color: rgba(245, 158, 11, 0.3); }
+    .tag-megastore { background: rgba(59, 130, 246, 0.12); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3); }
+    .tag-speed { background: rgba(236, 72, 153, 0.12); color: #f472b6; border-color: rgba(236, 72, 153, 0.3); }
+
+    .card-title-group h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .card-author {
+      font-size: 0.76rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .card-metrics {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .metric-badge {
+      font-size: 0.7rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 3px 7px;
+      border-radius: 4px;
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-description {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      min-height: 48px;
+    }
+
+    .card-features-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .feature-pill {
+      font-size: 0.7rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: #cbd5e1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: auto;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-select-theme {
+      flex: 1;
+      background: rgba(0, 255, 204, 0.12);
+      border: 1px solid rgba(0, 255, 204, 0.35);
+      color: var(--cyan);
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .btn-select-theme:hover {
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+    }
+
+    .btn-select-theme.is-active {
+      background: var(--cyan);
+      color: #000;
+      cursor: default;
+    }
+
+    .btn-inspect {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+      padding: 0.6rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-inspect:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-demo-link {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #93c5fd;
+      padding: 0.6rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-demo-link:hover {
+      background: rgba(59, 130, 246, 0.25);
+      color: #fff;
+      border-color: rgba(59, 130, 246, 0.6);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.25);
+    }
+
+    /* Modal for theme inspection - Fullscreen High-Definition Studio */
+    .theme-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(16px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-box {
+      background: #16161a;
+      border: 1px solid rgba(0, 255, 204, 0.35);
+      border-radius: var(--radius-lg);
+      width: 96vw;
+      max-width: 1420px;
+      height: 94vh;
+      max-height: 94vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 255, 204, 0.12);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid var(--border-glass);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(24, 24, 28, 0.95);
+      flex-shrink: 0;
+      gap: 1rem;
+    }
+
+    .modal-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .modal-nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glass);
+    }
+
+    .modal-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-tab-btn.active {
+      background: rgba(0, 255, 204, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 255, 204, 0.3);
+    }
+
+    .modal-body {
+      padding: 1.25rem 1.5rem;
+      overflow-y: auto;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      flex: 1;
+      height: calc(100% - 65px);
+    }
+
+    .full-image-lightbox {
+      width: 100%;
+      height: 100%;
+      min-height: 60vh;
+      overflow-y: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-glass);
+      background: #0a0a0c;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    .full-image-lightbox img {
+      width: 100%;
+      display: block;
+    }
+
+    .live-demo-frame {
+      width: 100%;
+      height: 100%;
+      min-height: 65vh;
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      background: #fff;
+    }
+
+    .btn-modal-close {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      color: var(--text-dim);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+    }
+
+    .btn-modal-close:hover {
+      color: #fff;
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    .toast-notice {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #18181c;
+      border: 1px solid var(--cyan);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 204, 0.2);
+      color: #fff;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-sm);
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 200;
+      font-size: 0.85rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Hub Header -->
+  <header class="hub-header">
+    <div class="brand-group">
+      <a href="/" class="brand-logo">
+        NYXERIS
+        <span class="brand-badge">Theme Studio</span>
+      </a>
+    </div>
+
+    <div class="header-actions">
+      <div class="active-pill-box">
+        <span class="active-dot"></span>
+        <span>Active Theme: <strong id="header-active-theme" style="color: var(--cyan);">{{ selected_theme }}</strong></span>
+      </div>
+      <a href="/" class="btn-nav">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Storefront
+      </a>
+      <a href="/admin" class="btn-nav">
+        Cockpit
+      </a>
+    </div>
+  </header>
+
+  <!-- Hub Body -->
+  <div class="hub-container">
+    <!-- Sidebar Filters -->
+    <aside class="hub-sidebar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="theme-search-input" placeholder="Search themes, styles, authors..." oninput="ThemeStudio.filterThemes()" />
+      </div>
+
+      <div class="filter-section">
+        <h4>Design Archetype</h4>
+        <div class="filter-pills">
+          <button class="filter-btn active" data-filter="all" onclick="ThemeStudio.setCategory('all', this)">
+            <span>All Themes</span>
+            <span class="filter-count" id="count-all">32</span>
+          </button>
+          <button class="filter-btn" data-filter="kinetic" onclick="ThemeStudio.setCategory('kinetic', this)">
+            <span>⚡ Kinetic & Motion</span>
+            <span class="filter-count" id="count-kinetic">5</span>
+          </button>
+          <button class="filter-btn" data-filter="megastore" onclick="ThemeStudio.setCategory('megastore', this)">
+            <span>🏢 Megastore & Best Buy</span>
+            <span class="filter-count" id="count-megastore">6</span>
+          </button>
+          <button class="filter-btn" data-filter="luxury" onclick="ThemeStudio.setCategory('luxury', this)">
+            <span>💎 Luxury & Editorial</span>
+            <span class="filter-count" id="count-luxury">4</span>
+          </button>
+          <button class="filter-btn" data-filter="speed" onclick="ThemeStudio.setCategory('speed', this)">
+            <span>🏎️ Speed & High-Volume</span>
+            <span class="filter-count" id="count-speed">5</span>
+          </button>
+          <button class="filter-btn" data-filter="boutique" onclick="ThemeStudio.setCategory('boutique', this)">
+            <span>🎨 Boutique & Lifestyle</span>
+            <span class="filter-count" id="count-boutique">12</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-stats-card">
+        <strong>📂 Local Storage Repository</strong>
+        All archives stored in <code>C:\Nyxeris\data\shopify_themes\</code>.<br><br>
+        Contains full Liquid templates, theme settings schema, and JS/CSS assets.
+      </div>
+    </aside>
+
+    <!-- Main Theme Cards Grid -->
+    <main class="hub-grid-wrapper">
+      <div class="catalog-header">
+        <div>
+          <h1>Shopify Theme Showcase</h1>
+          <p>Inspect, compare, and select your store's architecture from your curated 32-theme repository.</p>
+        </div>
+      </div>
+
+      <div class="theme-cards-grid" id="theme-cards-grid">
+        <!-- Rendered via JavaScript -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Inspection Modal -->
+  <div class="theme-modal" id="theme-modal" onclick="ThemeStudio.closeModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-title">Theme Details</h3>
+        <button class="btn-modal-close" onclick="ThemeStudio.closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Injected details -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-notice" id="toast-notice">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--cyan)" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span id="toast-text">Theme activated!</span>
+  </div>
+
+  <script>
+    const RAW_THEMES = {{ themes | tojson }};
+    let currentSelectedTheme = {{ selected_theme | tojson }};
+
+    // Metadata dictionary for themes with clean full renders and direct myshopify demo URLs
+    const THEME_PROFILES = {
+      "Motion": {
+        category: "kinetic",
+        categoryName: "⚡ Kinetic & Motion",
+        tagClass: "tag-kinetic",
+        image: "/static/images/themes/clean_hero_motion.png",
+        fullImage: "/static/images/themes/clean_full_motion.png",
+        demoUrl: "https://motion-theme-adventure.myshopify.com/",
+        tagline: "Fluid video flow, smooth page transitions, and interactive hotspots.",
+        features: ["Ambient Video Backgrounds", "Smooth Page Reveals", "Interactive Product Hotspots", "Sound/Media Modules", "Dynamic Hero Chapters"],
+        bestFor: "Flagship tech, mechanical peripherals, precision acoustics, and visual storytelling."
+      },
+      "Warehouse": {
+        category: "megastore",
+        categoryName: "🏢 Megastore & Best Buy",
+        tagClass: "tag-megastore",
+        image: "/static/images/themes/clean_hero_warehouse.png",
+        fullImage: "/static/images/themes/clean_full_warehouse.png",
+        demoUrl: "https://warehouse-theme-metal.myshopify.com/",
+        tagline: "The premier electronics & multi-SKU catalog benchmark.",
+        features: ["Amazon/Best Buy Faceted Search", "Stock Inventory Meters", "Cross-Sell Bundles", "Tech Spec Sheets", "Multi-tiered Navigation"],
+        bestFor: "200+ hardware items, computer peripherals, GaN power, and electronics."
+      },
+      "Prestige": {
+        category: "luxury",
+        categoryName: "💎 Luxury & Editorial",
+        tagClass: "tag-luxury",
+        image: "/static/images/themes/clean_hero_prestige.png",
+        fullImage: "/static/images/themes/clean_full_prestige.png",
+        demoUrl: "https://prestige-theme-allure.myshopify.com/",
+        tagline: "French luxury editorial with impeccable typography.",
+        features: ["Magazine Editorial Layout", "Luxury Cart Drawer", "Image Hotspots", "High-Resolution Product Zoom"],
+        bestFor: "Premium designer tech, titanium EDC, and studio aesthetics."
+      },
+      "Empire": {
+        category: "megastore",
+        categoryName: "🏢 Megastore & Best Buy",
+        tagClass: "tag-megastore",
+        image: "/static/images/themes/clean_hero_empire.png",
+        fullImage: "/static/images/themes/clean_full_empire.png",
+        demoUrl: "https://empire-theme-supply.myshopify.com/",
+        tagline: "Amazon/Best Buy industrial strength catalog navigation.",
+        features: ["Predictive Thumbnail Search", "Category Grid Badges", "Bulk SKU Selectors", "Live Availability Status"],
+        bestFor: "Large catalog dropshipping, electronic wholesale, and multi-department stores."
+      },
+      "Focal": {
+        category: "luxury",
+        categoryName: "💎 Luxury & Editorial",
+        tagClass: "tag-luxury",
+        image: "/static/images/themes/clean_hero_focal.png",
+        fullImage: "/static/images/themes/clean_full_focal.png",
+        demoUrl: "https://focal-theme-carbon.myshopify.com/",
+        tagline: "Contemporary color-blocking with tactile pill accents.",
+        features: ["Interactive Cross-Sell", "Free-Shipping Progress Bar", "Slide-Out Quick View", "Modern Grid Spacing"],
+        bestFor: "Trendy consumer tech, smart home devices, and acoustic studio gear."
+      },
+      "Impulse": {
+        category: "kinetic",
+        categoryName: "⚡ Kinetic & Motion",
+        tagClass: "tag-kinetic",
+        image: "/static/images/themes/clean_hero_impulse.png",
+        fullImage: "/static/images/themes/clean_full_impulse.png",
+        demoUrl: "https://impulse-theme-fashion.myshopify.com/",
+        tagline: "High-impact merchandising with animated multi-tiered promotions.",
+        features: ["Subcollection Grid Filters", "Quick Buy Modals", "Promo Tiles", "Lookbook Hotspots"],
+        bestFor: "High-energy gear, outdoor gadgets, and fast-moving drops."
+      },
+      "Pipeline": {
+        category: "kinetic",
+        categoryName: "⚡ Kinetic & Motion",
+        tagClass: "tag-kinetic",
+        image: "/static/images/themes/clean_hero_pipeline.png",
+        fullImage: "/static/images/themes/clean_full_pipeline.png",
+        demoUrl: "https://pipeline-theme-fashion.myshopify.com/",
+        tagline: "Architectural grid with modular scroll animations.",
+        features: ["Sleek Modular Grid", "Multi-column Navigation", "Editorial Story Blocks"],
+        bestFor: "Modern minimalist tech, clean workspace setups, and EDC."
+      },
+      "Turbo": {
+        category: "speed",
+        categoryName: "🏎️ Speed & High-Volume",
+        tagClass: "tag-speed",
+        image: "/static/images/themes/clean_hero_turbo.png",
+        fullImage: "/static/images/themes/clean_full_turbo.png",
+        demoUrl: "https://turbo-theme-florence.myshopify.com/",
+        tagline: "The fastest theme in Shopify history with instant prefetching.",
+        features: ["Instant Page Prefetching", "Ultra-lightweight DOM", "High-Volume Checkout Flow", "Infinite Scroll Option"],
+        bestFor: "Maximum conversion rate, instant navigation, and zero bounce rate."
+      },
+      "Dawn": {
+        category: "speed",
+        categoryName: "🏎️ Speed & High-Volume",
+        tagClass: "tag-speed",
+        image: "/static/images/themes/clean_hero_dawn.png",
+        fullImage: "/static/images/themes/clean_full_dawn.png",
+        demoUrl: "https://theme-dawn-demo.myshopify.com/",
+        tagline: "Shopify's official reference architecture for OS 2.0.",
+        features: ["JSON Section Templates", "Pure CSS/Native JS", "Minimal Bloat", "Native App Compatibility"],
+        bestFor: "Clean, reliable, and lightweight foundation."
+      },
+      "Broadcast": {
+        category: "kinetic",
+        categoryName: "⚡ Kinetic & Motion",
+        tagClass: "tag-kinetic",
+        tagline: "Single-product focus with rich media storytelling.",
+        features: ["Hero Media Overlays", "Sticky Product Header", "Feature Comparison Tables"],
+        bestFor: "Boutique high-ticket hardware and product hero campaigns."
+      },
+      "Electro Store": {
+        category: "megastore",
+        categoryName: "🏢 Megastore & Best Buy",
+        tagClass: "tag-megastore",
+        tagline: "Direct Newegg/Best Buy electronics layout with department bars.",
+        features: ["Tech Spec Comparison", "Daily Deal Countdowns", "Mega Menu Categories", "Faceted Sidebar Filters"],
+        bestFor: "Consumer electronics, audio gear, cables, and hardware."
+      },
+      "Porto": {
+        category: "megastore",
+        categoryName: "🏢 Megastore & Best Buy",
+        tagClass: "tag-megastore",
+        tagline: "Powerhouse multi-concept megastore framework.",
+        features: ["20+ Layout Presets", "High SKU Density", "Interactive Banner Grids"],
+        bestFor: "Massive hardware variety and multi-niche stores."
+      },
+      "Wokiee": {
+        category: "megastore",
+        categoryName: "🏢 Megastore & Best Buy",
+        tagClass: "tag-megastore",
+        tagline: "Flexible modular e-commerce toolset.",
+        features: ["80+ Homepage Blocks", "Color Swatch Pickers", "Dynamic Cart Slide-out"],
+        bestFor: "Versatile dropshipping catalogs."
+      },
+      "Symmetry": {
+        category: "luxury",
+        categoryName: "💎 Luxury & Editorial",
+        tagClass: "tag-luxury",
+        tagline: "Balanced multi-column layout with harmonious visual symmetry.",
+        features: ["Masonry Product Grids", "Clean Column Structure", "Editorial Lookbook Sections"],
+        bestFor: "High-end product photography and balanced catalogs."
+      },
+      "Booster Premium": {
+        category: "speed",
+        categoryName: "🏎️ Speed & High-Volume",
+        tagClass: "tag-speed",
+        tagline: "Conversion-optimized performance engine.",
+        features: ["Direct Checkout Boosters", "Scarcity & Urgency Timers", "Smart Cart Upsells"],
+        bestFor: "High-conversion direct-response dropshipping."
+      },
+      "Trade": {
+        category: "speed",
+        categoryName: "🏎️ Speed & High-Volume",
+        tagClass: "tag-speed",
+        tagline: "B2B and high-volume wholesale catalog theme.",
+        features: ["Quick Order Form", "Quantity Pricing Tiers", "Compact Catalog View"],
+        bestFor: "Bulk tech hardware buyers and B2B."
+      },
+      "Sense": {
+        category: "speed",
+        categoryName: "🏎️ Speed & High-Volume",
+        tagClass: "tag-speed",
+        tagline: "Clean, vibrant, and clarity-focused reference theme.",
+        features: ["Gradient Accents", "Clear Trust Badging", "Direct Buy Buttons"],
+        bestFor: "Simple modern gadget shops."
+      }
+    };
+
+    const ThemeStudio = {
+      activeCategory: "all",
+      searchQuery: "",
+
+      init() {
+        this.renderThemes();
+        this.updateCounts();
+      },
+
+      setCategory(cat, el) {
+        this.activeCategory = cat;
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        el.classList.add("active");
+        this.renderThemes();
+      },
+
+      filterThemes() {
+        this.searchQuery = document.getElementById("theme-search-input").value.toLowerCase().trim();
+        this.renderThemes();
+      },
+
+      getProfile(theme) {
+        const name = theme.theme_name || "";
+        for (const [key, prof] of Object.entries(THEME_PROFILES)) {
+          if (name.toLowerCase().includes(key.toLowerCase()) || theme.file.toLowerCase().includes(key.toLowerCase())) {
+            return prof;
+          }
+        }
+        return {
+          category: "boutique",
+          categoryName: "🎨 Boutique & Lifestyle",
+          tagClass: "tag-megastore",
+          tagline: "Specialized niche storefront with tailored brand assets.",
+          features: ["Complete Liquid Engine", "Dynamic Homepage Blocks", "Responsive Mobile UX"],
+          bestFor: "Curated niche lifestyle gear."
+        };
+      },
+
+      renderThemes() {
+        const container = document.getElementById("theme-cards-grid");
+        container.innerHTML = "";
+
+        const filtered = RAW_THEMES.filter(t => {
+          if (t.size_mb === 0) return false;
+          const prof = this.getProfile(t);
+          if (this.activeCategory !== "all" && prof.category !== this.activeCategory) return false;
+          if (this.searchQuery) {
+            const haystack = `${t.theme_name} ${t.file} ${t.author} ${prof.tagline} ${prof.bestFor}`.toLowerCase();
+            if (!haystack.includes(this.searchQuery)) return false;
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-dim);">No themes found matching criteria.</div>`;
+          return;
+        }
+
+        filtered.forEach(t => {
+          const prof = this.getProfile(t);
+          const isSelected = currentSelectedTheme.toLowerCase() === t.theme_name.toLowerCase();
+
+          const thumbHtml = prof.image ? `
+            <div class="card-preview-thumb" onclick='ThemeStudio.openFullPreview(${JSON.stringify(t)})'>
+              <img src="${prof.image}" alt="${t.theme_name}" loading="lazy" />
+              <div class="thumb-overlay">
+                <span class="btn-thumb-action">🔍 View Full Theme</span>
+              </div>
+            </div>
+          ` : `
+            <div class="card-preview-thumb" style="display:flex; align-items:center; justify-content:center; color: var(--text-dim); font-size: 0.8rem; background: rgba(255,255,255,0.02);">
+              <span>📦 Production Theme Package</span>
+            </div>
+          `;
+
+          const card = document.createElement("div");
+          card.className = `theme-card ${isSelected ? "is-active-theme" : ""}`;
+          card.innerHTML = `
+            ${thumbHtml}
+
+            <div class="card-top">
+              <span class="card-category-tag ${prof.tagClass}">${prof.categoryName}</span>
+              <span style="font-size: 0.72rem; color: var(--text-dim);">v${t.version || '1.0'}</span>
+            </div>
+
+            <div class="card-title-group">
+              <h3>${t.theme_name}</h3>
+              <div class="card-author">${t.author || 'Shopify Ecosystem Agency'} &bull; ${t.file}</div>
+              <div class="card-metrics">
+                <span class="metric-badge">📦 ${t.size_mb} MB</span>
+                <span class="metric-badge">⚡ ${t.file_count || '200+'} Assets</span>
+              </div>
+            </div>
+
+            <div class="card-description">
+              ${prof.tagline}
+              <div style="margin-top: 4px; font-size: 0.75rem; color: var(--cyan);">Ideal for: ${prof.bestFor}</div>
+            </div>
+
+            <div class="card-features-list">
+              ${prof.features.map(f => `<span class="feature-pill">${f}</span>`).join("")}
+            </div>
+
+            <div class="card-footer">
+              <button type="button" class="btn-select-theme ${isSelected ? "is-active" : ""}" onclick="ThemeStudio.selectTheme('${t.theme_name}', this)">
+                ${isSelected ? "✓ Active" : "⚡ Choose"}
+              </button>
+              <button type="button" class="btn-inspect" onclick='ThemeStudio.openFullPreview(${JSON.stringify(t)})'>
+                Full Preview
+              </button>
+              ${prof.demoUrl ? `
+                <a href="${prof.demoUrl}" target="_blank" class="btn-demo-link" title="Open official live interactive store in a new browser tab" onclick="event.stopPropagation()">
+                  🌐 Live ↗
+                </a>
+              ` : ''}
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      },
+
+      updateCounts() {
+        let counts = { all: 0, kinetic: 0, megastore: 0, luxury: 0, speed: 0, boutique: 0 };
+        RAW_THEMES.forEach(t => {
+          if (t.size_mb === 0) return;
+          counts.all++;
+          const prof = this.getProfile(t);
+          if (counts[prof.category] !== undefined) {
+            counts[prof.category]++;
+          }
+        });
+        for (const [cat, num] of Object.entries(counts)) {
+          const el = document.getElementById(`count-${cat}`);
+          if (el) el.innerText = num;
+        }
+      },
+
+      async selectTheme(name, btn) {
+        try {
+          const resp = await fetch("/api/themes/select", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ theme_name: name })
+          });
+          const res = await resp.json();
+          if (res.status === "success") {
+            currentSelectedTheme = name;
+            document.getElementById("header-active-theme").innerText = name;
+            this.showToast(`Selected "${name}" as your active store theme architecture!`);
+            this.renderThemes();
+          }
+        } catch (e) {
+          alert("Error selecting theme: " + e.message);
+        }
+      },
+
+      openFullPreview(theme) {
+        const prof = this.getProfile(theme);
+        const titleEl = document.getElementById("modal-title");
+        titleEl.innerHTML = `
+          <div class="modal-title-group">
+            <span style="color:#fff; font-size:1.15rem; font-weight:800;">${theme.theme_name}</span>
+            <span class="card-category-tag ${prof.tagClass}">${prof.categoryName}</span>
+            <span style="font-size:0.75rem; color:var(--text-dim);">v${theme.version || '1.0'}</span>
+          </div>
+        `;
+
+        const fullImg = prof.fullImage || prof.image;
+
+        document.getElementById("modal-body").innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; padding-bottom:0.75rem; border-bottom:1px solid var(--border-glass);">
+            <div>
+              <div style="color:var(--text-main); font-size:0.92rem; font-weight:600;">${prof.tagline}</div>
+              <div style="color:var(--cyan); font-size:0.8rem; margin-top:2px;">Ideal for: ${prof.bestFor}</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.6rem;">
+              ${prof.demoUrl ? `
+                <a href="${prof.demoUrl}" target="_blank" class="btn-demo-link" style="padding:0.5rem 1rem; font-size:0.82rem; background:rgba(0,255,204,0.12); color:var(--cyan); border-color:rgba(0,255,204,0.35);">
+                  🌐 Open Live Store (New Tab) ↗
+                </a>
+              ` : ''}
+              <button class="btn-select-theme" style="padding:0.5rem 1rem; font-size:0.82rem;" onclick="ThemeStudio.selectTheme('${theme.theme_name}'); ThemeStudio.closeModal();">
+                ⚡ Activate Theme
+              </button>
+            </div>
+          </div>
+
+          <div class="modal-nav-tabs">
+            <button class="modal-tab-btn active" id="tab-btn-visual" onclick="ThemeStudio.switchModalTab('visual')">📸 Full Page Architecture (Complete Scroll)</button>
+            ${prof.demoUrl ? `
+              <button class="modal-tab-btn" id="tab-btn-live" onclick="ThemeStudio.switchModalTab('live', '${prof.demoUrl}')">🌐 Live Interactive Storefront (Embedded Webview)</button>
+            ` : ''}
+          </div>
+
+          <div id="modal-tab-content-visual" style="flex:1; height:100%; min-height:60vh; overflow:hidden;">
+            ${fullImg ? `
+              <div class="full-image-lightbox">
+                <img src="${fullImg}" alt="${theme.theme_name} Full Architecture" loading="lazy" />
+              </div>
+            ` : '<p style="padding: 2rem; text-align: center; color: var(--text-dim);">Visual preview not pre-cached. Click "Open Live Store" above to inspect.</p>'}
+          </div>
+
+          <div id="modal-tab-content-live" style="flex:1; height:100%; min-height:60vh; display:none;">
+            <iframe id="modal-live-iframe" class="live-demo-frame" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          </div>
+        `;
+        document.getElementById("theme-modal").style.display = "flex";
+      },
+
+      switchModalTab(tab, url) {
+        const visualContent = document.getElementById("modal-tab-content-visual");
+        const liveContent = document.getElementById("modal-tab-content-live");
+        const btnVisual = document.getElementById("tab-btn-visual");
+        const btnLive = document.getElementById("tab-btn-live");
+
+        if (tab === 'visual') {
+          if (visualContent) visualContent.style.display = "block";
+          if (liveContent) liveContent.style.display = "none";
+          if (btnVisual) btnVisual.classList.add("active");
+          if (btnLive) btnLive.classList.remove("active");
+        } else {
+          if (visualContent) visualContent.style.display = "none";
+          if (liveContent) liveContent.style.display = "block";
+          if (btnVisual) btnVisual.classList.remove("active");
+          if (btnLive) btnLive.classList.add("active");
+          const iframe = document.getElementById("modal-live-iframe");
+          if (iframe && url && !iframe.src) {
+            iframe.src = url;
+          }
+        }
+      },
+
+      closeModal(e) {
+        document.getElementById("theme-modal").style.display = "none";
+        const iframe = document.getElementById("modal-live-iframe");
+        if (iframe) iframe.src = "";
+      },
+
+      showToast(text) {
+        const toast = document.getElementById("toast-notice");
+        document.getElementById("toast-text").innerText = text;
+        toast.style.display = "flex";
+        setTimeout(() => {
+          toast.style.display = "none";
+        }, 3500);
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      ThemeStudio.init();
+    });
+  </script>
+</body>
+</html>

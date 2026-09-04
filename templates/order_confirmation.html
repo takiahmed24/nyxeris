@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed — {{ order.order_id }} | Nyxeris</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <style>
+    .confirmation-container {
+      max-width: 880px;
+      margin: 40px auto 80px;
+      padding: 0 24px;
+      width: 100%;
+    }
+    .confirmation-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 40px;
+    }
+    .confirm-status-banner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .status-check-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #10b981;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .timeline-track {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 32px 0;
+    }
+    .timeline-step {
+      background: var(--bg-black);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .timeline-step.completed {
+      border-color: #10b981;
+    }
+    .timeline-step.active {
+      border-color: #ffffff;
+    }
+    .step-number {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .timeline-step.completed .step-number { color: #10b981; }
+    .timeline-step.active .step-number { color: #ffffff; }
+
+    .step-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .receipt-action-bar {
+      display: flex;
+      gap: 16px;
+      margin: 30px 0;
+      padding: 20px;
+      background: var(--bg-black);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 640px) {
+      .timeline-track {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="site-header">
+      <div class="header-container">
+        <a href="/" class="brand-mark">
+          <span class="brand-name">NYXERIS</span>
+        </a>
+        <a href="/" class="btn-outline-subtle" style="font-size: 12.5px; padding: 6px 16px;">
+          Return to Store
+        </a>
+      </div>
+    </header>
+
+    <div class="confirmation-container">
+      <div class="confirmation-card">
+        <!-- Status Banner -->
+        <div class="confirm-status-banner">
+          <div class="status-check-circle">✓</div>
+          <div>
+            <div style="font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #10b981; font-weight: 700;">
+              Payment Authorized & Verified
+            </div>
+            <h1 style="font-size: 24px; font-weight: 800; color: #ffffff; margin-top: 2px;">
+              Thank you, {{ order.customer_name }}
+            </h1>
+            <p style="font-size: 13.5px; color: var(--text-secondary); margin-top: 4px;">
+              Order Number: <strong style="color: #ffffff;">{{ order.order_id }}</strong> • Official purchase receipt dispatched to <strong>{{ order.customer_email }}</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Fulfillment Progress Timeline -->
+        <div class="timeline-track">
+          <div class="timeline-step completed">
+            <div class="step-number">Step 01</div>
+            <div class="step-name">Payment Authorized</div>
+          </div>
+          <div class="timeline-step {% if order.fulfillment_status in ['processing', 'shipped', 'delivered'] %}completed{% else %}active{% endif %}">
+            <div class="step-number">Step 02</div>
+            <div class="step-name">Warehouse Prep</div>
+          </div>
+          <div class="timeline-step {% if order.fulfillment_status in ['shipped', 'delivered'] %}completed{% elif order.fulfillment_status == 'processing' %}active{% endif %}">
+            <div class="step-number">Step 03</div>
+            <div class="step-name">Courier Dispatched</div>
+          </div>
+          <div class="timeline-step {% if order.fulfillment_status == 'delivered' %}completed{% endif %}">
+            <div class="step-number">Step 04</div>
+            <div class="step-name">Delivered & Signed</div>
+          </div>
+        </div>
+
+        <!-- Tracking Details if Shipped -->
+        {% if order.tracking_number %}
+        <div style="background: var(--bg-black); border: 1px solid var(--border-card); border-radius: 10px; padding: 18px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.08em;">
+              Parcel En Route
+            </div>
+            <div style="font-size: 14px; color: #ffffff; font-weight: 700; margin-top: 2px;">
+              Carrier: {{ order.carrier or 'Courier Service' }}
+            </div>
+            <div style="font-size: 13px; font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); margin-top: 2px;">
+              Tracking: {{ order.tracking_number }}
+            </div>
+          </div>
+          {% if order.tracking_url %}
+          <a href="{{ order.tracking_url }}" target="_blank" class="btn-solid-white" style="font-size: 12.5px; padding: 8px 18px;">
+            Track on Carrier Site ↗
+          </a>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Nyxeris Official PDF Receipt Download Bar -->
+        <div class="receipt-action-bar">
+          <div>
+            <div style="font-size: 15px; font-weight: 700; color: #ffffff;">
+              Official Nyxeris Purchase Receipt (PDF)
+            </div>
+            <div style="font-size: 12.5px; color: var(--text-secondary); margin-top: 2px;">
+              Itemized invoice with 30-Day Nyxeris Quality & Transit Guarantee validation. Zero third-party branding.
+            </div>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <a href="/api/orders/{{ order.order_id }}/receipt" target="_blank" class="btn-solid-white" style="padding: 10px 20px; font-size: 13px;">
+              Download PDF Receipt
+            </a>
+            <a href="/api/orders/{{ order.order_id }}/email-preview" target="_blank" class="btn-outline-subtle" style="padding: 10px 16px; font-size: 13px;">
+              Preview HTML Email
+            </a>
+          </div>
+        </div>
+
+        <!-- Order Items & Shipping Breakdown -->
+        <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; margin-top: 28px;">
+          <!-- Items List -->
+          <div>
+            <h3 style="font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.04em;">
+              Purchased Hardware
+            </h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              {% for itm in items %}
+              <div style="display: flex; gap: 14px; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);">
+                <img src="{{ itm.image_url }}" alt="{{ itm.product_title }}" style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-subtle); background: #141418;" />
+                <div style="flex: 1;">
+                  <div style="font-size: 13.5px; font-weight: 700; color: #ffffff;">{{ itm.product_title }}</div>
+                  {% if itm.variant_title %}
+                  <div style="font-size: 11.5px; color: var(--text-muted);">{{ itm.variant_title }}</div>
+                  {% endif %}
+                  <div style="font-size: 12px; color: var(--text-secondary);">Qty: {{ itm.quantity }} × ${{ "%.2f"|format(itm.unit_price) }}</div>
+                </div>
+                <div style="font-weight: 700; color: #ffffff; font-size: 14px;">
+                  ${{ "%.2f"|format(itm.total_price) }}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Destination & Financials -->
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: var(--bg-black); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 18px;">
+              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 8px;">
+                Physical Shipping Destination
+              </div>
+              <div style="font-size: 13.5px; font-weight: 700; color: #ffffff;">{{ order.customer_name }}</div>
+              <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 4px;">
+                {{ order.shipping_address_line1 }}{% if order.shipping_address_line2 %}, {{ order.shipping_address_line2 }}{% endif %}<br/>
+                {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}<br/>
+                {{ order.shipping_country }}
+              </div>
+              <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 8px;">
+                Method: <strong>{{ order.shipping_method }}</strong>
+              </div>
+            </div>
+
+            <div style="background: var(--bg-black); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 18px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">
+                <span>Subtotal</span>
+                <span>${{ "%.2f"|format(order.subtotal) }}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">
+                <span>Insured Courier Shipping</span>
+                <span>{% if order.shipping_fee == 0 %}FREE{% else %}${{ "%.2f"|format(order.shipping_fee) }}{% endif %}</span>
+              </div>
+              {% if order.packaging_fee and order.packaging_fee > 0 %}
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">
+                <span>Nyxeris Signature Luxury Box</span>
+                <span>${{ "%.2f"|format(order.packaging_fee) }}</span>
+              </div>
+              {% endif %}
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">
+                <span>Sales Tax (8%)</span>
+                <span>${{ "%.2f"|format(order.tax) }}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; color: #ffffff; padding-top: 8px; border-top: 1px solid var(--border-subtle);">
+                <span>Total Paid (USD)</span>
+                <span>${{ "%.2f"|format(order.total_amount) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--text-muted); text-align: center;">
+          Assistance: <strong>{{ support_email }}</strong>. Mention Order #<strong>{{ order.order_id }}</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

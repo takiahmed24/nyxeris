@@ -1,0 +1,338 @@
+@font-face {
+    font-family: "monal";
+    src: url("../fonts/monal.eot");
+    src: url("../fonts/monal.eot") format("embedded-opentype"),
+        url("../fonts/monal.ttf") format("truetype"),
+        url("../fonts/monal.woff") format("woff"),
+        url("../fonts/monal.svg") format("svg");
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+[class^="icon-monal-"],
+[class*=" icon-monal-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: "monal" !important;
+    speak: never;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-monal-behance:before {
+    content: "\e956";
+}
+.icon-monal-bitcoin:before {
+    content: "\e957";
+}
+.icon-monal-digg:before {
+    content: "\e958";
+}
+.icon-monal-google-plus:before {
+    content: "\e959";
+}
+.icon-monal-pinterest:before {
+    content: "\e95a";
+}
+.icon-monal-skype:before {
+    content: "\e95b";
+}
+.icon-monal-slack:before {
+    content: "\e95c";
+}
+.icon-monal-spotify-logo:before {
+    content: "\e95d";
+}
+.icon-monal-stack-overflow:before {
+    content: "\e95e";
+}
+.icon-monal-steam:before {
+    content: "\e95f";
+}
+.icon-monal-vimeo:before {
+    content: "\e960";
+}
+.icon-monal-youtube:before {
+    content: "\e961";
+}
+
+.icon-monal-thumbtack:before {
+    content: "\e955";
+}
+
+.icon-monal-quotes:before {
+    content: "\e954";
+}
+.icon-monal-delete:before {
+    content: "\e951";
+}
+.icon-monal-info:before {
+    content: "\e952";
+}
+.icon-monal-notice:before {
+    content: "\e953";
+}
+
+.icon-monal-toggle-on:before {
+    content: "\e94f";
+}
+.icon-monal-toogle-off:before {
+    content: "\e950";
+}
+
+.icon-monal-date-gra:before {
+    content: "\e94e";
+}
+
+.icon-monal-circle:before {
+    content: "\e934";
+}
+.icon-monal-line-title:before {
+    content: "\e90a";
+}
+
+.icon-monal-shape:before {
+    content: "\e94c";
+}
+.icon-monal-shape-2:before {
+    content: "\e94d";
+}
+.icon-monal-reply:before {
+    content: "\e949";
+}
+.icon-monal-file-adobe:before {
+    content: "\e94a";
+}
+.icon-monal-file-document:before {
+    content: "\e94b";
+}
+
+.icon-monal-arrow-up:before {
+    content: "\e948";
+}
+.icon-monal-phone-message:before {
+    content: "\e947";
+}
+.icon-monal-app:before {
+    content: "\e900";
+}
+.icon-monal-app-development-2:before {
+    content: "\e901";
+}
+.icon-monal-arrow-down:before {
+    content: "\e902";
+}
+.icon-monal-arrow-left:before {
+    content: "\e903";
+}
+.icon-monal-arrow-right:before {
+    content: "\e904";
+}
+.icon-monal-arrow-right-2:before {
+    content: "\e905";
+}
+.icon-monal-author-setting:before {
+    content: "\e906";
+}
+.icon-monal-box:before {
+    content: "\e907";
+}
+.icon-monal-calendar:before {
+    content: "\e908";
+}
+.icon-monal-cart:before {
+    content: "\e909";
+}
+.icon-monal-check:before {
+    content: "\e90a";
+}
+.icon-monal-check-2:before {
+    content: "\e90b";
+}
+.icon-monal-check-box .path1:before {
+    content: "\e90c";
+    color: rgb(0, 0, 0);
+}
+.icon-monal-check-box .path2:before {
+    content: "\e90d";
+    margin-left: -1em;
+    color: rgb(0, 0, 0);
+}
+.icon-monal-check-mark:before {
+    content: "\e90e";
+}
+.icon-monal-choose:before {
+    content: "\e90f";
+}
+.icon-monal-cloud:before {
+    content: "\e910";
+}
+.icon-monal-coding:before {
+    content: "\e911";
+}
+.icon-monal-comment:before {
+    content: "\e912";
+}
+.icon-monal-creative:before {
+    content: "\e913";
+}
+.icon-monal-customer-service:before {
+    content: "\e914";
+}
+.icon-monal-data-recovery:before {
+    content: "\e915";
+}
+.icon-monal-date:before {
+    content: "\e916";
+}
+.icon-monal-diskette:before {
+    content: "\e917";
+}
+.icon-monal-drag:before {
+    content: "\e918";
+}
+.icon-monal-email:before {
+    content: "\e919";
+}
+.icon-monal-email-2:before {
+    content: "\e91a";
+}
+.icon-monal-engineering:before {
+    content: "\e91b";
+}
+.icon-monal-facebook:before {
+    content: "\e91c";
+}
+.icon-monal-game-development:before {
+    content: "\e91d";
+}
+.icon-monal-group:before {
+    content: "\e91e";
+}
+.icon-monal-help:before {
+    content: "\e91f";
+}
+.icon-monal-instagram:before {
+    content: "\e920";
+}
+.icon-monal-left:before {
+    content: "\e921";
+}
+.icon-monal-linkedin:before {
+    content: "\e922";
+}
+.icon-monal-location:before {
+    content: "\e923";
+}
+.icon-monal-location-2:before {
+    content: "\e924";
+}
+.icon-monal-long-arrow-left:before {
+    content: "\e925";
+}
+.icon-monal-long-arrow-right:before {
+    content: "\e926";
+}
+.icon-monal-minus:before {
+    content: "\e927";
+}
+.icon-monal-mobile-development:before {
+    content: "\e928";
+}
+.icon-monal-outline:before {
+    content: "\e929";
+}
+.icon-monal-people:before {
+    content: "\e92a";
+}
+.icon-monal-phone:before {
+    content: "\e92b";
+}
+.icon-monal-phone-2:before {
+    content: "\e92c";
+}
+.icon-monal-plan:before {
+    content: "\e92d";
+}
+.icon-monal-play:before {
+    content: "\e92e";
+}
+.icon-monal-play-2:before {
+    content: "\e92f";
+}
+.icon-monal-plus:before {
+    content: "\e930";
+}
+.icon-monal-plus-2:before {
+    content: "\e931";
+}
+.icon-monal-plus-3:before {
+    content: "\e932";
+}
+.icon-monal-processor-security:before {
+    content: "\e933";
+}
+.icon-monal-quote-right:before {
+    content: "\e934";
+}
+.icon-monal-right:before {
+    content: "\e935";
+}
+.icon-monal-search:before {
+    content: "\e936";
+}
+.icon-monal-setting:before {
+    content: "\e937";
+}
+.icon-monal-setting-2:before {
+    content: "\e938";
+}
+.icon-monal-setting-3:before {
+    content: "\e939";
+}
+.icon-monal-software:before {
+    content: "\e93a";
+}
+.icon-monal-success:before {
+    content: "\e93b";
+}
+.icon-monal-tag:before {
+    content: "\e93c";
+}
+.icon-monal-training:before {
+    content: "\e93d";
+}
+.icon-monal-trophy:before {
+    content: "\e93e";
+}
+.icon-monal-twitter:before {
+    content: "\e93f";
+}
+.icon-monal-user:before {
+    content: "\e940";
+}
+.icon-monal-ux-interface:before {
+    content: "\e941";
+}
+.icon-monal-view:before {
+    content: "\e942";
+}
+.icon-monal-web:before {
+    content: "\e943";
+}
+.icon-monal-web-2:before {
+    content: "\e944";
+}
+.icon-monal-web-design:before {
+    content: "\e945";
+}
+.icon-monal-web-development:before {
+    content: "\e946";
+}

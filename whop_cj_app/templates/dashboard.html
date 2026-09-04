@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - CJ Dropshipping for Whop{% endblock %}
+
+{% block content %}
+
+<!-- Notice Banner -->
+<div class="tactical-alert alert-info">
+  <div>
+    <strong>Shopify Bridge Bypassed:</strong> Your orders from Whop flow directly to CJ Dropshipping. You are currently saving <strong>$39.00/month</strong>.
+  </div>
+  <div style="display: flex; gap: 10px;">
+    <button onclick="triggerTrackingSync()" class="btn btn-primary btn-sm">Sync Tracking Now</button>
+    <button onclick="simulateTestOrder()" class="btn btn-secondary btn-sm">Simulate Test Order</button>
+  </div>
+</div>
+
+<!-- Metrics Overview -->
+<div class="metrics-row">
+  <div class="metric-box">
+    <div class="metric-label">Total Whop Orders</div>
+    <div class="metric-value">{{ metrics.total_orders }}</div>
+    <div class="metric-sub">Direct Ingestion</div>
+  </div>
+
+  <div class="metric-box">
+    <div class="metric-label">Fulfilled by CJ</div>
+    <div class="metric-value" style="color: var(--accent-green);">{{ metrics.fulfilled_orders }}</div>
+    <div class="metric-sub">Tracking Synced</div>
+  </div>
+
+  <div class="metric-box">
+    <div class="metric-label">Pending Fulfillment</div>
+    <div class="metric-value" style="color: var(--accent-orange);">{{ metrics.pending_orders }}</div>
+    <div class="metric-sub">In Warehouse / Processing</div>
+  </div>
+
+  <div class="metric-box">
+    <div class="metric-label">Shopify Fees Saved</div>
+    <div class="metric-value" style="color: var(--accent-cyan);">$39.00</div>
+    <div class="metric-sub">Every 30 days</div>
+  </div>
+</div>
+
+<!-- Synced Orders Feed -->
+<div class="tactical-card">
+  <div class="card-header">
+    <div class="card-title-group">
+      <h2>Live Order Fulfillment Feed</h2>
+      <p>Real-time pipeline: Whop Payment &rarr; CJ Order Creation &rarr; Carrier Tracking Sync</p>
+    </div>
+    <div>
+      <span class="badge badge-success">Auto-Sync Active</span>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="tactical-table">
+      <thead>
+        <tr>
+          <th>Whop Order ID</th>
+          <th>Customer</th>
+          <th>Destination</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>CJ Order ID</th>
+          <th>CJ Status</th>
+          <th>Tracking</th>
+          <th>Whop Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if orders %}
+          {% for order in orders %}
+          <tr>
+            <td>
+              <strong style="color: var(--text-pure); font-family: var(--font-heading);">{{ order.whop_order_id }}</strong>
+            </td>
+            <td>
+              <div>{{ order.customer_name }}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">{{ order.customer_email }}</div>
+            </td>
+            <td>
+              <span class="badge badge-info">{{ order.shipping_country }}</span>
+            </td>
+            <td>
+              <span style="font-size: 12px; color: var(--text-pure);">{{ order.items_summary }}</span>
+            </td>
+            <td>${{ "%.2f"|format(order.total_amount) }}</td>
+            <td>
+              {% if order.cj_order_id %}
+                <code style="color: var(--accent-cyan);">{{ order.cj_order_id }}</code>
+              {% else %}
+                <span style="color: var(--text-dim);">&mdash;</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if order.cj_order_status == 'SHIPPED' %}
+                <span class="badge badge-success">Shipped</span>
+              {% elif order.cj_order_status == 'SUBMITTED' %}
+                <span class="badge badge-info">Submitted</span>
+              {% elif order.cj_order_status == 'UNMAPPED_SKU' %}
+                <span class="badge badge-warning">Unmapped SKU</span>
+              {% else %}
+                <span class="badge badge-warning">{{ order.cj_order_status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if order.tracking_number %}
+                <div>
+                  <a href="{{ order.tracking_url }}" target="_blank" style="color: var(--accent-cyan); text-decoration: underline; font-weight: 500;">
+                    {{ order.tracking_number }}
+                  </a>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted);">{{ order.tracking_carrier }}</div>
+              {% else %}
+                <span style="color: var(--text-dim); font-size: 12px;">Awaiting Carrier</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if order.whop_fulfilled %}
+                <span class="badge badge-success">Fulfilled</span>
+              {% else %}
+                <span class="badge badge-warning">Pending</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 36px; color: var(--text-muted);">
+              No orders ingested yet. Click <strong>"Simulate Test Order"</strong> above to test the automated CJ pipeline!
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Activity Log -->
+<div class="tactical-card">
+  <div class="card-header">
+    <div class="card-title-group">
+      <h2>Operational Audit Logs</h2>
+      <p>Diagnostic event feed of API transactions, webhook ingestion, and tracking callbacks</p>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="tactical-table">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Event</th>
+          <th>Order</th>
+          <th>Status</th>
+          <th>Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if logs %}
+          {% for log in logs %}
+          <tr>
+            <td style="font-size: 12px; color: var(--text-muted);">{{ log.created_at }}</td>
+            <td><code style="color: var(--accent-cyan);">{{ log.event_type }}</code></td>
+            <td>{{ log.order_id or '&mdash;' }}</td>
+            <td>
+              {% if log.status in ('success', 'simulated') %}
+                <span class="badge badge-success">{{ log.status }}</span>
+              {% elif log.status == 'error' %}
+                <span class="badge badge-danger">Error</span>
+              {% else %}
+                <span class="badge badge-info">{{ log.status }}</span>
+              {% endif %}
+            </td>
+            <td style="font-size: 12px; color: var(--text-main);">{{ log.message }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 24px; color: var(--text-muted);">
+              No sync log entries recorded.
+            </td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

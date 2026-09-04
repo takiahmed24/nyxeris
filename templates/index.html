@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nyxeris — Curated Modern Goods & Everyday Essentials</title>
+  <meta name="description" content="Nyxeris curates exceptional workspace essentials, smart power gear, audio instruments, and precision everyday tools. Official flagship storefront." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- 1. Pipeline Announcement Bar -->
+    <div class="pipeline-announcement">
+      <div class="pipeline-announcement-container">
+        <div class="announcement-text">
+          <span class="announcement-highlight">Autumn Collection is Live</span>
+          <span class="announcement-sep">|</span>
+          <a href="#catalog" class="announcement-link">Complimentary insured shipping on orders over $150</a>
+        </div>
+        <div class="announcement-selectors">
+          <div class="pipeline-dropdown-wrap">
+            <button type="button" class="pipeline-select-btn" onclick="NyxerisStore.toggleDropdown('currency-dropdown')">
+              <span id="active-currency-label">UNITED STATES (US $)</span>
+              <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="pipeline-dropdown-menu" id="currency-dropdown">
+              <button type="button" onclick="NyxerisStore.setCurrency('USD', '$')">United States (US $)</button>
+              <button type="button" onclick="NyxerisStore.setCurrency('CAD', 'CA $')">Canada (CA $)</button>
+              <button type="button" onclick="NyxerisStore.setCurrency('GBP', 'GB £')">United Kingdom (GB £)</button>
+              <button type="button" onclick="NyxerisStore.setCurrency('EUR', '€')">European Union (€)</button>
+            </div>
+          </div>
+          <div class="pipeline-dropdown-wrap">
+            <button type="button" class="pipeline-select-btn" onclick="NyxerisStore.toggleDropdown('lang-dropdown')">
+              <span id="active-lang-label">ENGLISH</span>
+              <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="pipeline-dropdown-menu" id="lang-dropdown">
+              <button type="button" onclick="NyxerisStore.setLanguage('English')">English</button>
+              <button type="button" onclick="NyxerisStore.setLanguage('Français')">Français</button>
+              <button type="button" onclick="NyxerisStore.setLanguage('Español')">Español</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Minimalist Editorial Header -->
+    <header class="pipeline-header">
+      <div class="pipeline-header-container">
+        <nav class="pipeline-nav-left">
+          <a href="#catalog" class="pipeline-nav-link">SHOP</a>
+          <a href="#lookbook-studio" class="pipeline-nav-link">LOOKBOOKS</a>
+          <a href="#top-collections" class="pipeline-nav-link">COLLECTIONS</a>
+          <a href="#footer-contact" class="pipeline-nav-link">CONTACT</a>
+          <a href="#about-studio" class="pipeline-nav-link">ABOUT</a>
+        </nav>
+
+        <div class="pipeline-brand-center">
+          <a href="/" class="pipeline-logo-link">
+            <span class="pipeline-brand-title">NYXERIS</span>
+            <span class="pipeline-brand-sub">CURATED MODERN GOODS</span>
+          </a>
+        </div>
+
+        <div class="pipeline-actions-right">
+          <button type="button" class="pipeline-action-btn" onclick="NyxerisStore.promptTrackOrder()">
+            <span class="pipeline-action-label">My Account</span>
+          </button>
+          <button type="button" class="pipeline-action-btn" onclick="NyxerisStore.openSearchModal()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span class="pipeline-action-label">Search</span>
+          </button>
+          <button type="button" class="pipeline-cart-trigger" onclick="NyxerisStore.openCart()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="pipeline-cart-text">Cart</span>
+            <span class="pipeline-cart-total" id="header-cart-total">$0.00</span>
+            <span class="pipeline-cart-count" id="header-cart-count">(0)</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 3. Curated Modern Goods Hero -->
+    <section class="pipeline-hero" id="overview">
+      <div class="pipeline-hero-bg">
+        <img src="/static/images/nyxeris_whop_banner.jpg" alt="Nyxeris Curated Lifestyle" class="pipeline-hero-img" />
+        <div class="pipeline-hero-scrim"></div>
+      </div>
+      <div class="pipeline-hero-content">
+        <div class="pipeline-hero-eyebrow">CURATED MODERN GOODS</div>
+        <h1 class="pipeline-hero-title">Thoughtful Design.<br>Everyday Living.</h1>
+        <p class="pipeline-hero-desc">
+          Curated essentials for your workspace, everyday carry, and modern life. Built for longevity, purposeful function, and quiet refinement.
+        </p>
+        <div class="pipeline-hero-buttons">
+          <a href="#catalog" class="pipeline-btn-solid">EXPLORE ALL PRODUCTS</a>
+          <a href="#top-collections" class="pipeline-btn-outline">VIEW COLLECTIONS</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Signature Selection Tabs (Tabbed Carousel) -->
+    <section class="pipeline-signature-tabs" id="signature-collection">
+      <div class="pipeline-container">
+        <div class="pipeline-tabs-header">
+          <div class="pipeline-section-kicker">CURATED HIGHLIGHTS</div>
+          <h2 class="pipeline-section-heading">SIGNATURE SELECTION</h2>
+          <div class="pipeline-tab-pills">
+            <button type="button" class="pipeline-tab-pill active" onclick="NyxerisStore.switchPipelineTab('edc', this)">EVERYDAY CARRY & TOOLS</button>
+            <button type="button" class="pipeline-tab-pill" onclick="NyxerisStore.switchPipelineTab('power', this)">SMART GEAR & CHARGING</button>
+            <button type="button" class="pipeline-tab-pill" onclick="NyxerisStore.switchPipelineTab('audio', this)">WORKSPACE & AUDIO</button>
+          </div>
+          <div class="pipeline-carousel-nav">
+            <button type="button" class="pipeline-nav-arrow" onclick="NyxerisStore.slidePipelineCarousel('prev')" aria-label="Previous slide">←</button>
+            <span class="pipeline-slide-counter" id="pipeline-tab-counter">1 / 5</span>
+            <button type="button" class="pipeline-nav-arrow" onclick="NyxerisStore.slidePipelineCarousel('next')" aria-label="Next slide">→</button>
+          </div>
+        </div>
+
+        <div class="pipeline-carousel-track" id="pipeline-carousel-track">
+          <!-- Populated dynamically via store.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Curated Collections Editorial Statement -->
+    <section class="pipeline-statement-section">
+      <div class="pipeline-container-narrow">
+        <div class="pipeline-statement-rule"></div>
+        <div class="pipeline-statement-kicker">CURATED LIVING</div>
+        <blockquote class="pipeline-statement-quote">
+          “We believe in fewer, better things. Purpose-built essentials designed to simplify, elevate, and inspire your daily routine.”
+        </blockquote>
+        <div class="pipeline-statement-rule"></div>
+      </div>
+    </section>
+
+    <!-- 6. Split Lookbook Story Chapter 1 -->
+    <section class="pipeline-split-chapter" id="lookbook-studio">
+      <div class="pipeline-split-grid">
+        <div class="pipeline-split-visual">
+          <img src="/static/images/nyxeris_whop_banner.jpg" alt="Nyxeris Workspace Setup" class="pipeline-split-img" />
+          <div class="pipeline-visual-badge">LOOKBOOK 01 // FOCUS & FLOW</div>
+        </div>
+        <div class="pipeline-split-editorial">
+          <div class="pipeline-split-kicker">WORKSPACE & LIVING</div>
+          <h3 class="pipeline-split-title">Designed For Daily Flow</h3>
+          <p class="pipeline-split-copy">
+            A harmonious collection of desk setups, ambient lighting, and daily essentials calibrated to eliminate friction and elevate your personal space.
+          </p>
+          <a href="#catalog" class="pipeline-link-btn" onclick="NyxerisStore.selectCategoryFromNav('Workspace & Studio')">VIEW THE LOOKBOOK →</a>
+
+          <!-- Integrated Quick-Buy Product Card -->
+          <div class="pipeline-embedded-product-card">
+            <img src="/static/images/products/nyxeris-horizon-screenbar-light.jpg" alt="Horizon Pro Screenbar" class="pipeline-emb-img" />
+            <div class="pipeline-emb-details">
+              <div class="pipeline-emb-status">IN STOCK • IMMEDIATE DISPATCH</div>
+              <div class="pipeline-emb-title">Horizon Pro Screenbar Asymmetric Light</div>
+              <div class="pipeline-emb-price">$69.00 <span class="pipeline-compare-price">$89.00</span></div>
+            </div>
+            <button type="button" class="pipeline-emb-quickadd" onclick="NyxerisStore.quickAdd('prod_horizon_light')">QUICK ADD</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Split Lookbook Story Chapter 2 (Alternating Layout) -->
+    <section class="pipeline-split-chapter reverse" id="lookbook-edc">
+      <div class="pipeline-split-grid">
+        <div class="pipeline-split-editorial">
+          <div class="pipeline-split-kicker">EVERYDAY & TRAVEL</div>
+          <h3 class="pipeline-split-title">Essentials For Life On The Move</h3>
+          <p class="pipeline-split-copy">
+            Compact multi-tools, durable everyday accessories, and portable power solutions engineered to accompany you through every journey.
+          </p>
+          <a href="#catalog" class="pipeline-link-btn" onclick="NyxerisStore.selectCategoryFromNav('EDC & Precision Tools')">EDC LOOKBOOK →</a>
+
+          <!-- Integrated Quick-Buy Product Card -->
+          <div class="pipeline-embedded-product-card">
+            <img src="/static/images/products/nyxeris-vektor-titanium-tool.jpg" alt="Vektor Grade-5 Titanium Tool" class="pipeline-emb-img" />
+            <div class="pipeline-emb-details">
+              <div class="pipeline-emb-status">TITANIUM ALLOY • CNC MACHINED</div>
+              <div class="pipeline-emb-title">Vektor Grade-5 Titanium Precision EDC Tool</div>
+              <div class="pipeline-emb-price">$55.00 <span class="pipeline-compare-price">$75.00</span></div>
+            </div>
+            <button type="button" class="pipeline-emb-quickadd" onclick="NyxerisStore.quickAdd('prod_edc_tool')">QUICK ADD</button>
+          </div>
+        </div>
+        <div class="pipeline-split-visual">
+          <img src="/static/images/products/nyxeris-vektor-titanium-tool.jpg" alt="Titanium EDC Tools" class="pipeline-split-img" />
+          <div class="pipeline-visual-badge">LOOKBOOK 02 // POCKET CARRY</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Best Sellers 4-Column Grid -->
+    <section class="pipeline-bestsellers-section">
+      <div class="pipeline-container">
+        <div class="pipeline-section-header-flex">
+          <div>
+            <div class="pipeline-section-kicker">COMMUNITY FAVORITES</div>
+            <h2 class="pipeline-section-heading">BEST SELLERS</h2>
+          </div>
+          <a href="#catalog" class="pipeline-section-link">View All Products (205) →</a>
+        </div>
+        <div class="pipeline-bestsellers-grid" id="pipeline-bestsellers-grid">
+          <!-- Dynamically populated via store.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Interactive "Shop The Look" Multi-Hotspot Module -->
+    <section class="pipeline-hotspots-section" id="shop-the-look">
+      <div class="pipeline-container">
+        <div class="pipeline-section-header-center">
+          <div class="pipeline-section-kicker">CURATED SPACES</div>
+          <h2 class="pipeline-section-heading">SHOP THE SETUP</h2>
+          <p class="pipeline-section-sub">Hover or click any pin (+) to inspect the curated pieces featured in this setup.</p>
+        </div>
+
+        <div class="pipeline-hotspot-canvas-wrap">
+          <div class="pipeline-hotspot-viewport">
+            <img src="/static/images/nyxeris_whop_banner.jpg" alt="Nyxeris Flagship Desk Setup" class="pipeline-hotspot-bg-image" />
+            
+            <!-- Pin 0: Light Bar (Top) -->
+            <button type="button" class="pipeline-hotspot-pin active" style="top: 18%; left: 32%;" onclick="NyxerisStore.selectHotspot(0)" aria-label="Horizon Pro Screenbar">
+              <span class="hotspot-pin-inner">+</span>
+            </button>
+
+            <!-- Pin 1: Apex-65 Keyboard (Center) -->
+            <button type="button" class="pipeline-hotspot-pin" style="top: 62%; left: 36%;" onclick="NyxerisStore.selectHotspot(1)" aria-label="Apex-65 Magnetic Keyboard">
+              <span class="hotspot-pin-inner">+</span>
+            </button>
+
+            <!-- Pin 2: Titanium EDC Pen (Front-Right) -->
+            <button type="button" class="pipeline-hotspot-pin" style="top: 58%; left: 58%;" onclick="NyxerisStore.selectHotspot(2)" aria-label="Vektor Titanium Tool">
+              <span class="hotspot-pin-inner">+</span>
+            </button>
+
+            <!-- Pin 3: Lumina Desk Mat (Desk Surface) -->
+            <button type="button" class="pipeline-hotspot-pin" style="top: 72%; left: 74%;" onclick="NyxerisStore.selectHotspot(3)" aria-label="Lumina Desk Mat">
+              <span class="hotspot-pin-inner">+</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Sidebar Card for the Selected Hotspot -->
+          <div class="pipeline-hotspot-card" id="pipeline-hotspot-card">
+            <!-- Updated dynamically via store.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Top Collections Visual Quad-Banner -->
+    <section class="pipeline-top-collections" id="top-collections">
+      <div class="pipeline-container">
+        <div class="pipeline-section-header-flex">
+          <div>
+            <div class="pipeline-section-kicker">EXPLORE BY DEPARTMENT</div>
+            <h2 class="pipeline-section-heading">FEATURED COLLECTIONS</h2>
+          </div>
+          <span class="pipeline-collection-total-count">205 Curated Products</span>
+        </div>
+
+        <div class="pipeline-quad-grid">
+          <!-- Card 1 -->
+          <div class="pipeline-collection-card" onclick="NyxerisStore.selectCategoryFromNav('Workspace & Studio')">
+            <div class="pipeline-col-img-wrap">
+              <img src="/static/images/nyxeris_whop_banner.jpg" alt="Workspace & Living" class="pipeline-col-img" />
+              <div class="pipeline-col-scrim"></div>
+            </div>
+            <div class="pipeline-col-content">
+              <div class="pipeline-col-count">42 PRODUCTS</div>
+              <h4 class="pipeline-col-title">Workspace & Living</h4>
+              <span class="pipeline-col-link">VIEW THE COLLECTION →</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="pipeline-collection-card" onclick="NyxerisStore.selectCategoryFromNav('Smart Gear & Power')">
+            <div class="pipeline-col-img-wrap">
+              <img src="/static/images/products/nyxeris-matrix-magsafe-station.jpg" alt="Smart Gear & Power" class="pipeline-col-img" />
+              <div class="pipeline-col-scrim"></div>
+            </div>
+            <div class="pipeline-col-content">
+              <div class="pipeline-col-count">38 PRODUCTS</div>
+              <h4 class="pipeline-col-title">Smart Gear & Power</h4>
+              <span class="pipeline-col-link">VIEW THE COLLECTION →</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="pipeline-collection-card" onclick="NyxerisStore.selectCategoryFromNav('Mechanical & Audio')">
+            <div class="pipeline-col-img-wrap">
+              <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&auto=format&fit=crop&q=80" alt="Audio & Tech" class="pipeline-col-img" />
+              <div class="pipeline-col-scrim"></div>
+            </div>
+            <div class="pipeline-col-content">
+              <div class="pipeline-col-count">45 PRODUCTS</div>
+              <h4 class="pipeline-col-title">Audio & Tech</h4>
+              <span class="pipeline-col-link">VIEW THE COLLECTION →</span>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="pipeline-collection-card" onclick="NyxerisStore.selectCategoryFromNav('All')">
+            <div class="pipeline-col-img-wrap">
+              <img src="/static/images/products/nyxeris-vektor-titanium-tool.jpg" alt="Complete Collection & EDC" class="pipeline-col-img" />
+              <div class="pipeline-col-scrim"></div>
+            </div>
+            <div class="pipeline-col-content">
+              <div class="pipeline-col-count">205 PRODUCTS</div>
+              <h4 class="pipeline-col-title">Complete Collection & EDC</h4>
+              <span class="pipeline-col-link">VIEW THE COLLECTION →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Two-Column Store Catalog -->
+    <main class="catalog-section" id="catalog">
+      <div class="catalog-header-lead">
+        <div>
+          <div class="section-lead-tag">DISCOVER OUR CATALOG</div>
+          <h2 class="section-lead-title" style="font-size: 28px;">Curated Goods & Everyday Essentials</h2>
+        </div>
+        <div class="catalog-stats-badge">
+          <span>205 Authentic Products • Real-Time Warehouse Stock</span>
+        </div>
+      </div>
+
+      <div class="catalog-two-col-layout">
+        <!-- Left Faceted Filter Rail (Best Buy Style) -->
+        <aside class="catalog-sidebar-filters">
+          <div class="filter-card filter-header-card">
+            <span class="filter-main-title">Filters</span>
+            <button type="button" class="btn-reset-filters" onclick="NyxerisStore.resetAllFilters()">Reset All</button>
+          </div>
+
+          <!-- Category Filter -->
+          <div class="filter-card">
+            <h4 class="filter-group-title">Departments</h4>
+            <div class="filter-options-list" id="category-filter-list">
+              <!-- Populated dynamically with live item counts -->
+            </div>
+          </div>
+
+          <!-- Price Range -->
+          <div class="filter-card">
+            <h4 class="filter-group-title">Price Range</h4>
+            <div class="filter-options-list">
+              <label class="filter-radio-label">
+                <input type="radio" name="price_range" value="all" checked onchange="NyxerisStore.setPriceFilter('all')" />
+                <span>All Prices</span>
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="price_range" value="0-25" onchange="NyxerisStore.setPriceFilter('0-25')" />
+                <span>Under $25</span>
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="price_range" value="25-50" onchange="NyxerisStore.setPriceFilter('25-50')" />
+                <span>$25 to $50</span>
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="price_range" value="50-100" onchange="NyxerisStore.setPriceFilter('50-100')" />
+                <span>$50 to $100</span>
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="price_range" value="100-9999" onchange="NyxerisStore.setPriceFilter('100-9999')" />
+                <span>$100 & Above</span>
+              </label>
+            </div>
+            <div class="price-custom-inputs">
+              <div class="price-input-box">
+                <span>$</span>
+                <input type="number" id="price-min-input" placeholder="Min" min="0" />
+              </div>
+              <span class="price-dash">–</span>
+              <div class="price-input-box">
+                <span>$</span>
+                <input type="number" id="price-max-input" placeholder="Max" min="0" />
+              </div>
+              <button type="button" class="btn-price-apply" onclick="NyxerisStore.applyCustomPrice()">Go</button>
+            </div>
+          </div>
+
+          <!-- Savings & Offers -->
+          <div class="filter-card">
+            <h4 class="filter-group-title">Savings & Offers</h4>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" id="filter-deals-only" onchange="NyxerisStore.toggleDealsOnly(this.checked)" />
+              <span class="custom-chk"></span>
+              <span>On Sale / Special Savings</span>
+            </label>
+          </div>
+
+          <!-- Customer Ratings -->
+          <div class="filter-card">
+            <h4 class="filter-group-title">Customer Rating</h4>
+            <label class="filter-radio-label">
+              <input type="radio" name="rating_filter" value="0" checked onchange="NyxerisStore.setRatingFilter(0)" />
+              <span>All Ratings</span>
+            </label>
+            <label class="filter-radio-label">
+              <input type="radio" name="rating_filter" value="4.0" onchange="NyxerisStore.setRatingFilter(4.0)" />
+              <span><span class="stars-gold">★★★★☆</span> 4.0 & Up</span>
+            </label>
+            <label class="filter-radio-label">
+              <input type="radio" name="rating_filter" value="4.8" onchange="NyxerisStore.setRatingFilter(4.8)" />
+              <span><span class="stars-gold">★★★★★</span> 4.8 & Up</span>
+            </label>
+          </div>
+
+          <!-- Availability & Logistics -->
+          <div class="filter-card">
+            <h4 class="filter-group-title">Availability</h4>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" id="filter-in-stock" checked onchange="NyxerisStore.toggleInStockOnly(this.checked)" />
+              <span class="custom-chk"></span>
+              <span>In Stock Only</span>
+            </label>
+            <label class="filter-checkbox-label" style="margin-top: 8px;">
+              <input type="checkbox" id="filter-fast-dispatch" onchange="NyxerisStore.toggleFastDispatch(this.checked)" />
+              <span class="custom-chk"></span>
+              <span>24h Express Dispatch</span>
+            </label>
+          </div>
+        </aside>
+
+        <!-- Right Product Feed -->
+        <section class="catalog-feed-wrapper">
+          <!-- Top Results Bar -->
+          <div class="catalog-toolbar">
+            <div class="toolbar-left">
+              <span class="results-count-text" id="results-count-text">Showing 200 items</span>
+              <div class="active-filter-chips" id="active-filter-chips"></div>
+            </div>
+            <div class="toolbar-right">
+              <div class="sort-select-wrapper">
+                <label for="catalog-sort-select">Sort by:</label>
+                <select id="catalog-sort-select" onchange="NyxerisStore.handleSortChange(this.value)">
+                  <option value="featured">Featured / Best Match</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="rating">Customer Rating</option>
+                  <option value="savings">Top Savings ($)</option>
+                </select>
+              </div>
+
+              <div class="view-mode-toggle">
+                <button type="button" class="btn-view-toggle active" id="btn-view-grid" title="Grid View" onclick="NyxerisStore.setViewMode('grid')">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 3h7v7H3zm11 0h7v7h-7zm0 11h7v7h-7zM3 14h7v7H3z"/></svg>
+                </button>
+                <button type="button" class="btn-view-toggle" id="btn-view-list" title="List View (Best Buy Style)" onclick="NyxerisStore.setViewMode('list')">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products Grid/List Container -->
+          <div class="products-grid grid-mode" id="products-grid">
+            <!-- Rendered dynamically via store.js -->
+          </div>
+
+          <div id="load-more-container" style="text-align: center; margin-top: 40px;">
+            <button type="button" id="btn-load-more" class="btn-solid-white" onclick="NyxerisStore.loadMore()" style="display: none; margin: 0 auto;">
+              Load More Products
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+
+
+    <!-- Slide-Out Shopping Bag Drawer -->
+    <div class="cart-drawer-overlay" id="cart-drawer-overlay">
+      <aside class="cart-drawer">
+        <div class="cart-header">
+          <h3>Shopping Bag</h3>
+          <button type="button" class="btn-close-cart" onclick="NyxerisStore.closeCart()">✕</button>
+        </div>
+
+        <div class="free-shipping-bar">
+          <div class="shipping-progress-text" id="shipping-progress-desc">
+            <span>Free Insured Courier Shipping</span>
+          </div>
+          <div class="shipping-progress-track">
+            <div class="shipping-progress-fill" id="shipping-progress-bar"></div>
+          </div>
+        </div>
+
+        <div class="cart-items-container" id="cart-items-list">
+          <!-- Dynamically populated -->
+        </div>
+
+        <div class="cart-footer">
+          <!-- Packaging & Presentation Upgrade -->
+          <div class="cart-packaging-wrapper">
+            <div class="cart-packaging-title">
+              <span>UNBOXING EXPERIENCE</span>
+            </div>
+            <div class="cart-packaging-options">
+              <label class="cart-packaging-card active" id="cart-pkg-standard-card" onclick="NyxerisStore.setPackaging('standard')">
+                <div class="cart-pkg-content">
+                  <span class="cart-pkg-name">Standard Retail Box</span>
+                  <span class="cart-pkg-desc">Factory retail box & transit mailer</span>
+                </div>
+                <span class="cart-pkg-badge">INCLUDED</span>
+              </label>
+              <label class="cart-packaging-card" id="cart-pkg-premium-card" onclick="NyxerisStore.setPackaging('premium')">
+                <div class="cart-pkg-content">
+                  <span class="cart-pkg-name">Nyxeris Signature Luxury Box</span>
+                  <span class="cart-pkg-desc">Matte-black rigid magnetic box, VIP card & silver seal</span>
+                </div>
+                <span class="cart-pkg-badge premium">+$2.99</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="pipeline-cart-subtotal-box">
+            <div class="pipeline-cart-subtotal-row">
+              <span class="subtotal-label">SUBTOTAL</span>
+              <span class="subtotal-amount" id="cart-subtotal-val">$0.00</span>
+            </div>
+            <p class="pipeline-cart-shipping-note">Taxes and shipping calculated at checkout</p>
+          </div>
+
+          <button type="button" class="btn-checkout-now" id="btn-open-checkout" onclick="NyxerisStore.openCheckoutModal()">
+            CHECKOUT
+          </button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Physical Shipping & Checkout Modal -->
+    <div class="checkout-modal-overlay" id="checkout-modal-overlay">
+      <div class="checkout-modal-card">
+        <div class="checkout-modal-header">
+          <div>
+            <h3>Nyxeris Checkout</h3>
+            <span style="font-size: 12px; color: var(--text-muted);">Enter shipping destination for physical dispatch</span>
+          </div>
+          <button type="button" class="btn-close-cart" onclick="NyxerisStore.closeCheckoutModal()">✕</button>
+        </div>
+
+        <form class="checkout-form" id="checkout-shipping-form" onsubmit="NyxerisStore.submitCheckout(event)">
+          <div class="form-section-title">1. Recipient Contact</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" name="full_name" class="form-input" required placeholder="John Doe" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address (For Nyxeris Official Receipt) *</label>
+              <input type="email" name="email" class="form-input" required placeholder="john@domain.com" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phone Number (For Courier SMS Updates)</label>
+            <input type="tel" name="phone" class="form-input" placeholder="+1 (555) 019-2834" />
+          </div>
+
+          <div class="form-section-title">2. Physical Delivery Destination</div>
+          <div class="form-group">
+            <label class="form-label">Street Address *</label>
+            <input type="text" name="address_line1" class="form-input" required placeholder="1044 Obsidian Way" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Apartment, Suite, Unit (Optional)</label>
+            <input type="text" name="address_line2" class="form-input" placeholder="Apt 4B" />
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">City *</label>
+              <input type="text" name="city" class="form-input" required placeholder="Seattle" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">State / Province *</label>
+              <input type="text" name="state" class="form-input" required placeholder="WA" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Postal / ZIP Code *</label>
+              <input type="text" name="postal_code" class="form-input" required placeholder="98101" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Destination Country *</label>
+              <select name="country" id="checkout-country-select" class="form-select" onchange="NyxerisStore.handleCountryChange(this.value)">
+                <option value="United States">United States (Tracked Air $14.99)</option>
+                <option value="Canada">Canada (Tracked Air $14.99)</option>
+                <option value="United Kingdom">United Kingdom (Tracked Air $16.99)</option>
+                <option value="Germany">Germany / EU (Tracked Air $16.99)</option>
+                <option value="France">France / EU (Tracked Air $16.99)</option>
+                <option value="Australia">Australia (Tracked Air $19.99)</option>
+                <option value="Rest of World">Rest of World (Tracked Air $19.99)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Shipping Method *</label>
+              <select name="shipping_method" class="form-select">
+                <option value="Nyxeris Priority Insured Courier">Priority Insured Courier (Tracked)</option>
+                <option value="Nyxeris Standard Express Air">Standard Express Air</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section-title" style="margin-top: 18px;">3. Packaging & Unboxing Experience</div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
+            <label class="cart-packaging-card active" id="modal-pkg-standard-card" onclick="NyxerisStore.setPackaging('standard')">
+              <div class="cart-pkg-content">
+                <span class="cart-pkg-name">Standard Retail Presentation Box</span>
+                <span class="cart-pkg-desc">Factory retail box with protective courier shipping mailer</span>
+              </div>
+              <span class="cart-pkg-badge">INCLUDED</span>
+            </label>
+            <label class="cart-packaging-card" id="modal-pkg-premium-card" onclick="NyxerisStore.setPackaging('premium')">
+              <div class="cart-pkg-content">
+                <span class="cart-pkg-name">Nyxeris Signature Luxury Gift Box</span>
+                <span class="cart-pkg-desc">Matte-black rigid magnetic box, silver foil seal & VIP card</span>
+              </div>
+              <span class="cart-pkg-badge premium">+$2.99</span>
+            </label>
+          </div>
+
+          <div style="background: #f7f5f4; border: 1px solid var(--border-subtle); border-radius: 2px; padding: 14px; font-size: 12px; color: var(--text-secondary); line-height: 1.5;">
+            <strong>Official Nyxeris Packaging & Dispatch:</strong> Orders are dispatched with tracked insured transit. Your purchase receipt is white-labeled exclusively under the <strong>Nyxeris</strong> brand.
+          </div>
+
+          <!-- Checkout Totals Breakdown -->
+          <div style="margin-top: 14px; padding: 12px 14px; background: #ffffff; border: 1px solid var(--border-subtle); border-radius: 2px; font-size: 12.5px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-secondary);">
+              <span>Items Subtotal:</span>
+              <span id="modal-subtotal-val" style="font-weight: 600; color: #1f1919;">$0.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-secondary);">
+              <span>Tracked Delivery (By Location):</span>
+              <span id="modal-shipping-val" style="font-weight: 600; color: #1f1919;">$14.99</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-secondary);">
+              <span>Unboxing Packaging:</span>
+              <span id="modal-packaging-val" style="font-weight: 600; color: #1f1919;">Standard (Free)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-secondary);">
+              <span>Estimated Tax (8%):</span>
+              <span id="modal-tax-val" style="font-weight: 600; color: #1f1919;">$0.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--border-subtle); font-size: 14px; font-weight: 700; color: #1f1919;">
+              <span>Total Amount:</span>
+              <span id="modal-grand-total" style="font-family: var(--font-nav); font-size: 18px; color: #1f1919;">$0.00</span>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: flex-end; margin-top: 16px;">
+            <button type="submit" class="btn-solid-white" id="btn-submit-order" style="padding: 12px 32px;">
+              Continue to Payment →
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 11. Pipeline Newsletter Section ("Always In The Know") -->
+    <section class="pipeline-newsletter-section">
+      <div class="pipeline-container-narrow">
+        <div class="pipeline-newsletter-box">
+          <div class="pipeline-section-kicker" style="text-align: center;">STAY CONNECTED</div>
+          <h3 class="pipeline-newsletter-title">Always In The Know</h3>
+          <p class="pipeline-newsletter-sub">
+            Be the first to receive updates on new curated arrivals, exclusive limited collections, and thoughtful design stories.
+          </p>
+          <form class="pipeline-newsletter-form" onsubmit="NyxerisStore.handleNewsletterSubmit(event)">
+            <input type="email" class="pipeline-newsletter-input" placeholder="Enter your email address..." required id="newsletter-email-input" />
+            <button type="submit" class="pipeline-newsletter-btn">JOIN</button>
+          </form>
+          <div class="pipeline-newsletter-disclaimer">Zero spam. Curated goods and updates only. Unsubscribe at any time.</div>
+          <div id="newsletter-feedback-msg" class="newsletter-success-msg" style="display: none;">✓ Welcome to Nyxeris. You are now on the insider list.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. Pipeline Store Trust Badges Strip -->
+    <section class="pipeline-trust-strip">
+      <div class="pipeline-container">
+        <div class="pipeline-trust-grid">
+          <div class="pipeline-trust-item">
+            <div class="pipeline-trust-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div class="pipeline-trust-title">30-DAY SATISFACTION</div>
+            <p class="pipeline-trust-desc">Experience your items at home for 30 days. Full refund if not completely satisfied.</p>
+          </div>
+          <div class="pipeline-trust-item">
+            <div class="pipeline-trust-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <div class="pipeline-trust-title">WORLDWIDE DISPATCH</div>
+            <p class="pipeline-trust-desc">Insured express shipping with full tracking to 120+ countries worldwide.</p>
+          </div>
+          <div class="pipeline-trust-item">
+            <div class="pipeline-trust-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="pipeline-trust-title">QUALITY CURATED</div>
+            <p class="pipeline-trust-desc">Every piece is handpicked and inspected for craftsmanship, aesthetic, and durability.</p>
+          </div>
+          <div class="pipeline-trust-item">
+            <div class="pipeline-trust-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="pipeline-trust-title">DIRECT FOUNDER SUPPORT</div>
+            <p class="pipeline-trust-desc">Direct SLA assistance from Raydrim leadership. Personal care, no generic chatbots.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13. Pipeline Verified Raydrim 4-Column Editorial Footer -->
+    <footer class="pipeline-footer" id="about-studio">
+      <div class="pipeline-container">
+        <div class="pipeline-footer-grid">
+          <!-- Column 1: Brand & Philosophy -->
+          <div class="pipeline-footer-col">
+            <h4 class="pipeline-footer-heading">NYXERIS</h4>
+            <p class="pipeline-footer-text">
+              Nyxeris is a destination for curated modern goods, workspace essentials, tech gear, and everyday lifestyle carry. Partnered with Raydrim Software Studio to bring thoughtful, functional design to modern living.
+            </p>
+            <div class="pipeline-footer-badge">CURATED MODERN GOODS</div>
+            <div style="margin-top: 14px; font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+              BACKED BY CJ DROPSHIPPING & DIRECT SECURE CHECKOUT
+            </div>
+          </div>
+
+          <!-- Column 2: Collections -->
+          <div class="pipeline-footer-col">
+            <h4 class="pipeline-footer-heading">COLLECTIONS</h4>
+            <ul class="pipeline-footer-links">
+              <li><a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Smart Gear & Power')">Smart Gear & Power (44)</a></li>
+              <li><a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Lighting & Ambience')">Lighting & Ambience (33)</a></li>
+              <li><a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Precision Tools & EDC')">Precision Tools & EDC (23)</a></li>
+              <li><a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Watches & Timepieces')">Watches & Timepieces (13)</a></li>
+              <li><a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Keyboards & Peripherals')">Keyboards & Peripherals (14)</a></li>
+              <li><a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Apparel & Outerwear')">Apparel & Outerwear (18)</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 3: Customer Care & SLA -->
+          <div class="pipeline-footer-col">
+            <h4 class="pipeline-footer-heading">CUSTOMER CARE</h4>
+            <ul class="pipeline-footer-links">
+              <li><a href="javascript:void(0)" onclick="NyxerisStore.promptTrackOrder()">Track Your Order (USPS / CJ)</a></li>
+              <li><a href="#signature-collection">30-Day Satisfaction Guarantee</a></li>
+              <li><a href="/admin">Raydrim Dropshipping Cockpit</a></li>
+              <li><a href="/themes">Shopify Themes Engine</a></li>
+              <li><a href="javascript:void(0)" onclick="NyxerisStore.openCheckoutModal()">Direct Storefront Checkout</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 4: Verified Raydrim Contacts -->
+          <div class="pipeline-footer-col" id="footer-contact">
+            <h4 class="pipeline-footer-heading">RAYDRIM STUDIO CONTACT</h4>
+            <div class="pipeline-contact-details">
+              <div class="contact-row">
+                <span class="contact-label">Founder & Lead:</span>
+                <span class="contact-val">Muhammad Taki Ahmed</span>
+              </div>
+              <div class="contact-row">
+                <span class="contact-label">Studio Entity:</span>
+                <span class="contact-val">Raydrim (Software Studio)</span>
+              </div>
+              <div class="contact-row">
+                <span class="contact-label">Location:</span>
+                <span class="contact-val">Dhaka-1230, Bangladesh</span>
+              </div>
+              <div class="contact-row">
+                <span class="contact-label">Direct Email:</span>
+                <a href="mailto:ahmedmuhammadtaki@gmail.com" class="contact-val-link">ahmedmuhammadtaki@gmail.com</a>
+              </div>
+              <div class="contact-row">
+                <span class="contact-label">Mobile / WhatsApp:</span>
+                <a href="tel:+8801873691022" class="contact-val-link">+880 1873-691022</a>
+              </div>
+              <div class="contact-row">
+                <span class="contact-label">Operating SLA:</span>
+                <span class="contact-val">Mon – Fri: 8:00 AM – 6:00 PM BST / EST</span>
+              </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="pipeline-social-links">
+              <a href="https://www.linkedin.com/in/muhammad-taki-ahmed-49059b426" target="_blank" rel="noopener" class="social-link-pill" title="LinkedIn">LinkedIn</a>
+              <a href="https://github.com/takiahmed24" target="_blank" rel="noopener" class="social-link-pill" title="GitHub">GitHub</a>
+              <a href="https://instagram.com/_lucife.yu" target="_blank" rel="noopener" class="social-link-pill" title="Instagram">Instagram</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- 14. Pipeline Sub-Footer -->
+    <div class="pipeline-subfooter">
+      <div class="pipeline-container pipeline-subfooter-flex">
+        <div class="pipeline-subfooter-left">
+          <span class="subfooter-selector">Language: <strong>ENGLISH</strong></span>
+          <span class="subfooter-sep">•</span>
+          <span class="subfooter-selector">Currency: <strong>UNITED STATES (US $)</strong></span>
+        </div>
+        <div class="pipeline-subfooter-center">
+          <span>© 2026 NYXERIS • CRAFTED BY RAYDRIM • ALL RIGHTS RESERVED</span>
+        </div>
+        <div class="pipeline-subfooter-right">
+          <span class="payment-badge-chip">VISA</span>
+          <span class="payment-badge-chip">MASTERCARD</span>
+          <span class="payment-badge-chip">AMEX</span>
+          <span class="payment-badge-chip">APPLE PAY</span>
+          <span class="payment-badge-chip">WISE</span>
+          <span class="payment-badge-chip">PAYONEER</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline Live Search Modal -->
+    <div class="pipeline-search-modal-overlay" id="pipeline-search-modal" style="display: none;">
+      <div class="pipeline-search-modal-card">
+        <div class="pipeline-search-modal-header">
+          <div class="search-modal-title-group">
+            <h3>Search Storefront</h3>
+            <span class="search-modal-sub">Explore 205 curated modern goods & essentials</span>
+          </div>
+          <button type="button" class="btn-close-search" onclick="NyxerisStore.closeSearchModal()">✕</button>
+        </div>
+        <div class="pipeline-search-input-box">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="pipeline-modal-search-input" placeholder="Search curated goods, workspace, power, audio, EDC..." oninput="NyxerisStore.handleModalSearch(this.value)" autocomplete="off" />
+          <button type="button" class="btn-clear-modal-search" id="btn-clear-modal-search" onclick="NyxerisStore.clearModalSearch()" style="display: none;">✕</button>
+        </div>
+        <div class="pipeline-modal-search-results" id="pipeline-modal-search-results">
+          <!-- Populated live with matching products -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Quick-View Modal (Best Buy Modal Inspection) -->
+    <div class="quickview-modal-overlay" id="quickview-modal-overlay">
+      <div class="quickview-modal-card">
+        <button type="button" class="btn-close-quickview" onclick="NyxerisStore.closeQuickView()">✕</button>
+        <div class="quickview-content-grid" id="quickview-content">
+          <!-- Populated dynamically via store.js -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/js/store.js"></script>
+</body>
+</html>

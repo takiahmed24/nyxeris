@@ -1,0 +1,94 @@
+{
+  "skill_cj_batch_list_and_export": {
+    "id": "skill_cj_batch_list_and_export",
+    "name": "CJ Dropshipping Batch Sourcing & Mass Export",
+    "description": "Switches CJ search to List view, checks select-all for up to 200 items, and mass adds them to your CJ account or triggers multi-thousand item CSV exports.",
+    "category": "Sourcing & Logistics",
+    "trigger_keywords": [
+      "cj batch",
+      "list view",
+      "export cj",
+      "add to my products"
+    ],
+    "steps": [
+      "1. In CJ Dropshipping product search, toggle to 'List' view in the upper right.",
+      "2. Click the 'Select All' checkbox in the dark table header bar to check all 60\u2013200 items.",
+      "3. Click the orange 'Selected Items: X/200' button in the upper right.",
+      "4. In the batch management modal, click 'All Products' at the bottom.",
+      "5. Choose 'Add To My Products' (to associate to your CJ account) or 'Export' (to download full CSV/Excel spreadsheet)."
+    ],
+    "execution_type": "automated_playbook",
+    "mastery_score": 98,
+    "execution_count": 3,
+    "last_executed": "2026-09-04T06:29:37Z",
+    "status": "MASTERED"
+  },
+  "skill_realtime_margin_optimization": {
+    "id": "skill_realtime_margin_optimization",
+    "name": "Autonomous Margin & Pricing Optimizer",
+    "description": "Scans all 205 products in the catalog database, verifies supplier costs, enforces a strict 60\u201375% gross profit margin, and computes retail compare-at prices for Best Buy savings badges.",
+    "category": "Pricing & Strategy",
+    "trigger_keywords": [
+      "optimize margins",
+      "recalculate prices",
+      "savings badges"
+    ],
+    "steps": [
+      "1. Connect to SQLite nyxeris.db database.",
+      "2. Read all products and evaluate cost_price vs retail price.",
+      "3. Ensure minimum 60% gross profit margin: target_price = cost_price / (1 - target_margin).",
+      "4. Calculate compare_at_price (target_price * 1.30) to provide attractive savings badges.",
+      "5. Update database records and persist changes."
+    ],
+    "execution_type": "python_callable",
+    "mastery_score": 95,
+    "execution_count": 25,
+    "last_executed": "2026-09-04T14:11:23Z",
+    "status": "MASTERED",
+    "last_status": "SUCCESS"
+  },
+  "skill_mass_catalog_csv_export": {
+    "id": "skill_mass_catalog_csv_export",
+    "name": "Multi-Channel Catalog & Whop Manifest Generator",
+    "description": "Generates clean CSV and JSON data exports for Whop bulk import, CJ dropshipping logistics mapping, and Shopify/WooCommerce cross-channel feeds.",
+    "category": "Catalog & Feeds",
+    "trigger_keywords": [
+      "export catalog",
+      "whop csv",
+      "download products"
+    ],
+    "steps": [
+      "1. Query all active physical products from nyxeris.db.",
+      "2. Map authentic titles, real supplier URLs, CJ SKUs, retail pricing, and CDN image links.",
+      "3. Export to C:/Nyxeris/data/whop_products_200_catalog.csv and C:/Nyxeris/data/cj_200_products.json.",
+      "4. Generate SHA256 integrity hash."
+    ],
+    "execution_type": "python_callable",
+    "mastery_score": 100,
+    "execution_count": 5,
+    "last_executed": "2026-09-04T06:29:37Z",
+    "status": "MASTERED"
+  },
+  "skill_whop_copywriting_and_sync": {
+    "id": "skill_whop_copywriting_and_sync",
+    "name": "Whop Architectural Luxury Copywriting & Listing",
+    "description": "Leverages Titan-One to generate studio-grade, minimalist product copy with zero dropshipping mentions, and publishes products to Whop company biz_ea3gy6pg50A7px.",
+    "category": "Marketing & Content",
+    "trigger_keywords": [
+      "whop copy",
+      "luxury product description",
+      "publish whop"
+    ],
+    "steps": [
+      "1. Inspect raw supplier product specifications and photos.",
+      "2. Run Titan-One brand filter to strip generic spam keywords.",
+      "3. Format into architectural specifications, feature bullets, and unboxing details.",
+      "4. Publish to Whop company using session cookies or Whop product creation API."
+    ],
+    "execution_type": "automated_playbook",
+    "mastery_score": 92,
+    "execution_count": 4,
+    "last_executed": "2026-09-04T06:29:37Z",
+    "status": "MASTERED"
+  }
+}

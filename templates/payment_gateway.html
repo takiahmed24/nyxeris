@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Payment — Nyxeris Official Secure Checkout</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+  <style>
+    .checkout-page-container {
+      max-width: 960px;
+      margin: 40px auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 32px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 36px;
+    }
+    .payment-brand-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .order-summary-box {
+      background: var(--bg-black);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .pay-item-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .pay-item-img {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #141416;
+      border: 1px solid var(--border-subtle);
+    }
+    .card-element-box {
+      background: #0d0d0f;
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .secure-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      .checkout-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+    <header class="site-header">
+      <div class="header-container">
+        <a href="/" class="brand-mark">
+          <span class="brand-name">NYXERIS</span>
+        </a>
+        <div class="secure-badge">
+          <span>Encrypted Checkout (256-Bit SSL)</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="checkout-page-container">
+      <div class="checkout-layout">
+        <!-- Form Side -->
+        <div class="payment-form-side">
+          <div class="payment-brand-header">
+            <div>
+              <h2 style="font-size: 20px; font-weight: 800; color: #ffffff;">Payment Details</h2>
+              <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Recipient: <strong>{{ order.customer_name }}</strong></p>
+            </div>
+            <span style="background: rgba(255, 255, 255, 0.08); color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+              ORDER {{ order.order_id }}
+            </span>
+          </div>
+
+          <form id="payment-submit-form" onsubmit="handlePaymentSubmit(event)">
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label">Name on Card</label>
+              <input type="text" class="form-input" id="card_name" value="{{ order.customer_name }}" required />
+            </div>
+
+            <div class="card-element-box">
+              <div class="form-group">
+                <label class="form-label">Card Number</label>
+                <div style="position: relative;">
+                  <input type="text" class="form-input" id="card_number" placeholder="4242 •••• •••• 4242" value="4242 •••• •••• 4242" required style="font-family: 'JetBrains Mono', monospace;" />
+                  <div style="position: absolute; right: 12px; top: 10px;">
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary);">VISA / MC / AMEX</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">Expiration Date</label>
+                  <input type="text" class="form-input" id="card_expiry" placeholder="MM/YY" value="12/28" required style="font-family: 'JetBrains Mono', monospace;" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Security Code</label>
+                  <input type="text" class="form-input" id="card_cvc" placeholder="CVC" value="894" required style="font-family: 'JetBrains Mono', monospace;" />
+                </div>
+              </div>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 12px; color: var(--text-secondary); line-height: 1.4;">
+              <strong>Nyxeris Direct Billing:</strong> Your credit card statement will display <strong>NYXERIS*STORE</strong>. Your official Nyxeris purchase receipt and PDF invoice will be generated and emailed immediately.
+            </div>
+
+            <button type="submit" class="btn-solid-white" id="btn-pay-confirm" style="width: 100%; padding: 14px; font-size: 14px; justify-content: center;">
+              Authorize & Pay ${{ "%.2f"|format(order.total_amount) }}
+            </button>
+          </form>
+        </div>
+
+        <!-- Order Summary Side -->
+        <div class="order-summary-side">
+          <div class="order-summary-box">
+            <h3 style="font-size: 15px; font-weight: 700; color: #ffffff;">Order Summary</h3>
+
+            <div class="pay-items-list">
+              {% for itm in items %}
+              <div class="pay-item-row">
+                <img src="{{ itm.image_url }}" alt="{{ itm.product_title }}" class="pay-item-img" />
+                <div style="flex: 1;">
+                  <div style="font-size: 13.5px; font-weight: 700; color: #ffffff;">{{ itm.product_title }}</div>
+                  {% if itm.variant_title %}
+                  <div style="font-size: 11.5px; color: var(--text-muted);">{{ itm.variant_title }}</div>
+                  {% endif %}
+                  <div style="font-size: 12px; color: var(--text-secondary);">Qty: {{ itm.quantity }} × ${{ "%.2f"|format(itm.unit_price) }}</div>
+                </div>
+                <div style="font-weight: 700; color: #ffffff; font-size: 14px;">
+                  ${{ "%.2f"|format(itm.total_price) }}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- Destination -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px;">
+              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">
+                Physical Destination
+              </div>
+              <div style="font-size: 13px; color: #ffffff; font-weight: 600;">{{ order.customer_name }}</div>
+              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">
+                {{ order.shipping_address_line1 }}{% if order.shipping_address_line2 %}, {{ order.shipping_address_line2 }}{% endif %}<br/>
+                {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}<br/>
+                {{ order.shipping_country }}
+              </div>
+            </div>
+
+            <!-- Totals -->
+            <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary);">
+                <span>Subtotal</span>
+                <span>${{ "%.2f"|format(order.subtotal) }}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary);">
+                <span>Courier Shipping</span>
+                <span>{% if order.shipping_fee == 0 %}FREE{% else %}${{ "%.2f"|format(order.shipping_fee) }}{% endif %}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary);">
+                <span>Sales Tax (8%)</span>
+                <span>${{ "%.2f"|format(order.tax) }}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; color: #ffffff; padding-top: 8px; border-top: 1px solid var(--border-subtle);">
+                <span>Total Due</span>
+                <span>${{ "%.2f"|format(order.total_amount) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function handlePaymentSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-pay-confirm');
+      btn.disabled = true;
+      btn.textContent = 'Authorizing Encrypted Payment...';
+
+      try {
+        const res = await fetch('/api/orders/{{ order.order_id }}/simulate-payment', {
+          method: 'POST'
+        });
+        if (!res.ok) throw new Error('Payment processing failed');
+        const data = await res.json();
+        window.location.href = data.redirect_url;
+      } catch (err) {
+        alert(err.message);
+        btn.disabled = false;
+        btn.textContent = 'Try Again';
+      }
+    }
+  </script>
+</body>
+</html>

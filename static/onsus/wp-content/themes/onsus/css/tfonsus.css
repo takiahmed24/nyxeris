@@ -1,0 +1,78 @@
+@font-face {
+  font-family: 'tfonsus';
+  src:  url("../fonts/onsus.eot");
+  src:  url("../fonts/onsus.eot") format('embedded-opentype'),
+    url('../fonts/tfonsus.ttf') format('truetype'),
+    url('../fonts/tfonsus.woff') format('woff'),
+    url('../fonts/tfonsus.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="tfonsus-icon-"],
+[class*="tfonsus-icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'tfonsus' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tfonsus-icon-right:before {
+  font-family: 'tfonsus' !important;
+  content: "\e90b";
+  color: #73787d;
+}
+
+.tfonsus-icon-audio:before {
+  font-family: 'tfonsus' !important;
+  content: "\e900";
+}
+.tfonsus-icon-camera:before {
+  font-family: 'tfonsus' !important;
+  content: "\e901";
+}
+.tfonsus-icon-electronic:before {
+  font-family: 'tfonsus' !important;
+  content: "\e902";
+}
+.tfonsus-icon-furniture:before {
+  font-family: 'tfonsus' !important;
+  content: "\e903";
+}
+.tfonsus-icon-gaming:before {
+  font-family: 'tfonsus' !important;
+  content: "\e904";
+}
+.tfonsus-icon-headphone:before {
+  font-family: 'tfonsus' !important;
+  content: "\e905";
+}
+.tfonsus-icon-laptop:before {
+  font-family: 'tfonsus' !important;
+  content: "\e906";
+}
+.tfonsus-icon-server:before {
+  font-family: 'tfonsus' !important;
+  content: "\e907";
+}
+.tfonsus-icon-smartphone:before {
+  font-family: 'tfonsus' !important;
+  content: "\e908";
+}
+.tfonsus-icon-smartwatch:before {
+  font-family: 'tfonsus' !important;
+  content: "\e909";
+}
+.tfonsus-icon-tv:before {
+  font-family: 'tfonsus' !important;
+  content: "\e90a";
+}

@@ -1,0 +1,120 @@
+/* themesflat animation
+-------------------------------------------------------------- */
+.tf-animated-twocolumn .item-animated.first {
+    transform: translateX(-15px);
+}
+.tf-animated-twocolumn .item-animated.last {
+    transform: translateX(15px);
+}
+
+
+/* .tf-animated-elementor .tf-animated-item, */
+.wrap-team-post .item,
+.wrap-services-post .item,
+.tf-animated-fadeup .elementor-widget-container,
+.wrap-blog-article.blog-list .item article,
+.wrap-blog-article.blog-gird .item,
+.tf-posts .item,
+.tf-portfolios .item,
+.tf-animated .item-animated,
+section .item-animated,
+.tf-animated-column-elementor .elementor-column {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 30px, 0);
+    transform: translate3d(0, 30px, 0);
+}
+
+
+/* .tf-animated-elementor .tf-animated-item.tfanimated, */
+.tf-animated-fadeup .elementor-widget-container,
+.wrap-blog-article.blog-list .item article.tfanimated,
+.wrap-blog-article.blog-gird .item.tfanimated,
+.tf-posts .item.tfanimated,
+.wrap-team-post .item.tfanimated,
+.wrap-services-post .item.tfanimated,
+.tf-portfolios .item.tfanimated,
+.tf-animated .item-animated.tfanimated,
+section .item-animated.tfanimated,
+.tf-animated-column-elementor .elementor-column.tfanimated,
+.tf-animated-twocolumn .item-animated.tfanimated.first,
+.tf-animated-twocolumn .item-animated.tfanimated.last {
+    -webkit-transform: none !important;
+    -ms-transform: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    -webkit-transition: opacity 0.8s linear, -webkit-transform 0.8s ease-in-out;
+    transition: opacity 0.8s linear, -webkit-transform 0.8s ease-in-out;
+    transition: transform 0.8s ease-in-out, opacity 0.8s linear;
+    transition: transform 0.8s ease-in-out, opacity 0.8s linear,
+        -webkit-transform 0.8s ease-in-out;
+}
+
+/* hover top */
+.tf-animated-hover-top {
+    transition: all 0.5s;
+    transform: translateY(0);
+}
+.tf-animated-hover-top:hover {
+    transform: translateY(-20px);
+}
+.tf-animated-hover-top-s2 {
+    transition: all 0.5s;
+    transform: translateY(0);
+}
+.tf-animated-hover-top-s2:hover {
+    transform: translateY(-5px);
+}
+
+.tf-animated-fadeleft .elementor-widget-container {
+    opacity: 0;
+    -webkit-transform: translate3d(-20px, 0, 0);
+    transform: translate3d(-20px, 0, 0);
+}
+
+.tf-animated-fadeleft .elementor-widget-container.tfanimated {
+    -webkit-transform: none !important;
+    -ms-transform: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    -webkit-transition: opacity 0.8s linear, -webkit-transform 0.8s ease-in-out;
+    transition: opacity 0.8s linear, -webkit-transform 0.8s ease-in-out;
+    transition: transform 0.8s ease-in-out, opacity 0.8s linear;
+    transition: transform 0.8s ease-in-out, opacity 0.8s linear,
+        -webkit-transform 0.8s ease-in-out;
+}
+
+.tf-animated-faderight .elementor-widget-container {
+    opacity: 0;
+    -webkit-transform: translate3d(20px, 0, 0);
+    transform: translate3d(20px, 0, 0);
+}
+
+.tf-animated-faderight .elementor-widget-container.tfanimated {
+    -webkit-transform: none !important;
+    -ms-transform: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    -webkit-transition: opacity 0.8s linear, -webkit-transform 0.8s ease-in-out;
+    transition: opacity 0.8s linear, -webkit-transform 0.8s ease-in-out;
+    transition: transform 0.8s ease-in-out, opacity 0.8s linear;
+    transition: transform 0.8s ease-in-out, opacity 0.8s linear,
+        -webkit-transform 0.8s ease-in-out;
+}
+
+.tf-animated-fadedown .elementor-widget-container {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -20px, 0);
+    transform: translate3d(0, -20px, 0);
+}
+
+.tf-animated-fadedown .elementor-widget-container.tfanimated {
+    -webkit-transform: none !important;
+    -ms-transform: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    -webkit-transition: opacity 0.8s linear, -webkit-transform 0.8s ease-in-out;
+    transition: opacity 0.8s linear, -webkit-transform 0.8s ease-in-out;
+    transition: transform 0.8s ease-in-out, opacity 0.8s linear;
+    transition: transform 0.8s ease-in-out, opacity 0.8s linear,
+        -webkit-transform 0.8s ease-in-out;
+}
