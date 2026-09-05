@@ -15,7 +15,22 @@
 
 ## 📋 Recent Changes & Architectural Log
 
-* **[2026-09-05] Nyxeris v2.0 Editorial Luxury Redesign & Whop Website Section Launch**:
+* **[2026-09-05] Product Catalog Merchandising Curation & Post-Checkout Receipt Flow**:
+  * **Database Merchandising Fix**: Added `featured_order` column to `products` table in `data/nyxeris.db`. Assigned priority ranks (1-10) to verified hardware flagships (Apex-65 Keyboard, 3-in-1 Wireless Charger, Desk Mat Pro, Horizon Pro Screenbar, Tech Organizer, Sphere ANC Earbuds, Minimalist RFID Wallet, 65W GaN Station, Monitor Riser, Key Light Screen Bar). Prioritized genuine CJ Dropshipping items at ranks 11+.
+  * **Forklift Image Cleanup**: Removed all 25 synthetic warehouse forklift Unsplash images and replaced them with curated high-end tech, EDC, and desk architecture photography.
+  * **Catalog Card UI Cleaned**: Replaced cramped dual buttons on product cards with a single full-width Forest Olive (`#324632`) `Add to Bag` button matching user's mockup (`media_1788595983849.png`).
+  * **End-to-End Post-Payment Flow & Official White-Labeled Receipts**:
+    * Re-skinned `templates/payment_gateway.html` and `templates/order_confirmation.html` to Shopify Pipeline Editorial Luxury (pristine `#ffffff` canvas, deep `#1f1919` text, `#f7f5f4` surfaces, emerald check badge `#2e7d32`, Forest Olive buttons).
+    * Upgraded `services/receipt_service.py` PDF generation to deep charcoal and Forest Olive accents.
+    * Upgraded `services/receipt_service.py` customer HTML receipt email to luxury editorial styling with zero third-party branding.
+    * Executed live test purchase for customer "Muhammad Taki Ahmed" (Order `NYX-2026-5C319F`, $82.77) on AWS Lightsail production server (`http://54.251.148.171`).
+    * Verified and captured screenshots of:
+      1. Properly arranged catalog grid without forklifts (`05_catalog_products_grid.png`, `06_catalog_products_row2.png`).
+      2. Clean checkout payment gateway (`02_payment_gateway.png`).
+      3. Live order confirmation page with 4-step fulfillment timeline (`03_order_confirmation_screen.png`).
+      4. White-labeled customer HTML receipt email (`04_customer_receipt_email.png`).
+      5. Official itemized PDF invoice (`scratch/official_receipt.pdf`).
+
   * **Whop Website Section Embedding (Option 2)**: Added HTTP security middleware in `main.py` configuring `Content-Security-Policy: frame-ancestors 'self' https://whop.com https://*.whop.com https://*.sslip.io;` and stripped blocking `X-Frame-Options` headers. Added clean `/embed` route and creator affiliate/referral tracking (`?ref=...` / `?creator=...`) so creators can implement the store inside their Whop Hub Website app tab, and we monetize through app subscriptions and fulfillment margins.
   * **1:1 Implementation of 4 Master Mockups on Flagship Store**:
     1. *Hero & Brand Language*: Re-skinned hero with *"Upgrade the way you work and live"*, dual CTAs (`Shop Best Sellers` in solid Forest Olive `#324632` + `Explore Collections` in outline).
