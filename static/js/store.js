@@ -262,7 +262,7 @@ const NyxerisStore = {
       </div>
       ${matches.map(p => `
         <div class="live-search-item" onclick="NyxerisStore.openQuickView('${p.id}'); NyxerisStore.hideLiveSearchResults();">
-          <img src="${p.image_url}" alt="${p.title}" class="live-search-thumb" />
+          <img src="${p.image_url}" alt="${p.title}" class="live-search-thumb" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
           <div class="live-search-info">
             <div class="live-search-title">${p.title}</div>
             <div class="live-search-meta">${p.category} • ${p.sku}</div>
@@ -579,7 +579,7 @@ const NyxerisStore = {
         return `
           <article class="product-card list-view" data-id="${prod.id}">
             <div class="product-thumb-wrapper">
-              <img src="${prod.image_url}" alt="${prod.title}" loading="lazy" />
+              <img src="${prod.image_url}" alt="${prod.title}" loading="lazy" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
               <button type="button" class="product-quickview-btn" onclick="NyxerisStore.openQuickView('${prod.id}')">
                 Quick View
               </button>
@@ -635,7 +635,7 @@ const NyxerisStore = {
         return `
           <article class="product-card" data-id="${prod.id}">
             <div class="product-thumb-wrapper">
-              <img src="${prod.image_url}" alt="${prod.title}" loading="lazy" />
+              <img src="${prod.image_url}" alt="${prod.title}" loading="lazy" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
               <button type="button" class="product-quickview-btn" onclick="NyxerisStore.openQuickView('${prod.id}')">
                 Quick View
               </button>
@@ -708,7 +708,7 @@ const NyxerisStore = {
 
     container.innerHTML = `
       <div class="quickview-image-wrap">
-        <img src="${product.image_url}" alt="${product.title}" />
+        <img src="${product.image_url}" alt="${product.title}" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
       </div>
       <div class="quickview-info-wrap">
         <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #767676; font-weight: 600; font-family: var(--font-nav); margin-bottom: 6px;">
@@ -718,9 +718,9 @@ const NyxerisStore = {
           ${product.title}
         </h2>
         <div class="rating-snippet" style="margin-bottom: 12px;">
-          <span class="rating-stars" style="font-size: 14px; color: #1f1919;">★★★★★</span>
+          <span class="rating-stars" style="font-size: 14px; color: #f59e0b;">★★★★★</span>
           <span class="rating-val" style="font-size: 13px; font-weight: 600; color: #1f1919;">${score}</span>
-          <span class="rating-count" style="font-size: 12.5px; color: #767676;">(${count} verified customer reviews)</span>
+          <span class="rating-count" style="font-size: 12.5px; color: #767676;" id="quickview-stars-count">(${count} verified reviews)</span>
         </div>
 
         <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 16px;">
@@ -761,14 +761,282 @@ const NyxerisStore = {
           </button>
         </div>
       </div>
+
+      <!-- Reviews Section -->
+      <div class="quickview-reviews-section">
+        <div class="reviews-section-header">
+          <div class="reviews-title-group">
+            <h3 class="reviews-main-title">Client Reviews & Ratings</h3>
+            <span class="reviews-avg-badge" id="quickview-reviews-badge">★ ${score} (${count} reviews)</span>
+          </div>
+          <button type="button" class="btn-write-review" onclick="NyxerisStore.toggleReviewForm('${product.id}')">
+            + Write a Review
+          </button>
+        </div>
+
+        <!-- Write Review Form -->
+        <div class="review-form-container" id="review-form-${product.id}">
+          <div style="font-weight: 600; font-size: 14px; margin-bottom: 12px; color: #1f1919;">Share Your Hardware Experience</div>
+          <div class="star-rating-selector" id="star-selector-${product.id}" data-rating="5">
+            <span class="star active" onclick="NyxerisStore.setReviewRating('${product.id}', 1)">★</span>
+            <span class="star active" onclick="NyxerisStore.setReviewRating('${product.id}', 2)">★</span>
+            <span class="star active" onclick="NyxerisStore.setReviewRating('${product.id}', 3)">★</span>
+            <span class="star active" onclick="NyxerisStore.setReviewRating('${product.id}', 4)">★</span>
+            <span class="star active" onclick="NyxerisStore.setReviewRating('${product.id}', 5)">★</span>
+            <span style="font-size: 12px; color: #767676; margin-left: 8px;" id="star-rating-label-${product.id}">5 of 5 Stars</span>
+          </div>
+          <div class="review-form-grid">
+            <input type="text" id="review-name-${product.id}" class="review-input" placeholder="Your Name or Moniker" required />
+            <input type="email" id="review-email-${product.id}" class="review-input" placeholder="Your Email (Verified Buyer check)" />
+          </div>
+          <input type="text" id="review-title-${product.id}" class="review-input" placeholder="Headline (e.g. Unrivaled CNC craftsmanship)" style="margin-bottom: 12px;" />
+          <textarea id="review-comment-${product.id}" class="review-textarea" placeholder="Describe the build quality, tactile feel, and setup integration..."></textarea>
+          <div id="review-alert-${product.id}" style="display: none; font-size: 12px; margin-bottom: 10px;"></div>
+          <div class="review-form-actions">
+            <button type="button" class="btn-outline-subtle" style="padding: 8px 14px; font-size: 12px;" onclick="NyxerisStore.toggleReviewForm('${product.id}')">Cancel</button>
+            <button type="button" class="btn-solid-white" style="padding: 8px 16px; font-size: 12px;" onclick="NyxerisStore.submitProductReview('${product.id}')">Submit Review</button>
+          </div>
+        </div>
+
+        <!-- Reviews List -->
+        <div class="reviews-cards-list" id="quickview-reviews-list">
+          <div style="font-size: 13px; color: #767676; text-align: center; padding: 20px 0;">Loading verified customer reviews...</div>
+        </div>
+      </div>
     `;
 
     overlay.classList.add('open');
+    this.loadQuickViewReviews(product.id);
   },
 
   closeQuickView() {
     const overlay = document.getElementById('quickview-modal-overlay');
     if (overlay) overlay.classList.remove('open');
+  },
+
+  toggleReviewForm(productId) {
+    const form = document.getElementById(`review-form-${productId}`);
+    if (form) {
+      form.style.display = (form.style.display === 'block') ? 'none' : 'block';
+    }
+  },
+
+  setReviewRating(productId, rating) {
+    const selector = document.getElementById(`star-selector-${productId}`);
+    const label = document.getElementById(`star-rating-label-${productId}`);
+    if (!selector) return;
+    selector.dataset.rating = rating;
+    const stars = selector.querySelectorAll('.star');
+    stars.forEach((star, idx) => {
+      if (idx < rating) {
+        star.classList.add('active');
+      } else {
+        star.classList.remove('active');
+      }
+    });
+    if (label) {
+      label.textContent = `${rating} of 5 Stars`;
+    }
+  },
+
+  async loadQuickViewReviews(productId) {
+    const listContainer = document.getElementById('quickview-reviews-list');
+    const badge = document.getElementById('quickview-reviews-badge');
+    const starsCount = document.getElementById('quickview-stars-count');
+    if (!listContainer) return;
+
+    try {
+      const res = await fetch(`/api/products/${productId}/reviews`);
+      if (!res.ok) throw new Error('Failed to load reviews');
+      const data = await res.json();
+
+      if (badge) {
+        badge.textContent = `★ ${data.average_rating} (${data.total_reviews} reviews)`;
+      }
+      if (starsCount) {
+        starsCount.textContent = `(${data.total_reviews} verified reviews)`;
+      }
+
+      if (!data.reviews || data.reviews.length === 0) {
+        listContainer.innerHTML = `<div style="font-size: 13px; color: #767676; padding: 12px 0;">No reviews yet. Be the first to review this piece!</div>`;
+        return;
+      }
+
+      listContainer.innerHTML = data.reviews.map(r => {
+        const starsStr = '★'.repeat(r.rating) + '☆'.repeat(Math.max(0, 5 - r.rating));
+        const dateStr = r.created_at ? (r.created_at.includes('T') ? r.created_at.split('T')[0] : r.created_at) : 'Recently';
+        return `
+          <div class="review-card-item">
+            <div class="review-card-header">
+              <div class="review-card-user">
+                <span class="review-card-name">${r.customer_name}</span>
+                ${r.is_verified_buyer ? `<span class="review-verified-tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> Verified Client</span>` : ''}
+              </div>
+              <span class="review-card-date">${dateStr}</span>
+            </div>
+            <div class="review-card-stars" style="margin-bottom: 4px;">${starsStr}</div>
+            ${r.title ? `<div class="review-card-title">${r.title}</div>` : ''}
+            <div class="review-card-comment">${r.comment}</div>
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      console.error('Error loading reviews:', err);
+      listContainer.innerHTML = `<div style="font-size: 13px; color: #767676; padding: 12px 0;">Verified review system active.</div>`;
+    }
+  },
+
+  async submitProductReview(productId) {
+    const selector = document.getElementById(`star-selector-${productId}`);
+    const nameInput = document.getElementById(`review-name-${productId}`);
+    const emailInput = document.getElementById(`review-email-${productId}`);
+    const titleInput = document.getElementById(`review-title-${productId}`);
+    const commentInput = document.getElementById(`review-comment-${productId}`);
+    const alertBox = document.getElementById(`review-alert-${productId}`);
+
+    if (!nameInput || !commentInput) return;
+    const rating = parseInt(selector?.dataset?.rating || '5', 10);
+    const name = nameInput.value.trim();
+    const email = emailInput?.value?.trim() || '';
+    const title = titleInput?.value?.trim() || '';
+    const comment = commentInput.value.trim();
+
+    if (!name) {
+      alert('Please provide your name or moniker.');
+      nameInput.focus();
+      return;
+    }
+    if (!comment || comment.length < 3) {
+      alert('Please write a brief review comment (at least 3 characters).');
+      commentInput.focus();
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/products/${productId}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: name,
+          customer_email: email || undefined,
+          rating: rating,
+          title: title,
+          comment: comment
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || 'Could not submit review');
+      }
+
+      if (alertBox) {
+        alertBox.style.display = 'block';
+        alertBox.style.color = '#059669';
+        alertBox.textContent = '✓ Review published successfully!';
+      }
+
+      commentInput.value = '';
+      if (titleInput) titleInput.value = '';
+
+      await this.loadQuickViewReviews(productId);
+
+      setTimeout(() => {
+        this.toggleReviewForm(productId);
+        if (alertBox) alertBox.style.display = 'none';
+      }, 1400);
+
+    } catch (err) {
+      if (alertBox) {
+        alertBox.style.display = 'block';
+        alertBox.style.color = '#dc2626';
+        alertBox.textContent = err.message;
+      } else {
+        alert(err.message);
+      }
+    }
+  },
+
+  openPolicyModal(policyKey = 'refunds') {
+    const modal = document.getElementById('pipeline-policy-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      this.switchPolicyTab(policyKey);
+    }
+  },
+
+  closePolicyModal() {
+    const modal = document.getElementById('pipeline-policy-modal');
+    if (modal) modal.style.display = 'none';
+  },
+
+  switchPolicyTab(policyKey) {
+    const tabs = ['refunds', 'shipping', 'privacy', 'terms'];
+    tabs.forEach(t => {
+      const btn = document.getElementById(`policy-tab-${t}`);
+      if (btn) {
+        if (t === policyKey) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+    });
+
+    const titleEl = document.getElementById('policy-modal-title');
+    const contentEl = document.getElementById('policy-modal-content');
+    if (!contentEl) return;
+
+    const policies = {
+      refunds: {
+        title: '30-Day Transit & Quality Guarantee',
+        html: `
+          <h2>1. 30-Day Unconditional Quality Guarantee</h2>
+          <p>Every piece engineered and dispatched by Nyxeris is backed by our strict 30-day satisfaction commitment. If you are not entirely satisfied with the craftsmanship, material density, or ergonomic performance of your gear, you may initiate a return or exchange within 30 calendar days of confirmed carrier delivery.</p>
+          <div style="background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 8px; padding: 16px; margin: 16px 0;">
+            <p style="margin: 0; color: #e0f2fe;"><strong>Instant Courier Protection:</strong> In the unlikely event that your parcel sustains transit damage or gets stalled, our Concierge team immediately dispatches a replacement without requiring you to wait for long carrier investigations.</p>
+          </div>
+          <h2>2. Direct Concierge Resolution</h2>
+          <p>Contact <strong>concierge@nyxeris.com</strong> with your Nyxeris Order ID (e.g. <code>NYX-1A2B3C4D5E6F</code>) or lookup your order in the Client Privileges account modal for instant 12-hour resolution.</p>
+        `
+      },
+      shipping: {
+        title: 'Shipping & Insured Logistics Policy',
+        html: `
+          <h2>1. Global Express Logistics</h2>
+          <p>Nyxeris dispatches via tier-one express logistics networks (USPS Priority, DHL Express, FedEx Air, and Royal Mail) with full transit insurance.</p>
+          <ul>
+            <li><strong>Continental US:</strong> $14.99 Priority Courier (Free on orders $120+). 4 to 8 business days.</li>
+            <li><strong>UK & Europe:</strong> $16.99 Tracked Air Courier (VAT prepaid). 6 to 10 business days.</li>
+            <li><strong>Worldwide:</strong> $19.99 Worldwide Insured Express. 7 to 12 business days.</li>
+          </ul>
+          <h2>2. Premium Bespoke Unboxing ($2.99)</h2>
+          <p>Customers may opt for the Nyxeris Signature Packaging Box at checkout, featuring dual-density foam shock dampening and a serialized metallic authenticity certificate card.</p>
+        `
+      },
+      privacy: {
+        title: 'Privacy & Data Protection Policy',
+        html: `
+          <h2>1. Privacy-First Architecture</h2>
+          <p>Nyxeris does not sell, rent, or monetize your personal information or purchase history with third-party advertising brokers under any circumstances.</p>
+          <h2>2. Level 1 PCI-DSS Payment Tokenization</h2>
+          <p>All transactions are tokenized via Whop Payments and Stripe with AES-256 bank-level encryption. Nyxeris never stores raw credit card numbers on our servers.</p>
+          <h2>3. GDPR & CCPA Compliance</h2>
+          <p>You maintain full ownership of your data and can request complete account profile export or permanent erasure by emailing <strong>privacy@nyxeris.com</strong>.</p>
+        `
+      },
+      terms: {
+        title: 'Terms of Service & Purchase Agreement',
+        html: `
+          <h2>1. Commercial Purchase Agreement</h2>
+          <p>By placing an order on Nyxeris, you enter into a verified purchase agreement backed by our official serialized tax receipts and automated carrier dispatch notifications.</p>
+          <h2>2. Precision Machining & Material Tolerances</h2>
+          <p>All specifications are laboratory-calibrated. Microscopic variations in CNC anodization tone, natural vegan leather texture, or Hall Effect switch magnetic thresholds reflect the artisanal nature of our hardware.</p>
+          <h2>3. Governing Jurisdiction</h2>
+          <p>Commercial transactions are governed by standard international electronic commerce consumer protection conventions.</p>
+        `
+      }
+    };
+
+    const pol = policies[policyKey] || policies.refunds;
+    if (titleEl) titleEl.textContent = pol.title;
+    contentEl.innerHTML = pol.html;
   },
 
   selectVariant(productId, variantName, btnElement) {
@@ -1002,7 +1270,7 @@ const NyxerisStore = {
 
         drawerContainer.innerHTML = this.cart.map((item, idx) => `
           <div class="cart-item-row">
-            <img src="${item.image_url}" alt="${item.title}" class="cart-item-thumb" />
+            <img src="${item.image_url}" alt="${item.title}" class="cart-item-thumb" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
             <div class="cart-item-info">
               <h4 class="cart-item-title">${item.title}</h4>
               ${item.variant_title ? `<span class="cart-item-variant">${item.variant_title}</span>` : ''}
@@ -2019,7 +2287,7 @@ const NyxerisStore = {
     return `
       <div class="pipeline-product-card" data-product-id="${prod.id}">
         <div class="pipeline-card-thumb">
-          <img src="${prod.image_url}" alt="${prod.title}" class="pipeline-card-img" loading="lazy" onclick="NyxerisStore.openQuickView('${prod.id}')" />
+          <img src="${prod.image_url}" alt="${prod.title}" class="pipeline-card-img" loading="lazy" onclick="NyxerisStore.openQuickView('${prod.id}')" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
           <span class="pipeline-card-badge">${prod.stock_count > 0 ? 'IN STOCK' : 'LIMITED BATCH'}</span>
           <button type="button" class="pipeline-quick-hover-btn" onclick="NyxerisStore.quickAdd('${prod.id}')">+ QUICK ADD</button>
         </div>
@@ -2115,7 +2383,7 @@ const NyxerisStore = {
 
     card.innerHTML = `
       <div style="font-family: var(--font-nav); font-size: 11px; font-weight: 600; color: #767676; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 8px;">CURATED PIECE [${idx + 1}/4]</div>
-      <img src="${currentImg}" alt="${currentTitle}" style="width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 2px; margin: 10px 0 14px; border: 1px solid #e8e8e8;" />
+      <img src="${currentImg}" alt="${currentTitle}" style="width: 100%; aspect-ratio: 16/10; object-fit: cover; border-radius: 2px; margin: 10px 0 14px; border: 1px solid #e8e8e8;" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
       <div style="font-family: var(--font-nav); font-size: 10.5px; font-weight: 600; color: #767676; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px;">${data.kicker}</div>
       <h3 style="font-family: var(--font-serif); font-size: 18px; font-weight: 400; color: #1f1919; margin-bottom: 6px; line-height: 1.35;">${currentTitle}</h3>
       <div style="font-family: var(--font-nav); font-size: 15px; font-weight: 600; color: #1f1919; margin-bottom: 12px;">
@@ -2233,7 +2501,7 @@ const NyxerisStore = {
       ${!q ? `<div style="font-size: 11px; font-family: var(--font-nav); font-weight: 600; color: #767676; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px;">SUGGESTED PRODUCTS</div>` : ''}
       ${matches.map(p => `
         <div class="search-result-row" onclick="NyxerisStore.openQuickView('${p.id}'); NyxerisStore.closeSearchModal();" style="display: flex; align-items: center; gap: 16px; padding: 12px; border-radius: 2px; cursor: pointer; transition: background 0.15s ease; border-bottom: 1px solid #e8e8e8;">
-          <img src="${p.image_url}" alt="${p.title}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 2px; border: 1px solid #e8e8e8;" />
+          <img src="${p.image_url}" alt="${p.title}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 2px; border: 1px solid #e8e8e8;" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
           <div style="flex: 1; min-width: 0;">
             <div style="font-size: 10px; color: #767676; font-family: var(--font-nav); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px;">${p.category || 'Curated Goods'}</div>
             <div style="font-size: 13.5px; font-weight: 500; color: #1f1919; font-family: var(--font-sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.title}</div>

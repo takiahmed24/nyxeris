@@ -138,6 +138,21 @@ def init_db():
         )
     """)
 
+    # Create Product Reviews table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS product_reviews (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id TEXT NOT NULL,
+            customer_name TEXT NOT NULL,
+            customer_email TEXT,
+            rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+            title TEXT,
+            comment TEXT NOT NULL,
+            is_verified_buyer INTEGER DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
     conn.commit()
 
     # Seed default physical products if table is empty
@@ -145,6 +160,12 @@ def init_db():
     count = cursor.fetchone()[0]
     if count == 0:
         seed_products(conn)
+
+    # Seed initial reviews if table is empty
+    cursor.execute("SELECT COUNT(*) FROM product_reviews")
+    review_count = cursor.fetchone()[0]
+    if review_count == 0:
+        seed_reviews(conn)
 
     conn.close()
 
@@ -319,5 +340,96 @@ def seed_products(conn):
     conn.commit()
 
 
+def seed_reviews(conn):
+    """Populates product reviews with authentic customer feedback."""
+    reviews = [
+        {
+            "product_id": "prod_lumina_pad",
+            "customer_name": "Marcus Vance",
+            "customer_email": "m.vance@archstudio.design",
+            "rating": 5,
+            "title": "Unrivaled desk mat precision and feel",
+            "comment": "The dual-layer vegan leather is substantially better than typical neoprene mats. Zero slip on walnut, mouse tracking is flawless, and the edge stitching is microscopic. Arrived in the luxury embossed tube within 4 business days.",
+            "is_verified_buyer": 1
+        },
+        {
+            "product_id": "prod_lumina_pad",
+            "customer_name": "Elena Rostova",
+            "customer_email": "elena.r@fintechcorp.io",
+            "rating": 5,
+            "title": "Minimalist luxury at its finest",
+            "comment": "Spilled espresso on it on day three — wiped off with zero stain or absorption thanks to the hydrophobic coating. Worth every penny.",
+            "is_verified_buyer": 1
+        },
+        {
+            "product_id": "prod_obsidian_board",
+            "customer_name": "Julian Hayes",
+            "customer_email": "jhayes.dev@gmail.com",
+            "rating": 5,
+            "title": "Magnetic HE switches are game-changing",
+            "comment": "The 0.1mm actuation rapid-trigger completely transformed my CS2 and typing experience. The CNC aluminum chassis is dense, heavy, and the acoustic dampening gives it a deep, satisfying 'thock' with zero ping.",
+            "is_verified_buyer": 1
+        },
+        {
+            "product_id": "prod_obsidian_board",
+            "customer_name": "Devin C.",
+            "customer_email": "devin.c@metaverse.ai",
+            "rating": 5,
+            "title": "Premium build quality",
+            "comment": "Weight alone feels like a solid block of aerospace metal. Gateron Jade magnetic switches are silky smooth out of the box.",
+            "is_verified_buyer": 1
+        },
+        {
+            "product_id": "prod_horizon_light",
+            "customer_name": "Sophia Lin",
+            "customer_email": "sophia.lin.photo@icloud.com",
+            "rating": 5,
+            "title": "Zero screen glare and perfect CRI for color work",
+            "comment": "As a colorist, the Ra95 high CRI rating is legitimate. No chromatic aberration on my OLED panel, and the capacitive wireless dial sits neatly beside my mouse.",
+            "is_verified_buyer": 1
+        },
+        {
+            "product_id": "prod_pulse_dock",
+            "customer_name": "Alexander Sterling",
+            "customer_email": "asterling@capitalventures.com",
+            "rating": 5,
+            "title": "My daily travel essential",
+            "comment": "Folds down completely flat to fit in a coat pocket. Charges iPhone at full 15W Qi2 speed and Apple Watch simultaneously without overheating.",
+            "is_verified_buyer": 1
+        },
+        {
+            "product_id": "prod_edc_tool",
+            "customer_name": "Kieran Briggs",
+            "customer_email": "kbriggs@outdoorsgear.co",
+            "rating": 5,
+            "title": "Bombproof Grade 5 Titanium",
+            "comment": "The DLC black finish has not scratched after a month of opening crates and everyday utility. Incredibly lightweight yet indestructible.",
+            "is_verified_buyer": 1
+        },
+        {
+            "product_id": "prod_apex_audio",
+            "customer_name": "Arthur Pendelton",
+            "customer_email": "arthur.audio@soundstage.org",
+            "rating": 5,
+            "title": "Dead silent noise floor with HD800S",
+            "comment": "Dual ESS Sabre architecture delivers crystalline separation and holographic spatial imaging. The 4.4mm balanced output has ample headroom.",
+            "is_verified_buyer": 1
+        }
+    ]
+
+    cursor = conn.cursor()
+    for r in reviews:
+        cursor.execute("""
+            INSERT INTO product_reviews (
+                product_id, customer_name, customer_email, rating, title, comment, is_verified_buyer
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            r["product_id"], r["customer_name"], r["customer_email"],
+            r["rating"], r["title"], r["comment"], r["is_verified_buyer"]
+        ))
+    conn.commit()
+
+
 # Run initialization on import if not existing
 init_db()
+

@@ -297,7 +297,7 @@
           <!-- Card 3 -->
           <div class="pipeline-collection-card" onclick="NyxerisStore.selectCategoryFromNav('Mechanical & Audio')">
             <div class="pipeline-col-img-wrap">
-              <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&auto=format&fit=crop&q=80" alt="Audio & Tech" class="pipeline-col-img" />
+              <img src="https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&auto=format&fit=crop&q=80" alt="Audio & Tech" class="pipeline-col-img" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
               <div class="pipeline-col-scrim"></div>
             </div>
             <div class="pipeline-col-content">
@@ -764,10 +764,11 @@
             <h4 class="pipeline-footer-heading">CUSTOMER CARE</h4>
             <ul class="pipeline-footer-links">
               <li><a href="javascript:void(0)" onclick="NyxerisStore.openAccountModal('lookup')">Track Your Order (USPS / CJ)</a></li>
-              <li><a href="#signature-collection">30-Day Satisfaction Guarantee</a></li>
+              <li><a href="/policies/refunds" onclick="event.preventDefault(); NyxerisStore.openPolicyModal('refunds')">30-Day Transit Guarantee</a></li>
+              <li><a href="/policies/shipping" onclick="event.preventDefault(); NyxerisStore.openPolicyModal('shipping')">Shipping & Insured Transit</a></li>
+              <li><a href="/policies/privacy" onclick="event.preventDefault(); NyxerisStore.openPolicyModal('privacy')">Privacy & Data Policy</a></li>
+              <li><a href="/policies/terms" onclick="event.preventDefault(); NyxerisStore.openPolicyModal('terms')">Terms of Service</a></li>
               <li><a href="/admin">Raydrim Dropshipping Cockpit</a></li>
-              <li><a href="/themes">Shopify Themes Engine</a></li>
-              <li><a href="javascript:void(0)" onclick="NyxerisStore.openCheckoutModal()">Direct Storefront Checkout</a></li>
             </ul>
           </div>
 
@@ -1026,6 +1027,28 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- Pipeline Storefront Policy Modal -->
+    <div class="pipeline-policy-modal-overlay" id="pipeline-policy-modal" style="display: none;">
+      <div class="pipeline-policy-modal-card">
+        <div class="policy-modal-header">
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-cyan);">Official Policy</span>
+            <h3 id="policy-modal-title" style="margin: 0; font-size: 18px; font-weight: 600; color: #ffffff;">Store Policies</h3>
+          </div>
+          <button type="button" class="btn-close-account" onclick="NyxerisStore.closePolicyModal()">✕</button>
+        </div>
+        <div class="policy-modal-nav">
+          <button type="button" class="policy-modal-tab-btn active" id="policy-tab-refunds" onclick="NyxerisStore.switchPolicyTab('refunds')">30-Day Guarantee</button>
+          <button type="button" class="policy-modal-tab-btn" id="policy-tab-shipping" onclick="NyxerisStore.switchPolicyTab('shipping')">Shipping & Logistics</button>
+          <button type="button" class="policy-modal-tab-btn" id="policy-tab-privacy" onclick="NyxerisStore.switchPolicyTab('privacy')">Privacy Policy</button>
+          <button type="button" class="policy-modal-tab-btn" id="policy-tab-terms" onclick="NyxerisStore.switchPolicyTab('terms')">Terms of Service</button>
+        </div>
+        <div class="policy-modal-content" id="policy-modal-content">
+          <!-- Populated dynamically via store.js -->
+        </div>
       </div>
     </div>
 

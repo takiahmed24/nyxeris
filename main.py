@@ -118,6 +118,173 @@ async def local_tf_ajax():
     return {"status": "success", "message": "Action recorded locally"}
 
 
+@app.get("/policies/refunds", response_class=HTMLResponse)
+async def policy_refunds_page(request: Request):
+    """Renders the official Nyxeris 30-Day Transit & Quality Guarantee."""
+    html_content = """
+    <h2>1. 30-Day Unconditional Quality Guarantee</h2>
+    <p>Every piece engineered and dispatched by Nyxeris is backed by our strict 30-day satisfaction commitment. If you are not entirely satisfied with the craftsmanship, material density, or ergonomic performance of your gear, you may initiate a return or exchange within 30 calendar days of confirmed carrier delivery.</p>
+    
+    <div class="guarantee-grid">
+      <div class="guarantee-item">
+        <div class="guarantee-item-title">Zero Hassle Returns</div>
+        <p class="guarantee-item-desc">30 days from delivery date to inspect, test, and verify fit in your setup.</p>
+      </div>
+      <div class="guarantee-item">
+        <div class="guarantee-item-title">Immediate Replacement</div>
+        <p class="guarantee-item-desc">Transit damage or defect? We ship an express replacement before return pickup.</p>
+      </div>
+      <div class="guarantee-item">
+        <div class="guarantee-item-title">3-5 Day Payouts</div>
+        <p class="guarantee-item-desc">Refunds routed directly to your original payment card via Whop Secure Gateway.</p>
+      </div>
+    </div>
+
+    <h2>2. Damaged or Lost in Transit Protection</h2>
+    <p>All Nyxeris shipments travel under fully insured carrier manifests. In the unlikely event that your parcel sustains damage during air courier transit or fails to show carrier movement past 15 business days, our Concierge team immediately dispatches a brand-new unit at no additional cost or issues a 100% full refund.</p>
+
+    <div class="highlight-box">
+      <p><strong>To report an issue:</strong> Contact <strong>concierge@nyxeris.com</strong> or your Account Order Portal with your 12-digit Nyxeris Order ID (e.g. <code>NYX-1A2B3C4D5E6F</code>) and our dispatch team will resolve your request within 12 hours.</p>
+    </div>
+
+    <h2>3. Return Eligibility Requirements</h2>
+    <ul>
+      <li>Item must remain in pristine functional condition with original serialized parts.</li>
+      <li>Packaging should include original inner protective sleeves and bundled accessories.</li>
+      <li>Custom bespoke engraved pieces are subject to a standard re-polishing deduction unless defective.</li>
+    </ul>
+
+    <h2>4. Refund Processing Window</h2>
+    <p>Once your returned item arrives at our inspection depot, your refund is credited within 3-5 business days. Your banking institution will reflect the credit according to standard processing times.</p>
+    """
+    return templates.TemplateResponse(
+        request=request,
+        name="policy_page.html",
+        context={
+            "policy_title": "30-Day Transit & Quality Guarantee",
+            "policy_badge": "Guaranteed Satisfaction",
+            "active_policy": "refunds",
+            "policy_html": html_content
+        }
+    )
+
+
+@app.get("/policies/shipping", response_class=HTMLResponse)
+async def policy_shipping_page(request: Request):
+    """Renders the official Nyxeris Priority Shipping & Delivery Policy."""
+    html_content = """
+    <h2>1. Dispatch & Courier Networks</h2>
+    <p>Nyxeris partners exclusively with tier-one express logistics networks (USPS Priority, DHL Express, FedEx Air, and Royal Mail) to ensure that your precision workspace hardware reaches your desk quickly and unharmed.</p>
+
+    <div class="guarantee-grid">
+      <div class="guarantee-item">
+        <div class="guarantee-item-title">Continental United States</div>
+        <p class="guarantee-item-desc"><strong>$14.99</strong> Flat Priority Courier (Free on orders $120+). 4 to 8 business days.</p>
+      </div>
+      <div class="guarantee-item">
+        <div class="guarantee-item-title">United Kingdom & Europe</div>
+        <p class="guarantee-item-desc"><strong>$16.99</strong> Tracked Air Courier (VAT prepaid). 6 to 10 business days.</p>
+      </div>
+      <div class="guarantee-item">
+        <div class="guarantee-item-title">Rest of World</div>
+        <p class="guarantee-item-desc"><strong>$19.99</strong> Worldwide Insured Express. 7 to 12 business days.</p>
+      </div>
+    </div>
+
+    <h2>2. Processing & Fulfillment Timelines</h2>
+    <p>All in-stock orders are processed, quality-inspected, and dispatched within 24 to 48 business hours. As soon as your shipment leaves our facility, you will receive an automated dispatch notification with your real-time tracking number and carrier link.</p>
+
+    <h2>3. Premium Bespoke Unboxing ($2.99)</h2>
+    <p>Customers may opt for the <strong>Nyxeris Signature Protective Box</strong> at checkout. This includes dual-density high-rebound foam cushioning, water-repellent matte obsidian sleeve, and an individualized metallic authenticity certificate card.</p>
+
+    <h2>4. Customs, Duties & Tariffs</h2>
+    <p>For US, UK, and EU orders, customs and duties are handled and cleared prior to doorstep arrival. For destinations subject to local import declarations, carrier brokers will contact you directly to facilitate clearance without warehouse delays.</p>
+    """
+    return templates.TemplateResponse(
+        request=request,
+        name="policy_page.html",
+        context={
+            "policy_title": "Shipping & Insured Transit Policy",
+            "policy_badge": "Global Logistics",
+            "active_policy": "shipping",
+            "policy_html": html_content
+        }
+    )
+
+
+@app.get("/policies/privacy", response_class=HTMLResponse)
+async def policy_privacy_page(request: Request):
+    """Renders the official Nyxeris Privacy & Data Protection Policy."""
+    html_content = """
+    <h2>1. Our Privacy Philosophy</h2>
+    <p>Nyxeris operates under a strict privacy-first architecture. We do not sell, rent, or trade your personal information, browsing history, or payment credentials to third-party advertising brokers under any circumstances.</p>
+
+    <h2>2. Data Collection & Use</h2>
+    <p>We collect only the minimum information necessary to execute and fulfill your hardware orders:</p>
+    <ul>
+      <li><strong>Contact Information:</strong> Full name and email address to send digital receipts, order tracking updates, and account credentials.</li>
+      <li><strong>Shipping Address:</strong> Street, city, state/province, and postal code required by couriers for physical delivery.</li>
+      <li><strong>Session & Security Data:</strong> Cryptographic session tokens and authentication tokens to keep your account secure.</li>
+    </ul>
+
+    <h2>3. Payment Security & PCI-DSS Compliance</h2>
+    <p>Nyxeris never touches or stores raw credit card numbers or banking secrets on our servers. All financial transactions are tokenized and processed through Whop Payments and Stripe infrastructure, adhering to Level 1 PCI-DSS compliance and AES-256 end-to-end encryption.</p>
+
+    <h2>4. GDPR & CCPA Rights</h2>
+    <p>Under global data privacy frameworks (including the European General Data Protection Regulation and California Consumer Privacy Act), you retain full rights to:</p>
+    <ul>
+      <li>Request an export of all personal data tied to your email account.</li>
+      <li>Request permanent erasure of customer profiles and delivery logs.</li>
+      <li>Opt-out of product update and engineering journal newsletters at any time.</li>
+    </ul>
+
+    <div class="highlight-box">
+      <p>To exercise your privacy rights or request data erasure, contact our Data Protection Officer at <strong>privacy@nyxeris.com</strong>.</p>
+    </div>
+    """
+    return templates.TemplateResponse(
+        request=request,
+        name="policy_page.html",
+        context={
+            "policy_title": "Privacy & Data Protection Policy",
+            "policy_badge": "Privacy-First Architecture",
+            "active_policy": "privacy",
+            "policy_html": html_content
+        }
+    )
+
+
+@app.get("/policies/terms", response_class=HTMLResponse)
+async def policy_terms_page(request: Request):
+    """Renders the official Nyxeris Terms of Service."""
+    html_content = """
+    <h2>1. Agreement to Terms</h2>
+    <p>By accessing the Nyxeris storefront, creating an account, or placing an order for hardware, you agree to be bound by these Terms of Service and all applicable international trade regulations.</p>
+
+    <h2>2. Orders & Commercial Transactions</h2>
+    <p>All orders placed through our digital storefront represent an offer to purchase. Acceptance occurs upon dispatch notification and generation of your official serialized Nyxeris PDF tax receipt. We reserve the right to decline or cancel orders exhibiting anomalous fraud flags or automated bot purchasing activity.</p>
+
+    <h2>3. Product Descriptions & Specifications</h2>
+    <p>We endeavor to present dimensions, finishes, anodization coatings, and magnetic switch specifications with laboratory accuracy. Minor tolerances inherent to CNC machining, natural vegan leather grain, or monitor display color gamuts are normal.</p>
+
+    <h2>4. Limitation of Liability</h2>
+    <p>To the maximum extent permitted by applicable law, Nyxeris and its suppliers shall not be liable for any indirect, incidental, or consequential damages resulting from the use or inability to use our physical hardware.</p>
+
+    <h2>5. Governing Law & Dispute Resolution</h2>
+    <p>These terms shall be governed by and construed in accordance with the laws governing commercial electronic trade, without giving effect to conflict of law principles. Any dispute arising under these terms shall be settled via direct concierge mediation before arbitration.</p>
+    """
+    return templates.TemplateResponse(
+        request=request,
+        name="policy_page.html",
+        context={
+            "policy_title": "Terms of Service",
+            "policy_badge": "Commercial Agreement",
+            "active_policy": "terms",
+            "policy_html": html_content
+        }
+    )
+
+
 @app.get("/order-confirmation/{order_id}", response_class=HTMLResponse)
 async def order_confirmation_page(request: Request, order_id: str):
     """Renders customer order confirmation and tracking with one-click Nyxeris PDF receipt download."""
