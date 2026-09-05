@@ -1300,6 +1300,31 @@ const NyxerisStore = {
     if (overlay) overlay.classList.remove('open');
   },
 
+  openMobileNav() {
+    const drawer = document.getElementById('pipeline-mobile-drawer');
+    const overlay = document.getElementById('pipeline-mobile-overlay');
+    if (drawer) drawer.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  },
+
+  closeMobileNav() {
+    const drawer = document.getElementById('pipeline-mobile-drawer');
+    const overlay = document.getElementById('pipeline-mobile-overlay');
+    if (drawer) drawer.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  },
+
+  toggleMobileFilters() {
+    const sidebar = document.getElementById('catalog-sidebar-filters');
+    const btn = document.getElementById('mobile-filter-toggle-btn');
+    if (sidebar) {
+      sidebar.classList.toggle('mobile-open');
+      if (btn) btn.classList.toggle('active');
+    }
+  },
+
   openCheckoutModal() {
     if (this.cart.length === 0) return;
     this.closeCart();

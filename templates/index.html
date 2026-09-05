@@ -51,6 +51,14 @@
     <!-- 2. Minimalist Editorial Header -->
     <header class="pipeline-header">
       <div class="pipeline-header-container">
+        <button type="button" class="pipeline-mobile-menu-btn" onclick="NyxerisStore.openMobileNav()" aria-label="Open Navigation Menu">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+
         <nav class="pipeline-nav-left">
           <a href="#catalog" class="pipeline-nav-link">SHOP</a>
           <a href="#lookbook-studio" class="pipeline-nav-link">LOOKBOOKS</a>
@@ -67,16 +75,16 @@
         </div>
 
         <div class="pipeline-actions-right">
-          <button type="button" class="pipeline-action-btn" id="btn-header-account" onclick="NyxerisStore.openAccountModal()">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <button type="button" class="pipeline-action-btn pipeline-account-btn" id="btn-header-account" onclick="NyxerisStore.openAccountModal()" aria-label="My Account">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span class="pipeline-action-label" id="pipeline-account-label">My Account</span>
           </button>
-          <button type="button" class="pipeline-action-btn" onclick="NyxerisStore.openSearchModal()">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <button type="button" class="pipeline-action-btn pipeline-search-btn" onclick="NyxerisStore.openSearchModal()" aria-label="Search Catalog">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <span class="pipeline-action-label">Search</span>
           </button>
-          <button type="button" class="pipeline-cart-trigger" onclick="NyxerisStore.openCart()">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <button type="button" class="pipeline-cart-trigger" onclick="NyxerisStore.openCart()" aria-label="View Shopping Cart">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             <span class="pipeline-cart-text">Cart</span>
             <span class="pipeline-cart-total" id="header-cart-total">$0.00</span>
             <span class="pipeline-cart-count" id="header-cart-count">(0)</span>
@@ -84,6 +92,68 @@
         </div>
       </div>
     </header>
+
+    <!-- Mobile Navigation Drawer Overlay & Drawer -->
+    <div class="pipeline-mobile-overlay" id="pipeline-mobile-overlay" onclick="NyxerisStore.closeMobileNav()"></div>
+    <aside class="pipeline-mobile-drawer" id="pipeline-mobile-drawer" aria-label="Mobile Navigation">
+      <div class="pipeline-mobile-drawer-header">
+        <div class="pipeline-mobile-drawer-logo">
+          <span class="pipeline-brand-title">NYXERIS</span>
+          <span class="pipeline-brand-sub">CURATED MODERN GOODS</span>
+        </div>
+        <button type="button" class="pipeline-mobile-drawer-close" onclick="NyxerisStore.closeMobileNav()" aria-label="Close Navigation Menu">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <nav class="pipeline-mobile-nav-links">
+        <a href="#catalog" class="pipeline-mobile-nav-item" onclick="NyxerisStore.closeMobileNav()">
+          <span>SHOP ALL CATALOG</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="#signature-collection" class="pipeline-mobile-nav-item" onclick="NyxerisStore.closeMobileNav()">
+          <span>SIGNATURE SELECTION</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="#top-collections" class="pipeline-mobile-nav-item" onclick="NyxerisStore.closeMobileNav()">
+          <span>CURATED COLLECTIONS</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="#lookbook-studio" class="pipeline-mobile-nav-item" onclick="NyxerisStore.closeMobileNav()">
+          <span>EDITORIAL LOOKBOOKS</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="#reviews-section" class="pipeline-mobile-nav-item" onclick="NyxerisStore.closeMobileNav()">
+          <span>VERIFIED REVIEWS (828)</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="#about-studio" class="pipeline-mobile-nav-item" onclick="NyxerisStore.closeMobileNav()">
+          <span>ABOUT NYXERIS</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a href="#footer-contact" class="pipeline-mobile-nav-item" onclick="NyxerisStore.closeMobileNav()">
+          <span>CLIENT CONCIERGE & SUPPORT</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </nav>
+
+      <div class="pipeline-mobile-drawer-footer">
+        <button type="button" class="pipeline-mobile-action-card" onclick="NyxerisStore.closeMobileNav(); NyxerisStore.openAccountModal('signin')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <div class="card-text-wrap">
+            <div class="card-title">Member Sign In</div>
+            <div class="card-sub">Access order history & preferences</div>
+          </div>
+        </button>
+        <button type="button" class="pipeline-mobile-action-card" onclick="NyxerisStore.closeMobileNav(); NyxerisStore.openAccountModal('lookup')">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <div class="card-text-wrap">
+            <div class="card-title">Track Order</div>
+            <div class="card-sub">Instant tracking via Nyxeris Order ID</div>
+          </div>
+        </button>
+      </div>
+    </aside>
 
     <!-- 3. Curated Modern Goods Hero -->
     <section class="pipeline-hero" id="overview">
@@ -336,8 +406,29 @@
       </div>
 
       <div class="catalog-two-col-layout">
+        <!-- Mobile Filter Toggle Bar -->
+        <div class="mobile-filter-bar">
+          <button type="button" class="mobile-filter-toggle-btn" onclick="NyxerisStore.toggleMobileFilters()" id="mobile-filter-toggle-btn" aria-label="Toggle Product Filters">
+            <span class="mobile-filter-btn-left">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="4" y1="21" x2="4" y2="14"/>
+                <line x1="4" y1="10" x2="4" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12" y2="3"/>
+                <line x1="20" y1="21" x2="20" y2="16"/>
+                <line x1="20" y1="12" x2="20" y2="3"/>
+                <line x1="1" y1="14" x2="7" y2="14"/>
+                <line x1="9" y1="8" x2="15" y2="8"/>
+                <line x1="17" y1="16" x2="23" y2="16"/>
+              </svg>
+              <span>Filters & Refinements</span>
+            </span>
+            <span class="mobile-filter-chevron" id="mobile-filter-chevron">▾</span>
+          </button>
+        </div>
+
         <!-- Left Faceted Filter Rail (Best Buy Style) -->
-        <aside class="catalog-sidebar-filters">
+        <aside class="catalog-sidebar-filters" id="catalog-sidebar-filters">
           <div class="filter-card filter-header-card">
             <span class="filter-main-title">Filters</span>
             <button type="button" class="btn-reset-filters" onclick="NyxerisStore.resetAllFilters()">Reset All</button>
