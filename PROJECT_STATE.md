@@ -82,6 +82,7 @@
     * Configured **Dashboard Path**: `/dashboard/[companyId]` so creators installing the app can launch their merchant dashboard directly within Whop.
     * Configured **Discover Path**: `/discover` mapped to product catalog and app store showcase.
     * Categorized as **B2B app** for business creators.
+    * **App Store Showcase Gallery**: Replaced old UI screenshots with user's high-res 16:9 marketing graphics ("CJdropshipping Fulfillment for Whop - Source globally..." and "From Creators to the World - Global Logistics...").
     * App Store Description updated with transparent pricing disclosures and direct links to Privacy Policy (`https://3.91.100.74.sslip.io/privacy`) and Terms of Service (`https://3.91.100.74.sslip.io/terms`).
   * **Code Verification & Deployment**:
     * Tested all legal and compliance routes with HTTP 200 responses.
