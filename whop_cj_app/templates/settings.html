@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Settings - CJ Dropshipping for Whop{% endblock %}
+{% block title %}Settings - CJdropshipping: Sourcing, Dropshipping & Fulfillment{% endblock %}
 
 {% block content %}
 
@@ -80,13 +80,13 @@
 
     <div class="form-group">
       <label class="form-label">Whop Company ID</label>
-      <input type="text" class="form-control" value="{{ company_id }}" readonly style="background-color: #061111; color: var(--status-cyan); font-family: monospace;">
+      <input type="text" class="form-control" value="{{ company_id }}" readonly style="background-color: var(--bg-panel-alt); color: var(--status-cyan); font-family: monospace;">
       <span class="form-sublabel">Identifies your store inside this SaaS instance</span>
     </div>
 
     <div class="form-group">
       <label class="form-label">Your Store's Dedicated Webhook URL</label>
-      <input type="text" class="form-control" value="{{ webhook_url }}" readonly style="background-color: #061111; color: var(--status-cyan); font-family: monospace;">
+      <input type="text" class="form-control" value="{{ webhook_url }}" readonly style="background-color: var(--bg-panel-alt); color: var(--status-cyan); font-family: monospace;">
       <span class="form-sublabel">Add this URL into your Whop Dashboard &rarr; Developer &rarr; Webhooks (Events: payment.succeeded)</span>
     </div>
 
@@ -103,7 +103,7 @@
     </div>
 
     <!-- Monetization & Trial Status -->
-    <div style="background-color: #061111; border: 1px solid var(--border-line); padding: 14px; margin-top: 14px;">
+    <div style="background-color: var(--bg-panel-alt); border: 1px solid var(--border-line); padding: 14px; margin-top: 14px; border-radius: var(--radius-sm);">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
           <div style="font-weight: 600; color: var(--text-bright); font-size: 13px;">Billed through Whop: $5.00/month</div>

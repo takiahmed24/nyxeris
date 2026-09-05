@@ -66,24 +66,130 @@ class CJApiClient:
             log_event("cj_auth", "error", f"Exception contacting CJ API: {str(e)}", company_id=company_id or "default")
             return None
 
-    async def search_products(self, query: str, page: int = 1, size: int = 10) -> List[Dict[str, Any]]:
+    # Mock Sandbox Catalog for Development and Initial Setup
+    SANDBOX_CATALOG = [
+        {
+            "pid": "CJ-PID-WATCH-01",
+            "productName": "Minimalist Mechanical Automatic Watch",
+            "productSku": "CJ-SKU-WATCH-BASE",
+            "productImage": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
+            "sellPrice": "24.50",
+            "description": "Crafted from 316L surgical-grade stainless steel with sapphire crystal glass and automatic mechanical movement. Water resistant to 50M.",
+            "categoryName": "Watches & Jewelry",
+            "variants": [
+                {"vid": "CJ-VAR-WATCH-01", "variantSku": "CJ-WATCH-SLV", "variantName": "Silver Mesh / 40mm", "variantPrice": "24.50", "variantImage": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400"},
+                {"vid": "CJ-VAR-WATCH-02", "variantSku": "CJ-WATCH-BLK", "variantName": "Matte Obsidian / 40mm", "variantPrice": "26.50", "variantImage": "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=400"},
+                {"vid": "CJ-VAR-WATCH-03", "variantSku": "CJ-WATCH-RSG", "variantName": "Rose Gold / Leather", "variantPrice": "28.00", "variantImage": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400"}
+            ]
+        },
+        {
+            "pid": "CJ-PID-HOODIE-02",
+            "productName": "Heavyweight 450GSM Oversized Hoodie",
+            "productSku": "CJ-SKU-HOOD-BASE",
+            "productImage": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=600&auto=format&fit=crop&q=80",
+            "sellPrice": "18.20",
+            "description": "Pre-shrunk 100% organic cotton fleece with double-needle ribbed binding, drop-shoulder silhouette, and hidden kangaroo pocket.",
+            "categoryName": "Apparel",
+            "variants": [
+                {"vid": "CJ-VAR-HOOD-01", "variantSku": "CJ-HOOD-BLK-L", "variantName": "Pitch Black - Large", "variantPrice": "18.20", "variantImage": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400"},
+                {"vid": "CJ-VAR-HOOD-02", "variantSku": "CJ-HOOD-BLK-XL", "variantName": "Pitch Black - XL", "variantPrice": "18.20", "variantImage": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400"},
+                {"vid": "CJ-VAR-HOOD-03", "variantSku": "CJ-HOOD-GRY-L", "variantName": "Heather Gray - Large", "variantPrice": "18.20", "variantImage": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400"}
+            ]
+        },
+        {
+            "pid": "CJ-PID-GLASSES-03",
+            "productName": "Titanium Polarized UV400 Aviator Sunglasses",
+            "productSku": "CJ-SKU-AV-BASE",
+            "productImage": "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&auto=format&fit=crop&q=80",
+            "sellPrice": "11.80",
+            "description": "Ultra-light aerospace titanium frame, anti-glare TAC polarized lenses with 100% UVA/UVB protection and spring hinges.",
+            "categoryName": "Accessories",
+            "variants": [
+                {"vid": "CJ-VAR-AV-01", "variantSku": "CJ-AV-GUN", "variantName": "Gunmetal / Deep Smoke", "variantPrice": "11.80", "variantImage": "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400"},
+                {"vid": "CJ-VAR-AV-02", "variantSku": "CJ-AV-GLD", "variantName": "Brushed Gold / Amber", "variantPrice": "12.50", "variantImage": "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400"}
+            ]
+        },
+        {
+            "pid": "CJ-PID-EARBUDS-04",
+            "productName": "Active Noise-Cancelling True Wireless Earbuds",
+            "productSku": "CJ-SKU-ANC-BASE",
+            "productImage": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&auto=format&fit=crop&q=80",
+            "sellPrice": "16.50",
+            "description": "Hybrid active noise cancellation (-35dB), Bluetooth 5.3 low-latency mode, 32-hour total battery life with wireless charging case.",
+            "categoryName": "Consumer Electronics",
+            "variants": [
+                {"vid": "CJ-VAR-ANC-01", "variantSku": "CJ-ANC-BLK", "variantName": "Phantom Black", "variantPrice": "16.50", "variantImage": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400"},
+                {"vid": "CJ-VAR-ANC-02", "variantSku": "CJ-ANC-WHT", "variantName": "Glacier White", "variantPrice": "16.50", "variantImage": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400"}
+            ]
+        },
+        {
+            "pid": "CJ-PID-BAG-05",
+            "productName": "Weatherproof Cordura Modular Sling Bag",
+            "productSku": "CJ-SKU-SLING-BASE",
+            "productImage": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&auto=format&fit=crop&q=80",
+            "sellPrice": "13.90",
+            "description": "Indestructible 500D Cordura ballistic nylon with YKK Aquaguard zippers, magnetic Fidlock buckle, and padded tablet compartment.",
+            "categoryName": "Bags & Luggage",
+            "variants": [
+                {"vid": "CJ-VAR-SLING-01", "variantSku": "CJ-SLING-BLK", "variantName": "Stealth Black", "variantPrice": "13.90", "variantImage": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400"},
+                {"vid": "CJ-VAR-SLING-02", "variantSku": "CJ-SLING-OLV", "variantName": "Ranger Olive", "variantPrice": "13.90", "variantImage": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400"}
+            ]
+        }
+    ]
+
+    async def get_my_products(
+        self,
+        keyword: str = "",
+        page: int = 1,
+        size: int = 20,
+        company_id: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Queries products the merchant has sourced or saved in their personal CJ account."""
+        token = await self.get_access_token(company_id=company_id)
+        if not token:
+            # Return matching sandbox catalog items for offline testing
+            results = self.SANDBOX_CATALOG
+            if keyword:
+                kw = keyword.lower()
+                results = [p for p in results if kw in p["productName"].lower() or kw in p["productSku"].lower() or kw in p.get("categoryName", "").lower()]
+            return results
+
+        headers = {"CJ-Access-Token": token}
+        params = {"pageNum": page, "pageSize": size}
+        if keyword:
+            params["keyword"] = keyword
+
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                res = await client.get(f"{self.base_url}/product/myProduct/query", headers=headers, params=params)
+                if res.status_code == 200:
+                    data = res.json()
+                    if data.get("result"):
+                        items = data.get("data", {}).get("list", [])
+                        if items:
+                            return items
+                # Fallback to general list if myProduct returned empty
+                return await self.search_products(keyword, page, size, company_id=company_id)
+        except Exception as e:
+            logger.error(f"Error fetching my CJ products: {e}")
+            return [p for p in self.SANDBOX_CATALOG if not keyword or keyword.lower() in p["productName"].lower()]
+
+    async def search_products(
+        self,
+        query: str = "",
+        page: int = 1,
+        size: int = 20,
+        company_id: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """Searches CJ Dropshipping catalog for products and variants."""
-        token = await self.get_access_token()
+        token = await self.get_access_token(company_id=company_id)
         if not token:
             # Fallback simulated products for testing/setup
-            return [
-                {
-                    "pid": "CJ-DEMO-901",
-                    "productName": f"CJ Sourced: {query.title()}",
-                    "productSku": f"CJ-SKU-{hash(query) % 100000}",
-                    "productImage": "https://img.cjdropshipping.com/demo.jpg",
-                    "sellPrice": "14.50",
-                    "variants": [
-                        {"vid": "CJ-VAR-01", "variantSku": f"CJ-{query[:3].upper()}-STD", "variantName": "Standard Edition", "variantPrice": "14.50"},
-                        {"vid": "CJ-VAR-02", "variantSku": f"CJ-{query[:3].upper()}-PRO", "variantName": "Pro Edition", "variantPrice": "19.99"}
-                    ]
-                }
-            ]
+            results = self.SANDBOX_CATALOG
+            if query:
+                q = query.lower()
+                results = [p for p in results if q in p["productName"].lower() or q in p["productSku"].lower() or q in p.get("categoryName", "").lower()]
+            return results
 
         headers = {"CJ-Access-Token": token}
         params = {"productName": query, "pageNum": page, "pageSize": size}
@@ -95,11 +201,43 @@ class CJApiClient:
                     data = res.json()
                     if data.get("result"):
                         items = data.get("data", {}).get("list", [])
-                        return items
-            return []
+                        if items:
+                            return items
+            return [p for p in self.SANDBOX_CATALOG if not query or query.lower() in p["productName"].lower()]
         except Exception as e:
             logger.error(f"Error searching CJ products: {e}")
-            return []
+            return [p for p in self.SANDBOX_CATALOG if not query or query.lower() in p["productName"].lower()]
+
+    async def get_product_detail(
+        self,
+        pid: str,
+        company_id: Optional[str] = None
+    ) -> Optional[Dict[str, Any]]:
+        """Queries full details, gallery images, and variant list for a specific CJ Product ID."""
+        token = await self.get_access_token(company_id=company_id)
+
+        # Check sandbox catalog first
+        for p in self.SANDBOX_CATALOG:
+            if p["pid"] == pid:
+                return p
+
+        if not token:
+            return None
+
+        headers = {"CJ-Access-Token": token}
+        params = {"pid": pid}
+
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                res = await client.get(f"{self.base_url}/product/query", headers=headers, params=params)
+                if res.status_code == 200:
+                    data = res.json()
+                    if data.get("result") and "data" in data:
+                        return data["data"]
+            return None
+        except Exception as e:
+            logger.error(f"Error fetching product detail for {pid}: {e}")
+            return None
 
     async def create_fulfillment_order(
         self,

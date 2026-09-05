@@ -249,3 +249,102 @@ async def sync_all_pending_tracking(company_id: Optional[str] = None) -> Dict[st
             )
 
     return {"checked": len(orders_to_check), "updated": updated_count}
+
+
+async def list_cj_product_to_whop_service(
+    company_id: str,
+    cj_pid: str,
+    selling_price: float,
+    custom_title: Optional[str] = None,
+    custom_description: Optional[str] = None
+) -> Dict[str, Any]:
+    """Lists a CJ product directly to Whop store and automatically saves SKU mappings."""
+    # 1. Fetch CJ product details and variants
+    cj_prod = await cj_client.get_product_detail(pid=cj_pid, company_id=company_id)
+    if not cj_prod:
+        return {"success": False, "error": f"CJ product {cj_pid} not found in catalog"}
+
+    title = custom_title or cj_prod.get("productName", "CJ Sourced Item")
+    description = custom_description or cj_prod.get("description", "Direct dropshipped item fulfilled via CJ Dropshipping.")
+    images = [cj_prod.get("productImage", "")]
+
+    # 2. Call Whop API to create product & plan
+    whop_res = await whop_client.create_whop_product(
+        title=title,
+        description=description,
+        price=float(selling_price),
+        currency="usd",
+        images=images,
+        metadata={"cj_pid": cj_pid, "cj_sku": cj_prod.get("productSku", "")},
+        company_id=company_id
+    )
+
+    if not whop_res.get("success"):
+        return {"success": False, "error": whop_res.get("error", "Failed to create Whop product")}
+
+    whop_product_id = whop_res["whop_product_id"]
+
+    # 3. Automatically link all variants into sku_mappings table
+    conn = get_db_connection()
+    c = conn.cursor()
+
+    variants = cj_prod.get("variants", [])
+    if not variants:
+        variants = [{
+            "vid": "",
+            "variantSku": cj_prod.get("productSku", f"CJ-SKU-{cj_pid}"),
+            "variantName": "Standard",
+            "variantPrice": cj_prod.get("sellPrice", 0.0)
+        }]
+
+    mapped_count = 0
+    for v in variants:
+        variant_title = v.get("variantName", "Standard")
+        cj_vid = v.get("vid", "")
+        cj_sku = v.get("variantSku", cj_prod.get("productSku", cj_pid))
+        cj_cost = float(v.get("variantPrice", cj_prod.get("sellPrice", 0.0)))
+
+        c.execute("""
+            INSERT INTO sku_mappings (
+                company_id, whop_product_id, whop_product_title, whop_variant_title,
+                cj_product_id, cj_variant_id, cj_variant_sku, cj_product_title, cj_estimated_cost
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(company_id, whop_product_id, whop_variant_title) DO UPDATE SET
+                cj_product_id = excluded.cj_product_id,
+                cj_variant_id = excluded.cj_variant_id,
+                cj_variant_sku = excluded.cj_variant_sku,
+                cj_product_title = excluded.cj_product_title,
+                cj_estimated_cost = excluded.cj_estimated_cost
+        """, (
+            company_id,
+            whop_product_id,
+            title,
+            variant_title,
+            cj_pid,
+            cj_vid,
+            cj_sku,
+            cj_prod.get("productName", title),
+            cj_cost
+        ))
+        mapped_count += 1
+
+    conn.commit()
+    conn.close()
+
+    log_event(
+        "product_listed",
+        "success",
+        f"Listed '{title}' to Whop ({whop_product_id}) with {mapped_count} auto-mapped SKUs",
+        company_id=company_id,
+        payload={"whop_product_id": whop_product_id, "cj_pid": cj_pid, "price": selling_price, "variants": mapped_count}
+    )
+
+    return {
+        "success": True,
+        "whop_product_id": whop_product_id,
+        "whop_product_url": whop_res.get("whop_product_url"),
+        "title": title,
+        "selling_price": selling_price,
+        "variants_mapped": mapped_count,
+        "mode": whop_res.get("mode", "sandbox")
+    }

@@ -1,6 +1,6 @@
 /* ==========================================================================
-   NECYRON TACTICAL PIPELINE THEME (BESPOKE INDUSTRIAL SCHEMATIC)
-   Strictly Zero Glassmorphism • Local Offline Fonts • Pipeline Conduits
+   NECYRON TACTICAL PIPELINE THEME - WARM OFF-WHITE ARCHITECTURAL EDITION
+   Strictly Zero Glassmorphism • Local Offline Fonts • Warm Off-White Schematic
    ========================================================================== */
 
 /* 1. Offline Local Necyron Fonts */
@@ -9,39 +9,49 @@
 @import url('/assets/fonts/google/google_font_3.css'); /* Ubuntu */
 
 :root {
-  /* Necyron Tactical Palette */
-  --bg-deep: #050E0E;
-  --bg-panel: #091818;
-  --bg-panel-alt: #0C1E1E;
-  --bg-input: #040909;
+  /* Whop Vibe Palette - Clean Solid Off-White Canvas */
+  --bg-deep: #F8F8F6;
+  --bg-panel: #FFFFFF;
+  --bg-panel-alt: #F4F4F1;
+  --bg-input: #FFFFFF;
 
-  /* Line & Pipeline Conduit Colors */
-  --pipeline-grid: #0E1F1F;
-  --pipeline-conduit: #1B3535;
-  --pipeline-active: #6EC1E4;
-  --pipeline-pulse: #61CE70;
-  --border-line: #243838;
-  --border-subtle: #162828;
+  /* Whop Brand Accents */
+  --whop-orange: #FF6243;
+  --whop-orange-hover: #E85336;
+  --whop-orange-soft: #FFF0ED;
+  --whop-dark: #111113;
+  --whop-dark-surface: #18181B;
 
-  /* Text Colors */
-  --text-bright: #FFFFFF;
-  --text-body: #C5D1D1;
-  --text-muted: #7A8F8F;
-  --text-dim: #455757;
+  /* Borders & Dividers */
+  --border-line: #E8E8E4;
+  --border-subtle: #F0F0EB;
+  --border-focus: #FF6243;
+
+  /* High-Contrast Typography */
+  --text-bright: #111113;
+  --text-body: #2C2C30;
+  --text-muted: #71717A;
+  --text-dim: #A1A1AA;
 
   /* Status Colors */
-  --status-cyan: #6EC1E4;
-  --status-green: #61CE70;
-  --status-orange: #FF9F43;
-  --status-red: #EE5253;
+  --status-cyan: #0284C7;
+  --status-green: #15803D;
+  --status-orange: #FF6243;
+  --status-red: #EF4444;
 
   /* Fonts */
-  --font-heading: 'Ubuntu', monospace, sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-heading: 'Ubuntu', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Consolas', 'Courier New', monospace;
+
+  /* Whop Modern Squircle Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
 }
 
-/* Base Reset & Pipeline Schematic Background */
+/* Base Reset & Seamless Solid Canvas (Zero Dots / Zero Grids) */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -50,13 +60,7 @@
 
 body {
   background-color: var(--bg-deep);
-  /* Technical pipeline schematic grid pattern with orthogonal circuit junctions */
-  background-image: 
-    radial-gradient(circle at 12px 12px, #163636 1.5px, transparent 1.5px),
-    linear-gradient(to right, rgba(20, 48, 48, 0.4) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(20, 48, 48, 0.4) 1px, transparent 1px);
-  background-size: 32px 32px, 64px 64px, 64px 64px;
-  background-position: 0 0, -1px -1px, -1px -1px;
+  background-image: none !important;
   color: var(--text-body);
   font-family: var(--font-body);
   font-size: 13.5px;
@@ -75,115 +79,174 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 { font-size: 22px; text-transform: uppercase; letter-spacing: 0.04em; }
-h2 { font-size: 16px; text-transform: uppercase; letter-spacing: 0.03em; }
+h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.03em; }
 h3 { font-size: 14px; }
 
 code, .code-tag {
   font-family: var(--font-mono);
   font-size: 12px;
+  color: #0369A1;
 }
 
-/* Topbar Header */
-.app-header {
-  background-color: #071313;
-  border-bottom: 2px solid var(--border-line);
-  padding: 0 28px;
-  height: 64px;
+/* ==========================================================================
+   WHOP OS NAVIGATION & DOCK (MATCHING AUTHENTIC WHOP UI)
+   ========================================================================== */
+.whop-os-header {
+  background-color: var(--whop-dark);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  height: 56px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: relative;
-  z-index: 10;
+  z-index: 50;
 }
 
-.brand-wrap {
+.whop-os-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.whop-brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.whop-brand-name {
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.whop-divider {
+  width: 1px;
+  height: 22px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Authentic Whop Squircle Dock Icons (Matching Screenshot) */
+.whop-dock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.whop-dock-item {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background-color: #1E1E22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #A1A1AA;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+
+.whop-dock-item:hover {
+  background-color: #27272D;
+  color: #FFFFFF;
+}
+
+.whop-dock-item.active {
+  border: 2px solid #FFFFFF;
+  border-radius: 13px;
+  background-color: #1E1E22;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+/* Sub-Navigation Bar */
+.whop-subnav {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--border-line);
+  padding: 0 28px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.whop-subnav-left {
   display: flex;
   align-items: center;
   gap: 12px;
-  text-decoration: none;
 }
 
-.brand-badge {
-  background-color: var(--bg-panel);
-  border: 1px solid var(--status-cyan);
-  color: var(--status-cyan);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 12px;
-  padding: 4px 10px;
-  letter-spacing: 0.08em;
-}
-
-.brand-title {
-  color: var(--text-bright);
-  font-size: 16px;
-  font-weight: 600;
+.app-badge-title {
   font-family: var(--font-heading);
-  letter-spacing: 0.02em;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-bright);
 }
 
-.brand-sub {
-  color: var(--status-green);
-  font-size: 11px;
+.app-badge-tag {
+  background-color: var(--whop-orange-soft);
+  color: var(--whop-orange);
   font-family: var(--font-mono);
-  margin-left: 6px;
-  border-left: 1px solid var(--border-line);
-  padding-left: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
 }
 
-.nav-links {
+.whop-tabs {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
-.nav-item {
+.whop-tab {
   color: var(--text-muted);
   text-decoration: none;
   font-family: var(--font-heading);
-  font-weight: 500;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 8px 16px;
-  border: 1px solid transparent;
-  transition: all 0.12s ease-in-out;
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  transition: all 0.12s ease;
 }
 
-.nav-item:hover {
+.whop-tab:hover {
   color: var(--text-bright);
-  background-color: var(--bg-panel);
-  border-color: var(--border-line);
+  background-color: var(--bg-panel-alt);
 }
 
-.nav-item.active {
-  color: var(--status-cyan);
-  background-color: var(--bg-panel);
-  border-color: var(--status-cyan);
-  border-bottom: 2px solid var(--status-cyan);
+.whop-tab.active {
+  background-color: var(--whop-dark);
+  color: #FFFFFF;
 }
 
 /* Tenant / Company Switcher in Header */
 .workspace-selector-wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background-color: var(--bg-panel);
+  gap: 8px;
+  background-color: var(--bg-panel-alt);
   border: 1px solid var(--border-line);
-  padding: 4px 12px;
+  border-radius: 20px;
+  padding: 4px 14px;
 }
 
 .workspace-label {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
-  font-family: var(--font-heading);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 .workspace-select {
   background: transparent;
   border: none;
-  color: var(--status-green);
+  color: var(--text-bright);
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 600;
@@ -192,43 +255,30 @@ code, .code-tag {
 }
 
 .workspace-select option {
-  background-color: var(--bg-panel);
+  background-color: #FFFFFF;
   color: var(--text-bright);
 }
 
 /* Main Container */
 .main-content {
   flex: 1;
-  max-width: 1340px;
+  max-width: 1280px;
   width: 100%;
   margin: 0 auto;
-  padding: 24px;
+  padding: 28px 24px;
 }
 
 /* ==========================================================================
-   INTERACTIVE LIVE PIPELINE FLOW VISUALIZER
+   WHOP PIPELINE FLOW VISUALIZER (CLEAN MODERN ROUNDED EDITION)
    ========================================================================== */
 .pipeline-flow-container {
-  background-color: var(--bg-panel);
+  background-color: #FFFFFF;
   border: 1px solid var(--border-line);
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   margin-bottom: 24px;
-  padding: 18px 22px;
+  padding: 20px 24px;
   position: relative;
-}
-
-.pipeline-flow-container::before {
-  content: "DATA PIPELINE CONDUIT [MULTI-TENANT ISOLATED]";
-  position: absolute;
-  top: -9px;
-  left: 18px;
-  background-color: var(--bg-deep);
-  color: var(--status-cyan);
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  padding: 0 8px;
-  border: 1px solid var(--border-line);
 }
 
 .pipeline-nodes-wrapper {
@@ -241,17 +291,20 @@ code, .code-tag {
 }
 
 .pipeline-node {
-  background-color: #061212;
+  background-color: #FAFAFA;
   border: 1px solid var(--border-line);
-  padding: 12px 14px;
+  border-radius: 12px;
+  padding: 14px 16px;
   min-width: 170px;
   flex: 1;
   position: relative;
+  transition: all 0.15s ease;
 }
 
 .pipeline-node.active {
-  border-color: var(--status-cyan);
-  background-color: #071717;
+  border-color: var(--whop-orange);
+  background-color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(255, 98, 67, 0.08);
 }
 
 .node-step {
@@ -288,7 +341,7 @@ code, .code-tag {
   height: 6px;
   background-color: var(--status-green);
   border-radius: 50%;
-  box-shadow: 0 0 6px var(--status-green);
+  box-shadow: 0 0 6px rgba(21, 128, 61, 0.4);
 }
 
 .pipeline-arrow {
@@ -299,12 +352,14 @@ code, .code-tag {
   user-select: none;
 }
 
-/* Tactical Panels / Cards (Solid Slate - Sharp Lines) */
+/* Tactical Panels / Cards (Clean Solid White - Whop Rounded Style) */
 .tactical-card {
-  background-color: var(--bg-panel);
+  background-color: #FFFFFF;
   border: 1px solid var(--border-line);
-  padding: 22px;
-  margin-bottom: 22px;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 4px 12px rgba(0, 0, 0, 0.02);
+  padding: 24px;
+  margin-bottom: 24px;
   position: relative;
 }
 
@@ -312,22 +367,24 @@ code, .code-tag {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
-  padding-bottom: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .card-title-group h2 {
-  font-size: 15px;
-  margin-bottom: 2px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: var(--text-bright);
 }
 
 .card-title-group p {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
-/* Metrics Schematic Grid */
+/* Metrics Grid - Whop Rounded Cards */
 .metrics-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -336,19 +393,27 @@ code, .code-tag {
 }
 
 .metric-box {
-  background-color: var(--bg-panel);
+  background-color: #FFFFFF;
   border: 1px solid var(--border-line);
-  padding: 16px 20px;
-  border-left: 3px solid var(--status-cyan);
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  padding: 18px 22px;
+  border-left: 4px solid var(--whop-orange);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.metric-box:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .metric-label {
   color: var(--text-muted);
   font-family: var(--font-heading);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   margin-bottom: 6px;
 }
 
@@ -356,24 +421,25 @@ code, .code-tag {
   font-family: var(--font-heading);
   color: var(--text-bright);
   font-size: 26px;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
 
 .metric-sub {
-  color: var(--status-cyan);
+  color: var(--whop-orange);
   font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 400;
+  font-size: 11.5px;
+  font-weight: 600;
 }
 
 /* Tables */
 .table-wrapper {
   overflow-x: auto;
   border: 1px solid var(--border-line);
-  background-color: #061111;
+  border-radius: 12px;
+  background-color: #FFFFFF;
 }
 
 .tactical-table {
@@ -383,107 +449,117 @@ code, .code-tag {
 }
 
 .tactical-table th {
-  background-color: #081616;
+  background-color: #F8F8F6;
   color: var(--text-muted);
   font-family: var(--font-heading);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 12px 16px;
+  padding: 13px 18px;
   border-bottom: 1px solid var(--border-line);
 }
 
 .tactical-table td {
-  padding: 13px 16px;
+  padding: 14px 18px;
   border-bottom: 1px solid var(--border-subtle);
   color: var(--text-body);
   vertical-align: middle;
 }
 
-.tactical-table tr:hover td {
-  background-color: #0A1C1C;
+.tactical-table tr:last-child td {
+  border-bottom: none;
 }
 
-/* Badges */
+.tactical-table tr:hover td {
+  background-color: #FAFAF8;
+}
+
+/* Badges - Whop Rounded Pills */
 .badge {
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-family: var(--font-body);
+  font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border-radius: 2px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
 }
 
 .badge-success {
-  background-color: #082116;
-  border: 1px solid #196644;
-  color: var(--status-green);
+  background-color: #DCFCE7;
+  color: #15803D;
 }
 
 .badge-info {
-  background-color: #071C26;
-  border: 1px solid #165375;
-  color: var(--status-cyan);
+  background-color: var(--whop-orange-soft);
+  color: var(--whop-orange);
 }
 
 .badge-warning {
-  background-color: #241607;
-  border: 1px solid #6E4515;
-  color: var(--status-orange);
+  background-color: #FEF3C7;
+  color: #B45309;
 }
 
 .badge-danger {
-  background-color: #260A0D;
-  border: 1px solid #6B1C24;
-  color: var(--status-red);
+  background-color: #FEE2E2;
+  color: #B91C1C;
 }
 
-/* Buttons */
+/* Buttons - Whop Rounded Pill Style */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 9px 18px;
   font-family: var(--font-heading);
   font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   cursor: pointer;
   text-decoration: none;
+  border-radius: 24px;
   border: 1px solid transparent;
-  transition: all 0.12s;
+  transition: all 0.12s ease;
 }
 
 .btn-primary {
-  background-color: var(--status-cyan);
-  color: #040A0A;
-  border-color: var(--status-cyan);
+  background-color: #111113;
+  color: #FFFFFF;
+  border-color: #111113;
 }
 
 .btn-primary:hover {
-  background-color: #92D7F3;
-  border-color: #92D7F3;
+  background-color: #27272A;
+  border-color: #27272A;
+}
+
+.btn-whop {
+  background-color: var(--whop-orange);
+  color: #FFFFFF;
+  border-color: var(--whop-orange);
+}
+
+.btn-whop:hover {
+  background-color: var(--whop-orange-hover);
+  border-color: var(--whop-orange-hover);
 }
 
 .btn-secondary {
-  background-color: #071414;
+  background-color: #FFFFFF;
   color: var(--text-bright);
   border-color: var(--border-line);
 }
 
 .btn-secondary:hover {
-  background-color: #0D2626;
-  border-color: var(--status-cyan);
+  background-color: var(--bg-panel-alt);
+  border-color: #D4D4CE;
 }
 
 .btn-sm {
-  padding: 4px 10px;
+  padding: 5px 12px;
   font-size: 11px;
 }
 
@@ -513,17 +589,19 @@ code, .code-tag {
 .form-control {
   width: 100%;
   background-color: var(--bg-input);
-  border: 1px solid var(--border-line);
+  border: 1px solid #D4D4CE;
+  border-radius: var(--radius-sm);
   color: var(--text-bright);
   padding: 10px 14px;
   font-size: 13px;
   font-family: var(--font-mono);
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .form-control:focus {
   border-color: var(--status-cyan);
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
 }
 
 .form-control::placeholder {
@@ -538,21 +616,22 @@ code, .code-tag {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-radius: var(--radius-sm);
   border-left: 3px solid;
 }
 
 .alert-info {
-  background-color: #061822;
-  border: 1px solid #14445F;
+  background-color: #F0F9FF;
+  border: 1px solid #BAE6FD;
   border-left-color: var(--status-cyan);
-  color: #B5E0F2;
+  color: #0369A1;
 }
 
 .alert-success {
-  background-color: #051A11;
-  border: 1px solid #124B31;
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
   border-left-color: var(--status-green);
-  color: #9DE5BA;
+  color: #15803D;
 }
 
 /* Footer */
@@ -564,5 +643,5 @@ code, .code-tag {
   font-family: var(--font-mono);
   font-size: 11px;
   margin-top: auto;
-  background-color: #061111;
+  background-color: #FFFFFF;
 }

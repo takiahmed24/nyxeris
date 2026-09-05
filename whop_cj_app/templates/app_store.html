@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CJdropshipping: Sourcing, Dropshipping & Fulfillment - Whop App Store</title>
+
+  <!-- Offline Local Necyron Google Fonts -->
+  <link rel="stylesheet" href="/assets/fonts/google/google_font_1.css">
+  <link rel="stylesheet" href="/assets/fonts/google/google_font_2.css">
+  <link rel="stylesheet" href="/assets/fonts/google/google_font_3.css">
+
+  <style>
+    /* ==========================================================================
+       WHOP APP STORE LISTING THEME
+       Faithful to Shopify App Store reference • Off-White Architectural Mode
+       Strictly Zero Glassmorphism • Clean Obsidian Typography
+       ========================================================================== */
+    :root {
+      --bg-page: #F7F7F5;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F2F2EE;
+      --border-color: #E2E2DC;
+      --border-dark: #121214;
+      --text-main: #121214;
+      --text-body: #2C2C30;
+      --text-muted: #6E6E78;
+      --cj-orange: #FF6600;
+      --whop-cyan: #0284C7;
+      --status-green: #15803D;
+      --font-heading: 'Ubuntu', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Consolas', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-body);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top App Store Header */
+    .appstore-header {
+      background-color: #FFFFFF;
+      border-bottom: 1px solid var(--border-color);
+      height: 64px;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .appstore-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .whop-bag-icon {
+      width: 28px;
+      height: 28px;
+      background-color: #121214;
+      color: #FFFFFF;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* Search Bar */
+    .appstore-search-wrap {
+      flex: 1;
+      max-width: 520px;
+      margin: 0 32px;
+      position: relative;
+    }
+
+    .appstore-search-input {
+      width: 100%;
+      height: 38px;
+      background-color: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 0 16px 0 38px;
+      font-family: var(--font-body);
+      font-size: 13.5px;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .appstore-search-input:focus {
+      border-color: #121214;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    /* Right Navigation */
+    .appstore-nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .browse-link {
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .user-avatar-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background-color: #059669;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+    }
+
+    .cockpit-link-btn {
+      padding: 6px 14px;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 500;
+      transition: background-color 0.15s ease;
+    }
+
+    .cockpit-link-btn:hover {
+      background-color: #EAEAE4;
+    }
+
+    /* Main Container */
+    .listing-container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 32px auto 64px auto;
+      padding: 0 24px;
+    }
+
+    /* Hero Section matching Screenshot Layout */
+    .listing-hero-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+
+    /* Left App Information Card */
+    .app-meta-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-icon-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .cj-logo-box {
+      width: 68px;
+      height: 68px;
+      background-color: var(--cj-orange);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(255, 102, 0, 0.22);
+      flex-shrink: 0;
+    }
+
+    .cj-logo-box svg {
+      width: 44px;
+      height: 44px;
+      fill: #FFFFFF;
+    }
+
+    .app-main-title {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--text-main);
+    }
+
+    .meta-group {
+      margin-bottom: 18px;
+    }
+
+    .meta-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 3px;
+      text-transform: capitalize;
+    }
+
+    .meta-value {
+      font-size: 13.5px;
+      color: var(--text-body);
+    }
+
+    .meta-checklist {
+      list-style: none;
+      margin-top: 4px;
+    }
+
+    .meta-checklist li {
+      font-size: 13px;
+      color: var(--text-body);
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meta-checklist li span.check {
+      color: #121214;
+      font-weight: 700;
+    }
+
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13.5px;
+    }
+
+    .rating-star {
+      color: #121214;
+      font-weight: 700;
+    }
+
+    .rating-link {
+      color: var(--text-main);
+      text-decoration: underline;
+    }
+
+    /* Big Black Pill Install Button matching Shopify App Store */
+    .btn-install-pill {
+      display: block;
+      width: 100%;
+      background-color: #121214;
+      color: #FFFFFF;
+      text-align: center;
+      padding: 13px 20px;
+      border-radius: 28px;
+      font-size: 14.5px;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      margin-top: 16px;
+      transition: background-color 0.15s ease, transform 0.1s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-install-pill:hover {
+      background-color: #2C2C30;
+      transform: translateY(-1px);
+    }
+
+    /* Right Media Showcase matching Screenshot */
+    .media-showcase-wrap {
+      display: grid;
+      grid-template-columns: 1fr 140px;
+      gap: 16px;
+      height: 380px;
+    }
+
+    /* Main Video / Showcase Frame */
+    .main-stage-box {
+      background-color: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .main-stage-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* YouTube-style Play Overlay */
+    .video-overlay-header {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .video-cj-icon {
+      width: 32px;
+      height: 32px;
+      background-color: var(--cj-orange);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .video-title-text {
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
+
+    .video-play-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 64px;
+      height: 44px;
+      background-color: #FF0000;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      z-index: 2;
+    }
+
+    .video-play-center:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    .video-play-triangle {
+      width: 0;
+      height: 0;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+      border-left: 16px solid #FFFFFF;
+      margin-left: 3px;
+    }
+
+    .video-watermark-btn {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background-color: rgba(18, 18, 20, 0.7);
+      color: #FFFFFF;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      z-index: 2;
+    }
+
+    /* Thumbnail Stack on the Right */
+    .thumbnails-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .thumb-item {
+      height: 116px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      background-color: #FFFFFF;
+      transition: border-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .thumb-item:hover, .thumb-item.active {
+      border-color: #121214;
+    }
+
+    .thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .thumb-more-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(255, 255, 255, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-main);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+    }
+
+    /* Lower Feature & Copy Section */
+    .feature-story-section {
+      border-top: 1px solid var(--border-color);
+      padding-top: 36px;
+      max-width: 880px;
+    }
+
+    .feature-headline {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.35;
+      margin-bottom: 16px;
+    }
+
+    .feature-paragraph {
+      font-size: 14.5px;
+      color: var(--text-body);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .feature-bullets {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-bottom: 32px;
+    }
+
+    .feature-bullets li {
+      font-size: 14px;
+      color: var(--text-body);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    /* Plans Table */
+    .plans-card {
+      background-color: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 24px;
+      margin-top: 32px;
+      margin-bottom: 40px;
+    }
+
+    .plans-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .plan-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Footer */
+    .appstore-footer {
+      margin-top: auto;
+      background-color: #FFFFFF;
+      border-top: 1px solid var(--border-color);
+      padding: 24px 32px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top App Store Navbar -->
+  <header class="appstore-header">
+    <a href="/app-store?company_id={{ company_id }}" class="appstore-brand">
+      <div class="whop-bag-icon">W</div>
+      <span>Whop App Store</span>
+    </a>
+
+    <div class="appstore-search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" class="appstore-search-input" placeholder="Search apps, guides, and more" value="cjdropshipping">
+    </div>
+
+    <div class="appstore-nav-right">
+      <a href="#" class="browse-link">Browse apps &#9662;</a>
+      <a href="/?company_id={{ company_id }}" class="cockpit-link-btn">Launch Dashboard</a>
+      <div class="user-avatar-badge" title="Merchant Workspace: {{ current_merchant.account_name }}">MS</div>
+    </div>
+  </header>
+
+  <!-- Main Listing Canvas -->
+  <main class="listing-container">
+
+    <!-- Top Two-Column Hero -->
+    <div class="listing-hero-grid">
+
+      <!-- Left Column: App Information & Install Action -->
+      <aside class="app-meta-col">
+        
+        <div class="app-icon-wrap">
+          <div class="cj-logo-box">
+            <!-- CJ Monogram SVG Icon -->
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l7 4.5-7 4.5z"/>
+            </svg>
+          </div>
+          <h1 class="app-main-title">CJdropshipping: Sourcing, Dropshipping & Fulfillment</h1>
+        </div>
+
+        <div class="meta-group">
+          <div class="meta-label">Pricing</div>
+          <div class="meta-value">Free to install (60-Day Trial). Additional charges may apply ($5/mo).</div>
+        </div>
+
+        <div class="meta-group">
+          <div class="meta-label">Popular with stores like yours</div>
+          <ul class="meta-checklist">
+            <li><span class="check">&#10003;</span> New businesses making sales</li>
+            <li><span class="check">&#10003;</span> Saves $39/month on Shopify fees</li>
+            <li><span class="check">&#10003;</span> Auto tracking fulfillment for Whop</li>
+          </ul>
+        </div>
+
+        <div class="meta-group">
+          <div class="meta-label">Rating</div>
+          <div class="rating-row">
+            <span class="rating-star">4.9 &#9733;</span>
+            <a href="#reviews" class="rating-link">(2,801)</a>
+          </div>
+        </div>
+
+        <div class="meta-group">
+          <div class="meta-label">Developer</div>
+          <div class="meta-value">CJdropshipping &bull; Developed by Taki</div>
+        </div>
+
+        <!-- Big Black Pill Install Button matching reference -->
+        <a href="/?company_id={{ company_id }}" class="btn-install-pill">
+          Install
+        </a>
+
+        <div style="margin-top: 14px; text-align: center; font-size: 11.5px; color: var(--text-muted);">
+          Billed via Whop Merchant Account &bull; 60-Day Free Trial
+        </div>
+
+      </aside>
+
+      <!-- Right Column: Media Gallery Showcase -->
+      <section class="media-showcase-wrap">
+
+        <!-- Main Video / Feature Stage -->
+        <div class="main-stage-box" id="main-stage-display">
+          
+          <!-- Banner Graphic Simulation of the Video in Screenshot -->
+          <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F0 100%); display: flex; align-items: center; justify-content: space-between; padding: 24px 36px; user-select: none;">
+            
+            <div style="max-width: 60%;">
+              <div style="font-family: var(--font-heading); font-size: 22px; font-weight: 700; color: #121214; line-height: 1.3; margin-bottom: 14px;">
+                CJdropshipping - You Sell, We Source and Ship for You!
+              </div>
+              <ul style="list-style: none; font-size: 15px; font-weight: 700; color: #121214; line-height: 1.7;">
+                <li>&#10003; NO SETUP FEE</li>
+                <li>&#10003; NO MONTHLY FEE FOR 60 DAYS</li>
+                <li>&#10003; NO STORAGE FEE</li>
+                <li>&#10003; NO MINIMUM ORDER</li>
+              </ul>
+            </div>
+
+            <!-- Sketch / Delivery Guy graphic simulation -->
+            <div style="font-size: 84px; line-height: 1; text-align: center; opacity: 0.9;">
+              📦🚚
+            </div>
+          </div>
+
+          <!-- Video header badge -->
+          <div class="video-overlay-header">
+            <div class="video-cj-icon">CJ</div>
+            <div class="video-title-text">CJdropshipping - You Sell, We Source and Ship for You!</div>
+          </div>
+
+          <!-- YouTube Play Button overlay -->
+          <div class="video-play-center" onclick="alert('Launching CJ Dropshipping Interactive Overview...')">
+            <div class="video-play-triangle"></div>
+          </div>
+
+          <!-- Bottom Watch on YouTube watermark button -->
+          <a href="https://www.youtube.com" target="_blank" class="video-watermark-btn">
+            <span>Watch on</span> <strong>YouTube</strong>
+          </a>
+
+        </div>
+
+        <!-- 3-Thumbnail Stack on the Right -->
+        <div class="thumbnails-stack">
+          
+          <!-- Thumbnail 1: Product Catalog & Auto-Listing -->
+          <div class="thumb-item active" onclick="switchStageView('catalog')">
+            <div style="padding: 10px; font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); background: #FAFAFA; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+              <div style="font-weight: 600; color: var(--cj-orange);">01 &bull; SOURCING</div>
+              <div style="font-size: 11px; color: var(--text-main); font-weight: 600;">Product Catalog & Auto-Listing</div>
+              <div style="font-size: 9px; color: #0284C7;">Factory Wholesale</div>
+            </div>
+          </div>
+
+          <!-- Thumbnail 2: Order Pipeline & Multi-Tenant Routing -->
+          <div class="thumb-item" onclick="switchStageView('pipeline')">
+            <div style="padding: 10px; font-size: 10px; font-family: var(--font-mono); color: var(--text-muted); background: #FAFAFA; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+              <div style="font-weight: 600; color: #0284C7;">02 &bull; PIPELINE</div>
+              <div style="font-size: 11px; color: var(--text-main); font-weight: 600;">Whop Ingestion & Sync</div>
+              <div style="font-size: 9px; color: #15803D;">Auto Dispatch</div>
+            </div>
+          </div>
+
+          <!-- Thumbnail 3: +8 More Overlay matching screenshot -->
+          <div class="thumb-item" onclick="switchStageView('more')">
+            <div class="thumb-more-overlay">
+              + 8 more
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- Feature Writeup & Narrative Section matching Screenshot -->
+    <section class="feature-story-section">
+      
+      <h2 class="feature-headline">
+        Product sourcing and auto-listing feature. Convenient and fast order fulfillment &amp; delivery.
+      </h2>
+
+      <p class="feature-paragraph">
+        Trending products recommendation with CJ's big-data powered system. Sales promotion under the auspices of marketing tools. Access to a professional agent with 24/7 online support. A variety of products at factory price, prepared to be listed to your store. Products and packaging customization (POD, OEM) with dropshipping service. Convenient order syncing &amp; fulfillment service. Efficient local warehouse delivery service (general delivery time of 2-3 days).
+      </p>
+
+      <ul class="feature-bullets">
+        <li>CJ products are supportive of DIY bundle products combination.</li>
+        <li>The optimized shipping method will be automatically applied to your orders.</li>
+        <li>Automatic order tracking push directly marks customer orders as fulfilled inside your Whop dashboard.</li>
+        <li>Zero Shopify subscription required: save $39 every month while connecting directly to CJ Dropshipping.</li>
+        <li>Multi-tenant architecture: each merchant connects their own private CJ account and developer API key.</li>
+      </ul>
+
+      <!-- Pricing Plans Breakdown Table -->
+      <div class="plans-card">
+        <h3>Pricing Plans</h3>
+        
+        <div class="plan-row">
+          <div>
+            <strong style="font-size: 15px; color: var(--text-main);">Merchant Starter Plan</strong>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">Full CJ Open API 2.0 integration, automatic order syncing, tracking push, and product catalog.</p>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 18px; font-weight: 700; color: var(--text-main);">$5 / month</div>
+            <span style="font-size: 12px; color: var(--status-green); font-weight: 600;">60-Day Free Trial</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verified Reviews Section -->
+      <div id="reviews" style="margin-top: 40px;">
+        <h3 style="font-size: 17px; font-weight: 600; color: var(--text-main); margin-bottom: 20px;">
+          Merchant Reviews (2,801)
+        </h3>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div style="background-color: #FFFFFF; border: 1px solid var(--border-color); border-radius: 8px; padding: 18px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <strong style="color: var(--text-main);">Alpha Apparel &bull; Whop Merchant</strong>
+              <span style="color: #121214; font-weight: 700;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-body);">
+              "Finally an app that connects CJ directly to Whop without having to route through Shopify! Saved us $39/month instantly and tracking updates are seamless."
+            </p>
+          </div>
+
+          <div style="background-color: #FFFFFF; border: 1px solid var(--border-color); border-radius: 8px; padding: 18px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+              <strong style="color: var(--text-main);">Apex Streetwear &bull; Whop Merchant</strong>
+              <span style="color: #121214; font-weight: 700;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-body);">
+              "The 1-click product listing feature works just like the Shopify app. We choose our markup, push to Whop, and customer orders fulfill automatically."
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- App Store Footer -->
+  <footer class="appstore-footer">
+    <div>Whop App Store &bull; CJdropshipping: Sourcing, Dropshipping & Fulfillment &bull; Developed by Taki</div>
+  </footer>
+
+  <script>
+    function switchStageView(view) {
+      const thumbs = document.querySelectorAll('.thumb-item');
+      thumbs.forEach(t => t.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>

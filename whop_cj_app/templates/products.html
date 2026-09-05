@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+
+{% block title %}List Products to Whop - CJdropshipping: Sourcing, Dropshipping & Fulfillment{% endblock %}
+
+{% block content %}
+
+<!-- Store Notice & Tactical Action Bar -->
+<div class="tactical-alert alert-info">
+  <div>
+    <strong>Product Publishing Engine:</strong> Select products from your CJ account or the CJ catalog to list directly to <code style="color: var(--status-cyan);">{{ current_merchant.account_name }}</code> on Whop.
+    Pricing, descriptions, and automatic SKU mappings will sync instantly.
+  </div>
+  <div>
+    <span class="badge badge-info">Tenant: {{ company_id[:12] }}...</span>
+  </div>
+</div>
+
+<!-- Catalog Navigation & Search Bar -->
+<div class="tactical-card" style="margin-bottom: 24px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <!-- Mode Switcher Tabs -->
+    <div style="display: flex; gap: 8px;">
+      <button id="tab-my-products" onclick="switchProductTab('my_products')" class="btn btn-primary btn-sm">
+        My CJ Sourced Products
+      </button>
+      <button id="tab-catalog" onclick="switchProductTab('catalog')" class="btn btn-secondary btn-sm">
+        Search Full CJ Catalog
+      </button>
+      <button id="tab-listed" onclick="switchProductTab('listed')" class="btn btn-secondary btn-sm" style="font-weight: 600;">
+        ✓ Listed on Whop Store
+      </button>
+    </div>
+
+    <!-- Global Pricing Rule / Markup Multiplier -->
+    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px;">
+      <span style="color: var(--text-muted); font-weight: 500;">Default Markup:</span>
+      <select id="global-markup" onchange="applyGlobalMarkup(this.value)" class="form-control" style="width: 130px; padding: 6px 10px; font-size: 12.5px;">
+        <option value="2.0">2.0x (100% Margin)</option>
+        <option value="2.5" selected>2.5x (150% Margin)</option>
+        <option value="3.0">3.0x (200% Margin)</option>
+        <option value="3.5">3.5x (250% Margin)</option>
+      </select>
+    </div>
+
+    <!-- Keyword Search Box -->
+    <div style="display: flex; gap: 8px; flex: 1; max-width: 380px;">
+      <input type="text" id="product-search-input" class="form-control" placeholder="Search by name, SKU, or category..." onkeydown="if(event.key==='Enter') searchProducts()">
+      <button onclick="searchProducts()" class="btn btn-primary btn-sm" style="white-space: nowrap;">Search CJ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Product Listing Feed Container -->
+<div id="loading-spinner" style="display: none; text-align: center; padding: 48px; color: var(--text-muted);">
+  <div style="display: inline-block; width: 24px; height: 24px; border: 2px solid var(--border-line); border-top-color: var(--pipeline-active); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+  <div style="margin-top: 12px; font-family: var(--font-mono); font-size: 12px;">Querying CJ Dropshipping Catalog...</div>
+</div>
+
+<div id="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+  <!-- Products rendered dynamically via JavaScript -->
+</div>
+
+<!-- Empty State -->
+<div id="empty-state" style="display: none; text-align: center; padding: 60px 20px; background-color: var(--bg-panel); border: 1px dashed var(--border-line); border-radius: var(--radius-md);">
+  <div style="font-size: 32px; margin-bottom: 12px;">📦</div>
+  <h3 style="margin-bottom: 6px; color: var(--text-bright);">No Products Found</h3>
+  <p style="color: var(--text-muted); font-size: 13px; max-width: 420px; margin: 0 auto 16px;">
+    No products matched your query. Try searching the full CJ catalog or enter a different keyword.
+  </p>
+  <button onclick="switchProductTab('catalog')" class="btn btn-primary btn-sm">Browse Full CJ Catalog</button>
+</div>
+
+<!-- ==========================================================================
+     ONE-CLICK LIST TO WHOP MODAL
+     ========================================================================== -->
+<div id="list-modal" style="display: none; position: fixed; inset: 0; background-color: rgba(18, 18, 20, 0.45); z-index: 999; align-items: center; justify-content: center; padding: 20px;">
+  <div style="background-color: #FFFFFF; border: 1px solid var(--border-line); border-radius: var(--radius-lg); width: 100%; max-width: 580px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); overflow: hidden; animation: modalIn 0.15s ease-out;">
+    
+    <!-- Modal Header -->
+    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border-line); display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-panel-alt);">
+      <div>
+        <h3 style="font-size: 15px; color: var(--text-bright); text-transform: uppercase; letter-spacing: 0.03em;">List Product to Whop Store</h3>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Publishes product & creates automated fulfillment SKU linkages</p>
+      </div>
+      <button onclick="closeListModal()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+    </div>
+
+    <!-- Modal Body -->
+    <div style="padding: 20px; max-height: 70vh; overflow-y: auto;">
+      <div id="modal-alert" style="display: none;" class="tactical-alert alert-success"></div>
+
+      <!-- Product Preview Thumbnail & Cost Info -->
+      <div style="display: flex; gap: 16px; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
+        <img id="modal-product-img" src="" alt="Thumbnail" style="width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-line);">
+        <div>
+          <div id="modal-product-sku" style="font-family: var(--font-mono); font-size: 11px; color: var(--status-cyan); margin-bottom: 4px;"></div>
+          <div id="modal-product-cost-wrap" style="font-size: 13px; color: var(--text-muted);">
+            CJ Wholesale Cost: <strong id="modal-cj-cost" style="color: var(--text-bright);">$0.00</strong>
+          </div>
+          <div id="modal-product-variants-count" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;"></div>
+        </div>
+      </div>
+
+      <form id="whop-listing-form" onsubmit="submitProductListing(event)">
+        <input type="hidden" id="modal-cj-pid">
+
+        <div class="form-group">
+          <label class="form-label">Whop Product Title</label>
+          <input type="text" id="modal-product-title" class="form-control" required maxlength="80">
+          <span class="form-sublabel">Title as displayed to customers on your Whop storefront</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label">Your Selling Price ($ USD)</label>
+            <input type="number" step="0.01" min="0.50" id="modal-selling-price" class="form-control" required oninput="updateModalProfit()">
+            <span class="form-sublabel">Customer checkout price</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Estimated Profit per Unit</label>
+            <div id="modal-profit-display" style="padding: 9px 12px; background-color: var(--bg-panel-alt); border: 1px solid var(--border-line); border-radius: var(--radius-md); font-weight: 600; color: var(--status-green); font-size: 14px;">
+              +$0.00
+            </div>
+            <span class="form-sublabel">Selling Price minus CJ Cost</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Product Description</label>
+          <textarea id="modal-product-desc" class="form-control" rows="3" style="resize: vertical; font-size: 12.5px;"></textarea>
+          <span class="form-sublabel">Highlights and specifications shown to Whop buyers</span>
+        </div>
+
+        <div class="tactical-alert alert-info" style="margin-top: 14px; margin-bottom: 0; padding: 10px 14px; font-size: 12px;">
+          <strong>Zero-Touch Linkage:</strong> All variants of this product will be auto-registered in your store's SKU Mapping table. When a customer orders on Whop, the bridge will immediately dispatch it to CJ Dropshipping.
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" onclick="closeListModal()" class="btn btn-secondary">Cancel</button>
+          <button type="submit" id="btn-submit-listing" class="btn btn-primary">Publish to Whop Store</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+.product-card {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-line);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.product-card:hover {
+  border-color: var(--whop-orange);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+.product-card-thumb {
+  width: 100%;
+  height: 195px;
+  object-fit: cover;
+  background-color: var(--bg-panel-alt);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.product-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.product-title {
+  font-family: var(--font-heading);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-bright);
+  line-height: 1.35;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 38px;
+}
+.product-meta {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  margin-bottom: 12px;
+}
+.pricing-breakdown {
+  background-color: var(--bg-panel-alt);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+.pricing-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.pricing-row:last-child {
+  margin-bottom: 0;
+  padding-top: 4px;
+  border-top: 1px dashed var(--border-line);
+}
+</style>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let currentTab = 'my_products';
+let currentProducts = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadProducts();
+});
+
+function switchProductTab(tab) {
+  currentTab = tab;
+  const btnMy = document.getElementById('tab-my-products');
+  const btnCat = document.getElementById('tab-catalog');
+  const btnList = document.getElementById('tab-listed');
+
+  btnMy.className = (tab === 'my_products') ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+  btnCat.className = (tab === 'catalog') ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+  btnList.className = (tab === 'listed') ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm';
+
+  loadProducts();
+}
+
+function searchProducts() {
+  const q = document.getElementById('product-search-input').value.trim();
+  loadProducts(q);
+}
+
+async function loadProducts(query = '') {
+  const grid = document.getElementById('product-grid');
+  const spinner = document.getElementById('loading-spinner');
+  const emptyState = document.getElementById('empty-state');
+
+  grid.innerHTML = '';
+  spinner.style.display = 'block';
+  emptyState.style.display = 'none';
+
+  try {
+    const url = `/api/cj/products?tab=${currentTab}&q=${encodeURIComponent(query)}&company_id={{ company_id }}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    currentProducts = data.products || [];
+
+    spinner.style.display = 'none';
+
+    if (currentProducts.length === 0) {
+      emptyState.style.display = 'block';
+      return;
+    }
+
+    renderProductCards(currentProducts);
+  } catch (err) {
+    spinner.style.display = 'none';
+    console.error('Failed to load products:', err);
+    grid.innerHTML = `<div style="grid-column: 1/-1; padding: 24px; color: var(--status-red); text-align: center;">Error loading products: ${err.message}</div>`;
+  }
+}
+
+function renderProductCards(products) {
+  const grid = document.getElementById('product-grid');
+  const markupMultiplier = parseFloat(document.getElementById('global-markup').value) || 2.5;
+
+  grid.innerHTML = products.map((p, idx) => {
+    const cost = parseFloat(p.sellPrice) || 15.00;
+    const retailPrice = (cost * markupMultiplier).toFixed(2);
+    const profit = (retailPrice - cost).toFixed(2);
+    const variantsCount = (p.variants && p.variants.length) ? p.variants.length : 1;
+    const isListed = p.is_listed;
+
+    return `
+      <div class="product-card">
+        <img src="${p.productImage || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600'}" alt="${p.productName}" class="product-card-thumb" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600'">
+        <div class="product-card-body">
+          <div class="product-meta">
+            <span>PID: ${p.pid}</span> &bull; <span>${p.categoryName || 'Sourced Item'}</span>
+          </div>
+          <div class="product-title" title="${p.productName}">${p.productName}</div>
+          
+          <div class="pricing-breakdown">
+            <div class="pricing-row">
+              <span style="color: var(--text-muted);">CJ Sourcing Cost:</span>
+              <strong style="color: var(--text-bright);">$${cost.toFixed(2)}</strong>
+            </div>
+            <div class="pricing-row">
+              <span style="color: var(--text-muted);">Retail Selling Price:</span>
+              <strong style="color: var(--status-cyan);">$${retailPrice}</strong>
+            </div>
+            <div class="pricing-row">
+              <span style="color: var(--text-muted);">Net Profit / Unit:</span>
+              <strong style="color: var(--status-green);">+$${profit}</strong>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; color: var(--text-muted); margin-bottom: 14px;">
+            <span>${variantsCount} Variant(s) Included</span>
+            ${isListed ? `<span class="badge badge-success">Listed on Whop</span>` : `<span class="badge badge-warning">Unlisted</span>`}
+          </div>
+
+          <div style="margin-top: auto;">
+            ${isListed ? `
+              <div style="display: flex; gap: 8px;">
+                <a href="/sku-mapping?company_id={{ company_id }}" class="btn btn-secondary btn-sm" style="flex: 1; text-align: center; text-decoration: none;">View SKU Mapping</a>
+                <button onclick="openListModal(${idx})" class="btn btn-secondary btn-sm" title="Re-list or adjust pricing">Edit</button>
+              </div>
+            ` : `
+              <button onclick="openListModal(${idx})" class="btn btn-primary" style="width: 100%;">
+                List to Whop Store &rarr;
+              </button>
+            `}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function applyGlobalMarkup(multiplier) {
+  if (currentProducts.length > 0) {
+    renderProductCards(currentProducts);
+  }
+}
+
+let activeSelectedProduct = null;
+
+function openListModal(index) {
+  const p = currentProducts[index];
+  if (!p) return;
+
+  activeSelectedProduct = p;
+  const markupMultiplier = parseFloat(document.getElementById('global-markup').value) || 2.5;
+  const cost = parseFloat(p.sellPrice) || 15.00;
+  const targetRetail = (cost * markupMultiplier).toFixed(2);
+
+  document.getElementById('modal-cj-pid').value = p.pid;
+  document.getElementById('modal-product-img').src = p.productImage || '';
+  document.getElementById('modal-product-sku').innerText = `PID: ${p.pid} | SKU: ${p.productSku || 'BASE'}`;
+  document.getElementById('modal-cj-cost').innerText = `$${cost.toFixed(2)}`;
+  document.getElementById('modal-product-variants-count').innerText = `${(p.variants && p.variants.length) ? p.variants.length : 1} variant(s) will be automatically mapped to CJ`;
+  
+  document.getElementById('modal-product-title').value = p.productName;
+  document.getElementById('modal-selling-price').value = targetRetail;
+  document.getElementById('modal-product-desc').value = p.description || `Premium quality ${p.productName}. Fast fulfillment direct to customer.`;
+
+  updateModalProfit();
+
+  const modal = document.getElementById('list-modal');
+  modal.style.display = 'flex';
+}
+
+function closeListModal() {
+  document.getElementById('list-modal').style.display = 'none';
+  document.getElementById('modal-alert').style.display = 'none';
+}
+
+function updateModalProfit() {
+  if (!activeSelectedProduct) return;
+  const cost = parseFloat(activeSelectedProduct.sellPrice) || 15.00;
+  const price = parseFloat(document.getElementById('modal-selling-price').value) || 0;
+  const profit = price - cost;
+  const display = document.getElementById('modal-profit-display');
+
+  if (profit >= 0) {
+    display.style.color = 'var(--status-green)';
+    display.innerText = `+$${profit.toFixed(2)}`;
+  } else {
+    display.style.color = 'var(--status-red)';
+    display.innerText = `-$${Math.abs(profit).toFixed(2)} (Loss)`;
+  }
+}
+
+async function submitProductListing(event) {
+  event.preventDefault();
+
+  const btn = document.getElementById('btn-submit-listing');
+  const alertBox = document.getElementById('modal-alert');
+  const cj_pid = document.getElementById('modal-cj-pid').value;
+  const title = document.getElementById('modal-product-title').value.trim();
+  const price = parseFloat(document.getElementById('modal-selling-price').value);
+  const description = document.getElementById('modal-product-desc').value.trim();
+
+  btn.disabled = true;
+  btn.innerText = 'Publishing to Whop...';
+
+  try {
+    const res = await fetch('/api/whop/list-product', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        company_id: '{{ company_id }}',
+        cj_pid: cj_pid,
+        selling_price: price,
+        custom_title: title,
+        custom_description: description
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || 'Failed to list product to Whop');
+    }
+
+    alertBox.className = 'tactical-alert alert-success';
+    alertBox.style.display = 'block';
+    alertBox.innerHTML = `
+      <div>
+        <strong>Successfully Listed to Whop!</strong><br>
+        Whop Product ID: <code style="color: var(--status-cyan);">${data.whop_product_id}</code><br>
+        Auto-mapped ${data.variants_mapped} variant(s) to CJ Dropshipping for fulfillment.
+      </div>
+    `;
+
+    // Refresh products list in background
+    setTimeout(() => {
+      closeListModal();
+      loadProducts(document.getElementById('product-search-input').value.trim());
+    }, 1500);
+
+  } catch (err) {
+    alertBox.className = 'tactical-alert alert-error';
+    alertBox.style.display = 'block';
+    alertBox.innerText = `Listing Error: ${err.message}`;
+  } finally {
+    btn.disabled = false;
+    btn.innerText = 'Publish to Whop Store';
+  }
+}
+</script>
+{% endblock %}

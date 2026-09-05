@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-from fastapi import FastAPI, Request, HTTPException, Header, Depends
+from fastapi import FastAPI, Request, HTTPException, Header, Depends, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -16,7 +16,8 @@ from pydantic import BaseModel
 
 from config import settings
 from database import get_db_connection, get_settings, update_settings, log_event, get_or_create_merchant, list_merchants, DEFAULT_COMPANY_ID
-from services.sync_worker import process_incoming_whop_order, sync_all_pending_tracking
+from services.sync_worker import process_incoming_whop_order, sync_all_pending_tracking, list_cj_product_to_whop_service
+from services.cj_api_client import cj_client
 from services.whop_api_client import whop_client
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -36,8 +37,10 @@ app.mount("/assets/fonts/google", StaticFiles(directory=str(BASE_DIR / "static" 
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 def get_request_company_id(request: Request) -> str:
-    """Extracts tenant company_id from Whop iframe query parameters, cookies, or default."""
-    cid = request.query_params.get("company_id")
+    """Extracts tenant company_id from Whop iframe query parameters, cookies, path, or default."""
+    cid = request.path_params.get("company_id")
+    if not cid:
+        cid = request.query_params.get("company_id")
     if not cid:
         cid = request.cookies.get("active_company_id")
     if not cid:
@@ -47,12 +50,13 @@ def get_request_company_id(request: Request) -> str:
     return cid.strip()
 
 # ---------------------------------------------------------------------------
-# ---------------------------------------------------------------------------
 # HTML Web Dashboard Views (Multi-Tenant Isolated)
 # ---------------------------------------------------------------------------
 
 @app.get("/", response_class=HTMLResponse)
-def view_dashboard(request: Request):
+@app.get("/dashboard/{company_id}", response_class=HTMLResponse)
+@app.get("/experiences/{experience_id}", response_class=HTMLResponse)
+def view_dashboard(request: Request, company_id: Optional[str] = None, experience_id: Optional[str] = None):
     """Main merchant dashboard showing metrics, pipeline stages, order feed, and logs."""
     company_id = get_request_company_id(request)
     current_merchant = get_or_create_merchant(company_id)
@@ -132,6 +136,21 @@ def view_sku_mapping(request: Request):
         "mappings": mappings
     })
 
+@app.get("/products", response_class=HTMLResponse)
+def view_products_catalog(request: Request):
+    """Product catalog and listing manager pushing CJ items directly to Whop."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+
+    return templates.TemplateResponse("products.html", {
+        "request": request,
+        "active_page": "products",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants
+    })
+
 @app.get("/settings", response_class=HTMLResponse)
 def view_settings(request: Request):
     """Integration settings, credentials, and webhook endpoints for active merchant."""
@@ -151,6 +170,22 @@ def view_settings(request: Request):
         "all_merchants": all_merchants,
         "settings": current_merchant,
         "webhook_url": webhook_url
+    })
+
+@app.get("/app-store", response_class=HTMLResponse)
+@app.get("/listing", response_class=HTMLResponse)
+def view_app_store_listing(request: Request):
+    """Whop App Store marketplace listing page faithful to the CJ Dropshipping reference design."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+
+    return templates.TemplateResponse("app_store.html", {
+        "request": request,
+        "active_page": "app_store",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants
     })
 
 # ---------------------------------------------------------------------------
@@ -254,6 +289,106 @@ def delete_sku_mapping(mapping_id: int):
     conn.commit()
     conn.close()
     return {"status": "deleted"}
+
+@app.get("/api/cj/products")
+async def api_get_cj_products(
+    request: Request,
+    tab: str = Query("my_products"),
+    q: str = Query(""),
+    page: int = Query(1),
+    size: int = Query(20)
+):
+    """Fetches CJ products (either merchant's personal sourced items or catalog search) with Whop listing status."""
+    company_id = get_request_company_id(request)
+
+    if tab == "listed":
+        # Load permanently saved products directly from local database
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("""
+            SELECT 
+                cj_product_id, whop_product_id, whop_product_title, cj_product_title,
+                AVG(cj_estimated_cost) as sellPrice, COUNT(*) as variant_count
+            FROM sku_mappings 
+            WHERE company_id = ?
+            GROUP BY whop_product_id
+            ORDER BY id DESC
+        """, (company_id,))
+        rows = [dict(r) for r in c.fetchall()]
+        conn.close()
+
+        listed_products = []
+        for r in rows:
+            pid = r["cj_product_id"]
+            detail = next((p for p in cj_client.SANDBOX_CATALOG if p["pid"] == pid), None)
+            img = detail["productImage"] if detail else "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600"
+            desc = detail["description"] if detail else "Direct dropshipped item listed on Whop store."
+            listed_products.append({
+                "pid": pid,
+                "productName": r["whop_product_title"] or r["cj_product_title"],
+                "productSku": f"SKU-{pid}",
+                "sellPrice": float(r["sellPrice"] or 15.00),
+                "productImage": img,
+                "description": desc,
+                "categoryName": "Active on Whop",
+                "is_listed": True,
+                "whop_product_id": r["whop_product_id"],
+                "variants": [None] * int(r["variant_count"] or 1)
+            })
+        return {"products": listed_products, "tab": tab, "company_id": company_id}
+
+    if tab == "catalog":
+        products = await cj_client.search_products(query=q, page=page, size=size, company_id=company_id)
+    else:
+        products = await cj_client.get_my_products(keyword=q, page=page, size=size, company_id=company_id)
+
+    # Check which products are already mapped/listed for this merchant
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT cj_product_id, whop_product_id, whop_product_title FROM sku_mappings WHERE company_id = ?", (company_id,))
+    mapped_rows = c.fetchall()
+    conn.close()
+
+    mapped_lookup = {}
+    for row in mapped_rows:
+        mapped_lookup[row["cj_product_id"]] = {
+            "whop_product_id": row["whop_product_id"],
+            "whop_product_title": row["whop_product_title"]
+        }
+
+    enriched = []
+    for p in products:
+        p_dict = dict(p)
+        pid = p_dict.get("pid")
+        is_mapped = pid in mapped_lookup
+        p_dict["is_listed"] = is_mapped
+        if is_mapped:
+            p_dict["whop_product_id"] = mapped_lookup[pid]["whop_product_id"]
+        enriched.append(p_dict)
+
+    return {"products": enriched, "tab": tab, "company_id": company_id}
+
+class ListProductRequest(BaseModel):
+    cj_pid: str
+    selling_price: float
+    custom_title: Optional[str] = None
+    custom_description: Optional[str] = None
+    company_id: Optional[str] = None
+
+@app.post("/api/whop/list-product")
+async def api_list_product_to_whop(req: ListProductRequest, request: Request):
+    """Directly creates a product and plan on Whop and saves SKU mappings for automated fulfillment."""
+    company_id = req.company_id or get_request_company_id(request)
+    result = await list_cj_product_to_whop_service(
+        company_id=company_id,
+        cj_pid=req.cj_pid,
+        selling_price=req.selling_price,
+        custom_title=req.custom_title,
+        custom_description=req.custom_description
+    )
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error", "Listing to Whop failed"))
+    return result
 
 class SettingsUpdate(BaseModel):
     company_id: Optional[str] = None

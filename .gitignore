@@ -1,4 +1,4 @@
-﻿# Large and local cache directories
+# Large and local cache directories
 browser_profile/
 nexteuv/
 data/shopify_themes/
@@ -20,3 +20,10 @@ venv/
 *.log
 .DS_Store
 Thumbs.db
+
+# Secrets and Databases
+.env
+.env.*
+!.env.example
+*.db
+*.sqlite3

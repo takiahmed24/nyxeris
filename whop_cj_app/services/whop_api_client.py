@@ -96,4 +96,107 @@ class WhopApiClient:
             log_event("whop_fulfill", "error", f"Exception fulfilling Whop order: {str(e)}", order_id=whop_order_id)
             return {"success": False, "error": str(e)}
 
+    async def create_whop_product(
+        self,
+        title: str,
+        description: str,
+        price: float,
+        currency: str = "usd",
+        images: Optional[list] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        company_id: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Creates a product and pricing plan on Whop using merchant's Whop API credentials."""
+        creds = get_settings(company_id)
+        api_key = creds.get("whop_api_key")
+
+        # In Sandbox / Dev mode without Whop API key:
+        if not api_key:
+            clean_title = "".join(c for c in title if c.isalnum())[:10].lower()
+            product_hash = abs(hash(f"{company_id}_{title}_{price}")) % 10000000
+            simulated_prod_id = f"prod_{clean_title}_{product_hash:07d}"
+            simulated_plan_id = f"plan_{clean_title}_{product_hash:07d}"
+            product_url = f"https://whop.com/hub/products/{simulated_prod_id}"
+
+            logger.info(f"[Sandbox] Simulating Whop product creation: {simulated_prod_id} for '{title}' (Company: {company_id})")
+            log_event(
+                "whop_product_create",
+                "simulated",
+                f"Simulated Whop product {simulated_prod_id} ('{title}') at ${price:.2f}",
+                company_id=company_id or "default",
+                payload={"whop_product_id": simulated_prod_id, "price": price, "title": title}
+            )
+            return {
+                "success": True,
+                "mode": "sandbox",
+                "whop_product_id": simulated_prod_id,
+                "whop_plan_id": simulated_plan_id,
+                "whop_product_url": product_url,
+                "title": title,
+                "price": price,
+                "currency": currency.upper()
+            }
+
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+
+        # 1. Create Product
+        product_payload = {
+            "title": title[:80],
+            "description": description,
+            "account_id": company_id,
+            "metadata": metadata or {}
+        }
+        if images and len(images) > 0:
+            product_payload["gallery_images"] = [{"url": img} if isinstance(img, str) else img for img in images if img]
+
+        try:
+            async with httpx.AsyncClient(timeout=20.0) as client:
+                res = await client.post(
+                    f"{self.base_url}/products",
+                    headers=headers,
+                    json=product_payload
+                )
+                data = res.json() if res.status_code in (200, 201) else {}
+                whop_product_id = data.get("id") or data.get("product", {}).get("id")
+
+                if not whop_product_id:
+                    err = res.text
+                    log_event("whop_product_create", "error", f"Whop product creation failed: {err}", company_id=company_id or "default")
+                    return {"success": False, "mode": "live", "error": err}
+
+                # 2. Create Pricing Plan for this product
+                plan_payload = {
+                    "product_id": whop_product_id,
+                    "plan_type": "one_time",
+                    "initial_price": float(price),
+                    "currency": currency.lower()
+                }
+                plan_res = await client.post(
+                    f"{self.base_url}/plans",
+                    headers=headers,
+                    json=plan_payload
+                )
+                plan_data = plan_res.json() if plan_res.status_code in (200, 201) else {}
+                whop_plan_id = plan_data.get("id", "")
+
+                product_url = f"https://whop.com/hub/products/{whop_product_id}"
+                log_event("whop_product_create", "success", f"Live Whop product {whop_product_id} created for {title}", company_id=company_id or "default")
+                return {
+                    "success": True,
+                    "mode": "live",
+                    "whop_product_id": whop_product_id,
+                    "whop_plan_id": whop_plan_id,
+                    "whop_product_url": product_url,
+                    "title": title,
+                    "price": price,
+                    "currency": currency.upper()
+                }
+        except Exception as e:
+            logger.error(f"Exception creating Whop product: {e}")
+            log_event("whop_product_create", "error", f"Exception creating Whop product: {str(e)}", company_id=company_id or "default")
+            return {"success": False, "error": str(e)}
+
 whop_client = WhopApiClient()

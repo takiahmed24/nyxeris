@@ -1,11 +1,11 @@
 @echo off
-title CJ Dropshipping for Whop - SaaS Fulfillment Bridge
+title CJdropshipping: Sourcing, Dropshipping & Fulfillment - Developed by Taki
 cd /d "%~dp0whop_cj_app"
 
 echo ======================================================================
-echo          CJ DROPSHIPPING FOR WHOP - SAAS FULFILLMENT BRIDGE
-echo          Eliminating Shopify Fees & Direct Order Integration
-echo          Tactical Necyron UI (Zero Glassmorphism)
+echo    CJDROPSHIPPING: SOURCING, DROPSHIPPING & FULFILLMENT FOR WHOP
+echo    Multi-Tenant Sourcing & Automated Carrier Fulfillment Engine
+echo    Developed by Taki • Whop Vibe Architecture
 echo ======================================================================
 echo.
 

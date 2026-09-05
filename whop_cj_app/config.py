@@ -8,11 +8,11 @@ DB_PATH = BASE_DIR / "bridge.db"
 
 class Settings:
     # Server configuration
-    APP_NAME: str = "CJ Dropshipping for Whop"
+    APP_NAME: str = "CJdropshipping: Sourcing, Dropshipping & Fulfillment"
     APP_VERSION: str = "1.0.0"
-    HOST: str = "127.0.0.1"
-    PORT: int = 8090
-    DEBUG: bool = True
+    HOST: str = os.getenv("HOST", "0.0.0.0")
+    PORT: int = int(os.getenv("PORT", "8090"))
+    DEBUG: bool = os.getenv("DEBUG", "False").lower() in ("true", "1")
 
     # Database
     DATABASE_URL: str = str(DB_PATH)
