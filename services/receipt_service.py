@@ -503,3 +503,57 @@ def generate_nyxeris_email_html(order: Dict[str, Any], items: List[Dict[str, Any
     </body>
     </html>
     """
+
+
+def send_nyxeris_receipt_email(order: Dict[str, Any], items: List[Dict[str, Any]], pdf_path: Optional[str] = None) -> bool:
+    """Dispatches the white-labeled HTML receipt and attached PDF invoice to customer's Gmail.
+    Supports standard SMTP / Gmail App Passwords if configured in .env.
+    """
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from email.mime.application import MIMEApplication
+
+    recipient = order.get("customer_email")
+    if not recipient:
+        return False
+
+    smtp_host = os.getenv("SMTP_HOST", "")
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    smtp_user = os.getenv("SMTP_USER", "")
+    smtp_pass = os.getenv("SMTP_PASS", "")
+    sender_email = os.getenv("SMTP_FROM", f"orders@{settings.STORE_NAME.lower()}.com")
+
+    # If no SMTP server configured, log receipt readiness
+    if not (smtp_host and smtp_user and smtp_pass):
+        print(f"[Nyxeris Mailer] SMTP credentials not yet provided in .env. Email receipt ready for {recipient}. Preview at: {settings.BASE_URL}/api/orders/{order['order_id']}/email-preview")
+        return False
+
+    try:
+        msg = MIMEMultipart("mixed")
+        msg["Subject"] = f"Official Order Confirmation & Receipt — {order['order_id']} | Nyxeris"
+        msg["From"] = f"{settings.STORE_NAME} <{sender_email}>"
+        msg["To"] = recipient
+
+        # HTML body
+        html_content = generate_nyxeris_email_html(order, items)
+        msg.attach(MIMEText(html_content, "html", "utf-8"))
+
+        # Attach PDF invoice if generated
+        if pdf_path and os.path.exists(pdf_path):
+            with open(pdf_path, "rb") as f:
+                pdf_attachment = MIMEApplication(f.read(), _subtype="pdf")
+                pdf_attachment.add_header("Content-Disposition", "attachment", filename=f"Nyxeris_Receipt_{order['order_id']}.pdf")
+                msg.attach(pdf_attachment)
+
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_pass)
+            server.send_message(msg)
+
+        print(f"[Nyxeris Mailer] Successfully dispatched receipt email to {recipient}")
+        return True
+    except Exception as err:
+        print(f"[Nyxeris Mailer] Failed to send email to {recipient}: {err}")
+        return False
+

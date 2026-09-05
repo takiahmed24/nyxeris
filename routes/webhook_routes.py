@@ -10,7 +10,7 @@ from typing import Optional
 
 from database import get_db_connection
 from services.whop_service import whop_service
-from services.receipt_service import generate_nyxeris_receipt_pdf
+from services.receipt_service import generate_nyxeris_receipt_pdf, send_nyxeris_receipt_email
 
 logger = logging.getLogger("nyxeris.webhooks")
 router = APIRouter(prefix="/api/webhooks", tags=["Webhooks"])
@@ -96,6 +96,7 @@ async def handle_whop_webhook(
         # Generate official Nyxeris PDF receipt
         pdf_path = generate_nyxeris_receipt_pdf(updated_order, items)
         logger.info(f"Generated Nyxeris PDF receipt for {order_id} at {pdf_path}")
+        send_nyxeris_receipt_email(updated_order, items, pdf_path)
 
         return {
             "status": "processed",

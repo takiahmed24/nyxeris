@@ -12,7 +12,7 @@ from pydantic import BaseModel, EmailStr, Field
 from config import settings
 from database import get_db_connection
 from services.whop_service import whop_service
-from services.receipt_service import generate_nyxeris_receipt_pdf, generate_nyxeris_email_html
+from services.receipt_service import generate_nyxeris_receipt_pdf, generate_nyxeris_email_html, send_nyxeris_receipt_email
 
 router = APIRouter(prefix="/api", tags=["Storefront"])
 
@@ -377,6 +377,7 @@ def simulate_order_payment(order_id: str):
 
     # Pre-generate official Nyxeris PDF receipt
     pdf_path = generate_nyxeris_receipt_pdf(updated_order, items)
+    send_nyxeris_receipt_email(updated_order, items, pdf_path)
 
     return {
         "status": "success",
