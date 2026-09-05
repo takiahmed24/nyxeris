@@ -72,6 +72,39 @@ const NyxerisStore = {
     this.updateCartUI();
   },
 
+  getDeliveryCountdown() {
+    const now = new Date();
+    const cutoff = new Date();
+    if (now.getHours() >= 18) {
+      cutoff.setDate(cutoff.getDate() + 1);
+    }
+    cutoff.setHours(18, 0, 0, 0);
+    const diffMs = cutoff - now;
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    return `${hours}h ${mins}m`;
+  },
+
+  getEstimatedDeliveryRange() {
+    const now = new Date();
+    const d1 = new Date(now);
+    d1.setDate(d1.getDate() + 3);
+    const d2 = new Date(now);
+    d2.setDate(d2.getDate() + 6);
+    const m1 = d1.toLocaleDateString('en-US', { month: 'short' });
+    const day1 = d1.getDate();
+    const m2 = d2.toLocaleDateString('en-US', { month: 'short' });
+    const day2 = d2.getDate();
+    return m1 === m2 ? `${m1} ${day1} – ${day2}` : `${m1} ${day1} – ${m2} ${day2}`;
+  },
+
+  selectQuickPill(category, btnEl) {
+    document.querySelectorAll('.catalog-quick-pill').forEach(el => el.classList.remove('active'));
+    if (btnEl) btnEl.classList.add('active');
+    this.currentCategory = category;
+    this.applyFilters();
+  },
+
   allProducts: [],
   filteredProducts: [],
   displayCount: 24,
@@ -627,47 +660,43 @@ const NyxerisStore = {
         `;
       }).join('');
     } else {
-      // Best Buy Style Grid Mode Cards
+      // Editorial v2.0 Grid Mode Cards (Matching Catalog Mockup)
       grid.innerHTML = itemsToShow.map(prod => {
         const { price, comparePrice, savings, percent } = this.getProductPricing(prod);
         const { score, count } = this.getProductRating(prod);
 
         return `
           <article class="product-card" data-id="${prod.id}">
-            <div class="product-thumb-wrapper">
+            <div class="product-thumb-wrapper" style="position: relative;">
+              ${percent > 0 ? `<span class="badge-discount-terracotta" style="position: absolute; top: 10px; left: 10px; z-index: 2;">${percent}% OFF</span>` : ''}
+              <button type="button" class="wishlist-btn" style="position: absolute; top: 10px; right: 10px; z-index: 2; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Save to Wishlist" onclick="event.stopPropagation(); NyxerisStore.showToast('Saved to wishlist');">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#1f1919" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              </button>
               <img src="${prod.image_url}" alt="${prod.title}" loading="lazy" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
               <button type="button" class="product-quickview-btn" onclick="NyxerisStore.openQuickView('${prod.id}')">
                 Quick View
               </button>
-              <div class="stock-indicator">
-                <span class="stock-dot"></span>
-                <span>In Stock</span>
-              </div>
             </div>
             <div class="product-details">
-              <div class="product-meta-row">
-                <span class="product-category">${prod.category}</span>
-                <span class="product-sku">${prod.sku}</span>
+              <div style="display: flex; gap: 6px; margin: 4px 0 6px 0;">
+                <span class="badge-in-stock"><span class="badge-in-stock-dot"></span> In Stock</span>
+                <span class="badge-fast-dispatch">Fast Dispatch</span>
               </div>
               <h3 class="product-title" onclick="NyxerisStore.openQuickView('${prod.id}')" title="${prod.title}">${prod.title}</h3>
               <div class="rating-snippet">
-                <span class="rating-stars">★★★★★</span>
+                <span class="rating-stars" style="color: #f59e0b;">★★★★★</span>
                 <span class="rating-val">${score}</span>
                 <span class="rating-count">(${count})</span>
               </div>
               <p class="product-description">${prod.description}</p>
 
               <div class="product-bottom-row">
-                <div class="price-row-top">
+                <div class="price-row-top" style="display: flex; align-items: center; justify-content: space-between;">
                   <div class="price-box">
                     <span class="current-price">$${price.toFixed(2)}</span>
                     <span class="compare-price">$${comparePrice.toFixed(2)}</span>
                   </div>
-                  ${savings > 0 ? `
-                    <span class="savings-badge">
-                      Save $${savings.toFixed(2)}
-                    </span>
-                  ` : ''}
+                  <span style="color: #2e6b36; font-size: 11.5px; font-weight: 600;">Free Shipping</span>
                 </div>
                 <div class="catalog-actions-group">
                   <button type="button" class="btn-buy-direct" onclick="NyxerisStore.quickBuy('${prod.id}')" title="Instant Direct Checkout">
@@ -711,8 +740,11 @@ const NyxerisStore = {
         <img src="${product.image_url}" alt="${product.title}" onerror="this.src='/static/images/products/nyxeris-lumina-desk-mat.jpg'" />
       </div>
       <div class="quickview-info-wrap">
-        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #767676; font-weight: 600; font-family: var(--font-nav); margin-bottom: 6px;">
-          ${product.category || 'Curated Goods'}
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+          <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: #767676; font-weight: 600; font-family: var(--font-nav);">
+            ${product.category || 'Curated Goods'}
+          </div>
+          <span class="badge-in-stock"><span class="badge-in-stock-dot"></span> In Stock</span>
         </div>
         <h2 style="font-family: var(--font-serif); font-size: 22px; font-weight: 400; color: #1f1919; line-height: 1.35; margin-bottom: 8px;">
           ${product.title}
@@ -723,15 +755,27 @@ const NyxerisStore = {
           <span class="rating-count" style="font-size: 12.5px; color: #767676;" id="quickview-stars-count">(${count} verified reviews)</span>
         </div>
 
-        <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px;">
           <span style="font-family: var(--font-nav); font-size: 24px; font-weight: 600; color: #1f1919;">$${price.toFixed(2)}</span>
           <span style="font-size: 15px; color: #767676; text-decoration: line-through;">$${comparePrice.toFixed(2)}</span>
-          ${savings > 0 ? `<span class="savings-badge" style="font-size: 11px; padding: 3px 8px;">Save $${savings.toFixed(2)} (${percent}% off)</span>` : ''}
+          ${savings > 0 ? `<span class="badge-discount-terracotta">${percent}% OFF</span>` : ''}
         </div>
+        ${savings > 0 ? `<div style="font-size: 12.5px; color: var(--accent-terracotta); font-weight: 600; margin-bottom: 12px;">You save $${savings.toFixed(2)}</div>` : ''}
 
         <p style="font-size: 13.5px; color: #424242; line-height: 1.6; margin-bottom: 16px;">
           ${product.description}
         </p>
+
+        <!-- Delivery Urgency Box (PDP Mockup Specification) -->
+        <div class="pdp-delivery-urgency-box">
+          <div class="pdp-urgency-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <div class="pdp-urgency-text">
+            <div>Order within <strong>${this.getDeliveryCountdown()}</strong> to get it by</div>
+            <div class="pdp-urgency-date">${this.getEstimatedDeliveryRange()}</div>
+          </div>
+        </div>
 
         <div class="quickview-specs-box">
           <div class="quickview-specs-row">
@@ -752,13 +796,25 @@ const NyxerisStore = {
           </div>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 12px;">
-          <button type="button" class="btn-solid-white" style="flex: 1; padding: 12px 18px;" onclick="NyxerisStore.quickBuy('${product.id}');">
-            BUY NOW — $${price.toFixed(2)}
+        <!-- Dual Action CTAs -->
+        <div class="pdp-dual-actions-row">
+          <button type="button" class="btn-pdp-add-bag" onclick="NyxerisStore.addToCart('${product.id}'); NyxerisStore.closeQuickView();">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Add to Bag</span>
           </button>
-          <button type="button" class="btn-outline-subtle" style="padding: 12px 18px;" onclick="NyxerisStore.addToCart('${product.id}'); NyxerisStore.closeQuickView();">
-            ADD TO BAG
+          <button type="button" class="btn-pdp-buy-now" onclick="NyxerisStore.quickBuy('${product.id}');">
+            Buy Now
           </button>
+        </div>
+
+        <!-- Payment Badges Strip -->
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; font-size: 10px; color: #767676; flex-wrap: wrap;">
+          <span class="payment-badge-chip">VISA</span>
+          <span class="payment-badge-chip">MASTERCARD</span>
+          <span class="payment-badge-chip">AMEX</span>
+          <span class="payment-badge-chip">APPLE PAY</span>
+          <span class="payment-badge-chip">GOOGLE PAY</span>
+          <span class="payment-badge-chip">PAYPAL</span>
         </div>
       </div>
 
@@ -1239,14 +1295,17 @@ const NyxerisStore = {
     if (headerCartTotal) headerCartTotal.textContent = `$${subtotal.toFixed(2)}`;
 
     if (progressFill && progressText) {
+      const leftBadge = document.getElementById('shipping-progress-left-badge');
       if (subtotal >= this.freeShippingThreshold) {
         progressFill.style.width = '100%';
-        progressText.innerHTML = `<span style="color: #1f1919; font-weight: 600;">Unlocked Free Insured Courier Shipping!</span>`;
+        progressText.innerHTML = `<span>✓ Unlocked Free Insured Courier Delivery!</span>`;
+        if (leftBadge) leftBadge.textContent = 'FREE SHIPPING';
       } else {
         const remaining = (this.freeShippingThreshold - subtotal).toFixed(2);
         const percent = Math.min(100, Math.round((subtotal / this.freeShippingThreshold) * 100));
         progressFill.style.width = `${percent}%`;
-        progressText.innerHTML = `Add $${remaining} more for complimentary insured delivery`;
+        progressText.innerHTML = `<span>🚚 You're <strong>$${remaining}</strong> away from Free Shipping!</span>`;
+        if (leftBadge) leftBadge.textContent = `$${remaining} left`;
       }
     }
 

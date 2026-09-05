@@ -163,13 +163,106 @@
       </div>
       <div class="pipeline-hero-content">
         <div class="pipeline-hero-eyebrow">CURATED MODERN GOODS</div>
-        <h1 class="pipeline-hero-title">Thoughtful Design.<br>Everyday Living.</h1>
+        <h1 class="pipeline-hero-title">Upgrade the way<br>you work and live.</h1>
         <p class="pipeline-hero-desc">
-          Curated essentials for your workspace, everyday carry, and modern life. Built for longevity, purposeful function, and quiet refinement.
+          Curated essentials for a smarter workspace, everyday carry, and modern living.
         </p>
         <div class="pipeline-hero-buttons">
-          <a href="#catalog" class="pipeline-btn-solid">EXPLORE ALL PRODUCTS</a>
-          <a href="#top-collections" class="pipeline-btn-outline">VIEW COLLECTIONS</a>
+          <a href="#catalog" class="pipeline-btn-solid">Shop Best Sellers</a>
+          <a href="#top-collections" class="pipeline-btn-outline">Explore Collections</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.1 Luxury Trust Strip (Directly Below Hero) -->
+    <section class="nyxeris-trust-pills-bar">
+      <div class="pipeline-container">
+        <div class="nyxeris-trust-pills-grid">
+          <div class="trust-pill-card">
+            <div class="trust-pill-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            </div>
+            <div class="trust-pill-text">
+              <div class="trust-pill-title">Free insured shipping over $150</div>
+              <div class="trust-pill-sub">Fast & reliable delivery on select orders.</div>
+            </div>
+          </div>
+          <div class="trust-pill-card">
+            <div class="trust-pill-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
+            </div>
+            <div class="trust-pill-text">
+              <div class="trust-pill-title">Tracked Delivery</div>
+              <div class="trust-pill-sub">Real-time updates on every order.</div>
+            </div>
+          </div>
+          <div class="trust-pill-card">
+            <div class="trust-pill-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="trust-pill-text">
+              <div class="trust-pill-title">Secure Checkout</div>
+              <div class="trust-pill-sub">Safe, encrypted, and hassle-free.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.2 Shop by Category 5 Visual Tiles -->
+    <section class="nyxeris-categories-tiles-section">
+      <div class="pipeline-container">
+        <div class="pipeline-section-header-flex">
+          <div>
+            <h2 class="pipeline-section-heading" style="font-size: 24px; letter-spacing: -0.01em;">Shop by Category</h2>
+          </div>
+          <a href="#catalog" class="pipeline-section-link">View all categories →</a>
+        </div>
+        <div class="category-tiles-grid">
+          <a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Workspace & Studio')" class="category-tile-card">
+            <img src="/static/images/nyxeris_whop_banner.jpg" alt="Workspace" class="cat-tile-bg" />
+            <div class="cat-tile-overlay"></div>
+            <div class="cat-tile-content">
+              <span class="cat-tile-icon">💻</span>
+              <h3 class="cat-tile-title">Workspace</h3>
+              <span class="cat-tile-desc">Elevate your setup</span>
+            </div>
+          </a>
+          <a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Smart Gear & Power')" class="category-tile-card">
+            <img src="/static/images/products/nyxeris-3in1-wireless-charger.jpg" onerror="this.src='/static/images/nyxeris_whop_banner.jpg'" alt="Charging" class="cat-tile-bg" />
+            <div class="cat-tile-overlay"></div>
+            <div class="cat-tile-content">
+              <span class="cat-tile-icon">⚡</span>
+              <h3 class="cat-tile-title">Charging</h3>
+              <span class="cat-tile-desc">Power made simple</span>
+            </div>
+          </a>
+          <a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Precision Tools & EDC')" class="category-tile-card">
+            <img src="/static/images/products/nyxeris-vektor-titanium-tool.jpg" alt="Everyday Carry" class="cat-tile-bg" />
+            <div class="cat-tile-overlay"></div>
+            <div class="cat-tile-content">
+              <span class="cat-tile-icon">👜</span>
+              <h3 class="cat-tile-title">Everyday Carry</h3>
+              <span class="cat-tile-desc">Essentials for the go</span>
+            </div>
+          </a>
+          <a href="#catalog" onclick="NyxerisStore.selectCategoryFromNav('Workspace & Studio')" class="category-tile-card">
+            <img src="/static/images/products/nyxeris-horizon-screenbar-light.jpg" alt="Tech" class="cat-tile-bg" />
+            <div class="cat-tile-overlay"></div>
+            <div class="cat-tile-content">
+              <span class="cat-tile-icon">🎧</span>
+              <h3 class="cat-tile-title">Tech</h3>
+              <span class="cat-tile-desc">Smart gear, better life</span>
+            </div>
+          </a>
+          <a href="#catalog" onclick="NyxerisStore.toggleDealsOnly(true)" class="category-tile-card deals-card">
+            <div class="cat-tile-overlay-deals"></div>
+            <div class="cat-tile-content">
+              <span class="cat-tile-badge-deals">%</span>
+              <h3 class="cat-tile-title">Deals</h3>
+              <span class="cat-tile-desc">Top picks, better prices</span>
+            </div>
+          </a>
         </div>
       </div>
     </section>
@@ -526,6 +619,15 @@
 
         <!-- Right Product Feed -->
         <section class="catalog-feed-wrapper">
+          <!-- Catalog Quick Category Filter Pills -->
+          <div class="catalog-quick-pills-bar">
+            <button type="button" class="catalog-quick-pill active" onclick="NyxerisStore.selectQuickPill('All', this)">All Products</button>
+            <button type="button" class="catalog-quick-pill" onclick="NyxerisStore.selectQuickPill('Workspace & Studio', this)">Workspace</button>
+            <button type="button" class="catalog-quick-pill" onclick="NyxerisStore.selectQuickPill('Smart Gear & Power', this)">Charging Accessories</button>
+            <button type="button" class="catalog-quick-pill" onclick="NyxerisStore.selectQuickPill('Precision Tools & EDC', this)">Everyday Carry</button>
+            <button type="button" class="catalog-quick-pill" onclick="NyxerisStore.selectQuickPill('Lighting & Ambience', this)">Tech Essentials</button>
+          </div>
+
           <!-- Top Results Bar -->
           <div class="catalog-toolbar">
             <div class="toolbar-left">
@@ -580,8 +682,11 @@
         </div>
 
         <div class="free-shipping-bar">
-          <div class="shipping-progress-text" id="shipping-progress-desc">
-            <span>Free Insured Courier Shipping</span>
+          <div class="shipping-progress-row">
+            <div class="shipping-progress-text" id="shipping-progress-desc">
+              <span>🚚 Complimentary Insured Delivery</span>
+            </div>
+            <span class="shipping-progress-amount-left" id="shipping-progress-left-badge">$150.00 left</span>
           </div>
           <div class="shipping-progress-track">
             <div class="shipping-progress-fill" id="shipping-progress-bar"></div>
@@ -628,8 +733,33 @@
           <div id="cart-auth-strip" class="cart-auth-strip"></div>
 
           <button type="button" class="btn-checkout-now" id="btn-open-checkout" onclick="NyxerisStore.openCheckoutModal()">
-            CHECKOUT
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Secure Checkout</span>
           </button>
+
+          <!-- Express Checkout Buttons Strip -->
+          <div class="cart-express-checkout-row">
+            <button type="button" class="express-pay-btn express-pay-apple" onclick="NyxerisStore.openCheckoutModal()"> Pay</button>
+            <button type="button" class="express-pay-btn express-pay-gpay" onclick="NyxerisStore.openCheckoutModal()">G Pay</button>
+            <button type="button" class="express-pay-btn express-pay-paypal" onclick="NyxerisStore.openCheckoutModal()">PayPal</button>
+            <button type="button" class="express-pay-btn express-pay-shoppay" onclick="NyxerisStore.openCheckoutModal()">shop Pay</button>
+          </div>
+
+          <!-- Trust bullets -->
+          <div class="cart-drawer-trust-bullets">
+            <div class="cart-trust-bullet-item">
+              <span class="cart-trust-bullet-icon">🔒</span>
+              <div><strong>Secure Checkout</strong> — Industry standard encryption.</div>
+            </div>
+            <div class="cart-trust-bullet-item">
+              <span class="cart-trust-bullet-icon">🚚</span>
+              <div><strong>Tracked Shipping</strong> — Real-time updates from warehouse to door.</div>
+            </div>
+            <div class="cart-trust-bullet-item">
+              <span class="cart-trust-bullet-icon">↺</span>
+              <div><strong>30-Day Returns</strong> — Not in love? Return within 30 days for full refund.</div>
+            </div>
+          </div>
         </div>
       </aside>
     </div>

@@ -52,8 +52,18 @@
   --accent-white: #ffffff;
   --accent-tag: #f7f5f4;
 
+  /* Nyxeris Editorial v2.0 Forest Olive & Terracotta Palette */
+  --accent-olive: #324632;
+  --accent-olive-hover: #273827;
+  --accent-olive-light: #edf4ed;
+  --accent-olive-border: #b3ccb2;
+  --accent-terracotta: #c86a43;
+  --accent-terracotta-bg: #faefe9;
+  --accent-slate: #334e68;
+  --accent-slate-bg: #edf2f7;
+
   /* Button Radius & Transitions */
-  --button-radius: 2px;
+  --button-radius: 3px;
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
   --transition-fast: 150ms ease;
   --transition-normal: 250ms var(--ease-smooth);
@@ -2722,13 +2732,13 @@ body {
    SHOPIFY PIPELINE THEME EDITORIAL STYLING (OFFICIAL LIGHT PALETTE)
    ========================================================================== */
 
-/* 1. Announcement Bar */
+/* 1. Announcement Bar — Editorial Forest Olive */
 .pipeline-announcement {
-  background: #f7f5f4;
-  border-bottom: 1px solid #e8e8e8;
+  background: #1d2a1f;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 11.5px;
   letter-spacing: 0.06em;
-  color: #424242;
+  color: rgba(255, 255, 255, 0.9);
   padding: 9px 0;
   position: relative;
   z-index: 102;
@@ -2747,21 +2757,21 @@ body {
   gap: 10px;
 }
 .announcement-highlight {
-  color: #1f1919;
+  color: #ffffff;
   font-weight: 600;
 }
 .announcement-sep {
-  opacity: 0.35;
-  color: #767676;
+  opacity: 0.45;
+  color: rgba(255, 255, 255, 0.6);
 }
 .announcement-link {
-  color: #1f1919;
+  color: #ffffff;
   text-decoration: underline;
   text-underline-offset: 3px;
   transition: opacity 0.2s ease;
 }
 .announcement-link:hover {
-  opacity: 0.7;
+  opacity: 0.8;
 }
 .announcement-selectors {
   display: flex;
@@ -2774,7 +2784,7 @@ body {
 .pipeline-select-btn {
   background: none;
   border: none;
-  color: #424242;
+  color: rgba(255, 255, 255, 0.85);
   font-family: var(--font-nav);
   font-size: 11px;
   font-weight: 500;
@@ -2787,7 +2797,7 @@ body {
   transition: color 0.2s ease;
 }
 .pipeline-select-btn:hover {
-  color: #1f1919;
+  color: #ffffff;
 }
 .pipeline-dropdown-menu {
   position: absolute;
@@ -3144,9 +3154,9 @@ body {
   flex-wrap: wrap;
 }
 .pipeline-btn-solid {
-  background: #ffffff;
-  color: #1f1919;
-  border: 1px solid #ffffff;
+  background: var(--accent-olive);
+  color: #ffffff;
+  border: 1px solid var(--accent-olive);
   padding: 14px 34px;
   font-family: var(--font-nav);
   font-size: 12px;
@@ -3154,20 +3164,21 @@ body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
-  border-radius: 2px;
+  border-radius: 4px;
   transition: all 0.25s ease;
-  box-shadow: none;
+  box-shadow: 0 4px 14px rgba(47, 68, 45, 0.25);
 }
 .pipeline-btn-solid:hover {
-  background: #1f1919;
-  border-color: #ffffff;
+  background: var(--accent-olive-hover);
+  border-color: var(--accent-olive-hover);
   color: #ffffff;
-  box-shadow: none;
+  box-shadow: 0 6px 20px rgba(47, 68, 45, 0.35);
+  transform: translateY(-1px);
 }
 .pipeline-btn-outline {
   background: transparent;
   color: #ffffff;
-  border: 1px solid #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.7);
   padding: 14px 34px;
   font-family: var(--font-nav);
   font-size: 12px;
@@ -3175,13 +3186,14 @@ body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
-  border-radius: 2px;
+  border-radius: 4px;
   transition: all 0.25s ease;
 }
 .pipeline-btn-outline:hover {
   background: #ffffff;
   color: #1f1919;
   border-color: #ffffff;
+  transform: translateY(-1px);
 }
 
 /* 4. Signature Selection Tabs */
@@ -5261,5 +5273,418 @@ body {
 @media (max-width: 380px) {
   .pipeline-catalog-grid {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   NYXERIS V2.0 EDITORIAL LUXURY DESIGN SYSTEM (4 MOCKUPS SPECIFICATION)
+   ========================================================================== */
+
+/* 1. Trust Pills Strip (Directly Below Hero) */
+.nyxeris-trust-pills-bar {
+  background: #ffffff;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 24px 0;
+}
+.nyxeris-trust-pills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.trust-pill-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+}
+.trust-pill-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f7f5f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-olive);
+  flex-shrink: 0;
+}
+.trust-pill-title {
+  font-family: var(--font-nav);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1f1919;
+  letter-spacing: 0.02em;
+  margin-bottom: 2px;
+}
+.trust-pill-sub {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: #767676;
+  line-height: 1.4;
+}
+
+/* 2. Shop by Category 5 Visual Tiles */
+.nyxeris-categories-tiles-section {
+  padding: 48px 0 24px 0;
+  background: #ffffff;
+}
+.category-tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+.category-tile-card {
+  position: relative;
+  height: 140px;
+  border-radius: 6px;
+  overflow: hidden;
+  text-decoration: none;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.category-tile-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+.cat-tile-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.category-tile-card:hover .cat-tile-bg {
+  transform: scale(1.05);
+}
+.cat-tile-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(18,18,20,0.2) 0%, rgba(18,18,20,0.82) 100%);
+}
+.category-tile-card.deals-card {
+  background: #1f1919;
+}
+.cat-tile-overlay-deals {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(200, 106, 67, 0.25) 0%, rgba(31, 25, 25, 0.95) 100%);
+}
+.cat-tile-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cat-tile-icon {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+.cat-tile-badge-deals {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-terracotta);
+  color: var(--accent-terracotta);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.cat-tile-title {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.cat-tile-desc {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* 3. Enhanced Free Shipping Progress Meter in Slide-Over Drawer */
+.free-shipping-bar {
+  background: #f7f5f4;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 14px 20px;
+}
+.shipping-progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+}
+.shipping-progress-text {
+  font-weight: 500;
+  color: #1f1919;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.shipping-progress-amount-left {
+  font-weight: 600;
+  color: var(--accent-olive);
+  font-size: 12px;
+}
+.shipping-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #e8e8e8;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.shipping-progress-fill {
+  height: 100%;
+  background: var(--accent-olive);
+  border-radius: 999px;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 4. Slide-Over Bag Drawer Primary CTA & Trust */
+.btn-checkout-now {
+  background: var(--accent-olive) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 15px !important;
+  border-radius: 4px !important;
+  font-family: var(--font-nav) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: 0 4px 14px rgba(47, 68, 45, 0.25) !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer;
+  width: 100%;
+}
+.btn-checkout-now:hover {
+  background: var(--accent-olive-hover) !important;
+  box-shadow: 0 6px 18px rgba(47, 68, 45, 0.35) !important;
+}
+.cart-express-checkout-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+.express-pay-btn {
+  height: 36px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e8e8e8;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #ffffff;
+}
+.express-pay-apple { background: #000000; color: #ffffff; }
+.express-pay-gpay { background: #ffffff; color: #3c4043; border-color: #dadce0; }
+.express-pay-paypal { background: #ffc439; color: #003087; border: none; }
+.express-pay-shoppay { background: #5a31f4; color: #ffffff; border: none; }
+
+.cart-drawer-trust-bullets {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cart-trust-bullet-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 11.5px;
+  color: #767676;
+  line-height: 1.35;
+}
+.cart-trust-bullet-item strong {
+  color: #1f1919;
+}
+.cart-trust-bullet-icon {
+  color: var(--accent-olive);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* 5. Product QuickView / PDP: Delivery Urgency & Dual CTAs */
+.pdp-delivery-urgency-box {
+  background: #edf4ed;
+  border: 1px solid var(--accent-olive-border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+.pdp-urgency-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-olive);
+  flex-shrink: 0;
+}
+.pdp-urgency-text {
+  font-size: 12.5px;
+  color: #273827;
+  line-height: 1.4;
+}
+.pdp-urgency-date {
+  font-weight: 700;
+  color: var(--accent-olive);
+}
+
+.pdp-dual-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+.btn-pdp-add-bag {
+  background: #ffffff;
+  color: var(--accent-olive);
+  border: 1.5px solid var(--accent-olive);
+  border-radius: 4px;
+  padding: 13px 18px;
+  font-family: var(--font-nav);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-pdp-add-bag:hover {
+  background: var(--accent-olive-light);
+}
+.btn-pdp-buy-now {
+  background: var(--accent-olive);
+  color: #ffffff;
+  border: 1.5px solid var(--accent-olive);
+  border-radius: 4px;
+  padding: 13px 18px;
+  font-family: var(--font-nav);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(47, 68, 45, 0.22);
+  transition: all 0.2s ease;
+}
+.btn-pdp-buy-now:hover {
+  background: var(--accent-olive-hover);
+  border-color: var(--accent-olive-hover);
+  box-shadow: 0 6px 18px rgba(47, 68, 45, 0.32);
+}
+
+/* 6. Product Status & Sale Badges */
+.badge-in-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--accent-olive-light);
+  color: #2e6b36;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.badge-in-stock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2e6b36;
+}
+.badge-fast-dispatch {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-slate-bg);
+  color: var(--accent-slate);
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.badge-discount-terracotta {
+  background: var(--accent-terracotta);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 2px;
+  letter-spacing: 0.04em;
+}
+
+/* 7. Catalog Quick Category Filter Pills */
+.catalog-quick-pills-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.catalog-quick-pill {
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-family: var(--font-nav);
+  font-size: 12px;
+  font-weight: 500;
+  color: #1f1919;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.catalog-quick-pill.active,
+.catalog-quick-pill:hover {
+  background: #1f1919;
+  border-color: #1f1919;
+  color: #ffffff;
+}
+
+/* Responsive Overrides for v2.0 */
+@media (max-width: 900px) {
+  .category-tiles-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .nyxeris-trust-pills-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+@media (max-width: 640px) {
+  .category-tiles-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pdp-dual-actions-row {
+    grid-template-columns: 1fr;
   }
 }

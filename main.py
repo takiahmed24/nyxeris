@@ -33,6 +33,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Whop Iframe & Website Section Security Middleware
+@app.middleware("http")
+async def add_whop_embed_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    # Allow embedding in Whop Hubs, Whop Website App, and creator iframe dashboards
+    response.headers["Content-Security-Policy"] = "frame-ancestors 'self' https://whop.com https://*.whop.com https://*.sslip.io http://localhost:*;"
+    if "X-Frame-Options" in response.headers:
+        del response.headers["X-Frame-Options"]
+    if "x-frame-options" in response.headers:
+        del response.headers["x-frame-options"]
+    return response
+
 # Mount static assets and templates
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
@@ -59,6 +71,8 @@ def on_startup():
 @app.get("/", response_class=HTMLResponse)
 async def storefront_page(request: Request):
     """Renders the official Nyxeris Pipeline storefront."""
+    is_embed = request.query_params.get("embed") in ("true", "1", "yes")
+    creator_ref = request.query_params.get("ref") or request.query_params.get("creator") or ""
     return templates.TemplateResponse(
         request=request,
         name="index.html",
@@ -66,7 +80,27 @@ async def storefront_page(request: Request):
             "store_name": settings.STORE_NAME,
             "tagline": settings.STORE_TAGLINE,
             "currency_symbol": settings.STORE_CURRENCY_SYMBOL,
-            "free_shipping_threshold": settings.FREE_SHIPPING_THRESHOLD
+            "free_shipping_threshold": settings.FREE_SHIPPING_THRESHOLD,
+            "is_embed": is_embed,
+            "creator_ref": creator_ref
+        }
+    )
+
+
+@app.get("/embed", response_class=HTMLResponse)
+async def embed_storefront_page(request: Request):
+    """Clean embed route specifically designed for the Whop Website App section."""
+    creator_ref = request.query_params.get("ref") or request.query_params.get("creator") or ""
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "store_name": settings.STORE_NAME,
+            "tagline": settings.STORE_TAGLINE,
+            "currency_symbol": settings.STORE_CURRENCY_SYMBOL,
+            "free_shipping_threshold": settings.FREE_SHIPPING_THRESHOLD,
+            "is_embed": True,
+            "creator_ref": creator_ref
         }
     )
 
