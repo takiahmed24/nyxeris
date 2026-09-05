@@ -43,7 +43,7 @@ class WhopPaymentService:
         if self.is_sandbox or not self.api_key:
             logger.info(f"[Whop Sandbox] Initiating payment simulation for order {order_id} (${order['total_amount']:.2f})")
             return {
-                "checkout_url": f"{settings.BASE_URL}/checkout/pay/{order_id}",
+                "checkout_url": f"/checkout/pay/{order_id}",
                 "mode": "sandbox",
                 "session_id": f"whop_sess_sim_{order_id}",
                 "brand": "Nyxeris"

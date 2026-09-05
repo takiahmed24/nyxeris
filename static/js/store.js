@@ -1483,9 +1483,11 @@ const NyxerisStore = {
 
       const orderResult = await res.json();
       localStorage.removeItem('nyxeris_cart');
-      this.cart = [];
-      this.updateCartUI();
-      window.location.href = orderResult.checkout_url;
+      let checkoutUrl = orderResult.checkout_url;
+      if (checkoutUrl.startsWith('http://localhost') || checkoutUrl.startsWith('https://localhost')) {
+        checkoutUrl = checkoutUrl.replace(/^https?:\/\/[^\/]+/, '');
+      }
+      window.location.href = checkoutUrl;
     } catch (err) {
       alert(`Error: ${err.message}`);
       submitBtn.disabled = false;
