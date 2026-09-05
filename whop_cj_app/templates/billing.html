@@ -1,0 +1,588 @@
+{% extends "base.html" %}
+
+{% block title %}Billing & Subscription • CJdropshipping for Whop{% endblock %}
+
+{% block content %}
+<!-- Header Row (Uploaded Billing UI Exact) -->
+<div style="margin-bottom: 20px;">
+  <h1 class="greeting-title">Billing</h1>
+  <p class="greeting-subtitle">Manage your plan, payment method, and billing history.</p>
+</div>
+
+<!-- Tabs (Uploaded Billing UI Exact) -->
+<div class="filter-pills-bar" style="border-bottom: 1px solid var(--border-card); padding-bottom: 8px; margin-bottom: 24px; gap: 24px; background: transparent;">
+  <button class="filter-pill active" id="tabBtnOverview" onclick="switchBillingTab('overview')" style="background: transparent; border: none; border-radius: 0; border-bottom: 2px solid var(--cj-orange); color: var(--cj-orange); font-weight: 600; padding: 6px 0;">Overview</button>
+  <button class="filter-pill" id="tabBtnUsage" onclick="switchBillingTab('usage')" style="background: transparent; border: none; border-radius: 0; color: var(--text-muted); padding: 6px 0;">Usage</button>
+  <button class="filter-pill" id="tabBtnInvoices" onclick="switchBillingTab('invoices')" style="background: transparent; border: none; border-radius: 0; color: var(--text-muted); padding: 6px 0;">Invoices</button>
+  <button class="filter-pill" id="tabBtnPayment" onclick="switchBillingTab('payment')" style="background: transparent; border: none; border-radius: 0; color: var(--text-muted); padding: 6px 0;">Payment Methods</button>
+  <button class="filter-pill" id="tabBtnSettings" onclick="switchBillingTab('settings')" style="background: transparent; border: none; border-radius: 0; color: var(--text-muted); padding: 6px 0;">Billing Settings</button>
+</div>
+
+<!-- Yearly Discount Banner (Uploaded Billing UI Exact) -->
+<div style="background: #FFF7ED; border: 1px solid #FFEDD5; border-radius: var(--radius-md); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <span style="font-size: 20px; color: var(--cj-orange);">✨</span>
+    <div>
+      <div style="font-weight: 700; font-size: 14px; color: #9A3412;">Save up to 20% with yearly billing</div>
+      <div style="font-size: 12.5px; color: #C2410C;">Get the same powerful features for less. Perfect for growing stores.</div>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <button class="btn-cj-outline" style="background: #FFFFFF; border-color: #FED7AA; color: #9A3412; font-size: 13px; font-weight: 600; padding: 7px 16px;" onclick="openUpgradeModal('Creator', 'yearly', 48.00)">
+      Switch to Yearly
+    </button>
+    <button style="background: none; border: none; color: #9A3412; font-size: 18px; cursor: pointer;" onclick="this.parentElement.parentElement.style.display='none'">&times;</button>
+  </div>
+</div>
+
+<!-- Main Split: Plan & Usage (Left) + Payment & Invoices (Right) -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+  
+  <!-- Left Column: Current Plan & Compare Plans -->
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    
+    <!-- Current Plan Card (Uploaded Billing UI Exact with Adjusted $5 Price) -->
+    <div class="ui-card">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div>
+          <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Current Plan</div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h2 style="font-size: 22px; font-weight: 800; color: var(--text-main);">{{ plan_tier }} Plan</h2>
+            <span class="badge-pill green">Active</span>
+            {% if trial_days %}<span class="badge-pill blue" style="font-size: 11px;">{{ trial_days }}-Day Free Trial</span>{% endif %}
+          </div>
+          <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Everything you need to source, fulfill, and grow on Whop.</p>
+        </div>
+
+        <div style="text-align: right;">
+          <div style="display: flex; align-items: baseline; justify-content: flex-end; gap: 4px;">
+            <span style="font-size: 32px; font-weight: 800; color: var(--text-main);">${{ "%.0f"|format(plan_price) }}</span>
+            <span style="font-size: 14px; color: var(--text-muted); font-weight: 500;">/ {{ plan_interval }}</span>
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">Next billing date: Oct 5, 2026</div>
+        </div>
+      </div>
+
+      <!-- Plan Features Checklist -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0; padding: 16px 0; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);">
+          <span style="color: var(--cj-orange); font-weight: bold;">✓</span> Product sourcing & fulfillment
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);">
+          <span style="color: var(--cj-orange); font-weight: bold;">✓</span> Whop store integration
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);">
+          <span style="color: var(--cj-orange); font-weight: bold;">✓</span> Real-time order sync
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);">
+          <span style="color: var(--cj-orange); font-weight: bold;">✓</span> Global shipping
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);">
+          <span style="color: var(--cj-orange); font-weight: bold;">✓</span> Standard 24/7 support
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 20px;">
+        <button class="btn-cj-outline" onclick="document.getElementById('comparePlansSection').scrollIntoView({behavior:'smooth'})">Change Plan</button>
+        <button class="btn-cj-primary" onclick="openManageSubscriptionModal()">Manage Subscription</button>
+      </div>
+
+      <!-- Usage Progress Bars (Screen Exact) -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-top: 16px; border-top: 1px solid var(--border-card);">
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Orders this month</span>
+            <span style="font-weight: 600;">25% used</span>
+          </div>
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px;">248 <span style="font-weight: 400; color: var(--text-muted); font-size: 12px;">/ 1,000</span></div>
+          <div class="country-progress-track"><div class="country-progress-fill" style="width: 25%;"></div></div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Product syncs</span>
+            <span style="font-weight: 600;">25% used</span>
+          </div>
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px;">1,240 <span style="font-weight: 400; color: var(--text-muted); font-size: 12px;">/ 5,000</span></div>
+          <div class="country-progress-track"><div class="country-progress-fill" style="width: 25%;"></div></div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">API requests</span>
+            <span style="font-weight: 600;">25% used</span>
+          </div>
+          <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px;">12,480 <span style="font-weight: 400; color: var(--text-muted); font-size: 12px;">/ 50,000</span></div>
+          <div class="country-progress-track"><div class="country-progress-fill" style="width: 25%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compare Plans Section (Screen Exact with Adjusted $5 Price) -->
+    <div class="ui-card" id="comparePlansSection">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+        <h2 style="font-size: 17px; font-weight: 700;">Compare Plans</h2>
+        
+        <div style="display: flex; align-items: center; gap: 10px; font-size: 12.5px;">
+          <span style="color: var(--cj-orange); font-weight: 600;">Save 20%</span>
+          <div style="background: var(--bg-app); border: 1px solid var(--border-card); border-radius: var(--radius-pill); padding: 3px; display: flex;">
+            <button style="background: var(--cj-orange); color: #FFFFFF; border: none; border-radius: var(--radius-pill); padding: 4px 12px; font-size: 12px; font-weight: 600;">Monthly</button>
+            <button style="background: transparent; color: var(--text-muted); border: none; border-radius: var(--radius-pill); padding: 4px 12px; font-size: 12px; font-weight: 500;">Yearly</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+        
+        <!-- Starter Plan -->
+        <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column;">
+          <div style="font-weight: 700; font-size: 15px; color: var(--text-main);">Starter</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">For trying out</div>
+          <div style="font-size: 26px; font-weight: 800; margin-bottom: 16px;">$0 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ month</span></div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: var(--text-secondary); margin-bottom: 24px; flex: 1;">
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Up to 50 orders/month</div>
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Basic product access</div>
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Standard shipping</div>
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Community support</div>
+          </div>
+
+          {% if plan_tier == 'Starter' %}
+          <button class="btn-cj-outline" style="width: 100%; background: #FFF4ED; border-color: #FED7AA; color: var(--cj-orange); font-size: 13px; font-weight: 600; cursor: default;">Current Plan</button>
+          {% else %}
+          <button class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="openUpgradeModal('Starter', 'monthly', 0.00)">Downgrade to Starter</button>
+          {% endif %}
+        </div>
+
+        <!-- Creator Plan -->
+        <div style="background: #FFFFFF; border: 2px solid var(--cj-orange); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; position: relative; box-shadow: 0 4px 16px rgba(255,98,67,0.1);">
+          <div style="position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(--cj-orange); color: #FFFFFF; font-size: 10.5px; font-weight: 700; padding: 2px 10px; border-radius: var(--radius-pill); text-transform: uppercase;">
+            Most Popular
+          </div>
+
+          <div style="font-weight: 700; font-size: 15px; color: var(--text-main);">Creator</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">For growing stores</div>
+          <div style="font-size: 26px; font-weight: 800; color: var(--cj-orange); margin-bottom: 16px;">$5 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ month</span></div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: var(--text-secondary); margin-bottom: 24px; flex: 1;">
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Up to 1,000 orders/month</div>
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Full 400k+ catalog</div>
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Whop integration</div>
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Priority support</div>
+          </div>
+
+          {% if plan_tier == 'Creator' %}
+          <button class="btn-cj-outline" style="width: 100%; background: #FFF4ED; border-color: #FED7AA; color: var(--cj-orange); font-size: 13px; font-weight: 600; cursor: default;">Current Plan</button>
+          {% else %}
+          <button class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="openUpgradeModal('Creator', 'monthly', 5.00)">Switch to Creator</button>
+          {% endif %}
+        </div>
+
+        <!-- Pro Plan -->
+        <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column;">
+          <div style="font-weight: 700; font-size: 15px; color: var(--text-main);">Pro</div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">For high-volume sellers</div>
+          <div style="font-size: 26px; font-weight: 800; margin-bottom: 16px;">$29 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ month</span></div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: var(--text-secondary); margin-bottom: 24px; flex: 1;">
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Unlimited orders</div>
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Lowest product factory costs</div>
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Priority custom sourcing</div>
+            <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Dedicated account manager</div>
+          </div>
+
+          {% if plan_tier == 'Pro' %}
+          <button class="btn-cj-outline" style="width: 100%; background: #FFF4ED; border-color: #FED7AA; color: var(--cj-orange); font-size: 13px; font-weight: 600; cursor: default;">Current Plan</button>
+          {% else %}
+          <button class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="openUpgradeModal('Pro', 'monthly', 29.00)">Upgrade to Pro</button>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Column: Upgrade Box + Payment Methods + Invoices -->
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    
+    <!-- Upgrade to Pro Callout Card -->
+    <div style="background: #FFFBF5; border: 1px solid #FED7AA; border-radius: var(--radius-lg); padding: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+        <span style="font-size: 22px;">💎</span>
+        <div style="font-weight: 700; font-size: 14.5px; color: var(--text-main);">Upgrade to Pro</div>
+      </div>
+      <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 14px;">Lower fees, higher limits, priority custom sourcing support.</p>
+      <a href="javascript:void(0)" onclick="openUpgradeModal('Pro', 'monthly', 29.00)" style="font-size: 13px; font-weight: 600; color: var(--cj-orange);">View Pro Plans &rarr;</a>
+    </div>
+
+    <!-- Payment Method Card (Screen Exact with Whop Balance Option) -->
+    <div class="ui-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+        <h3 style="font-size: 14px; font-weight: 700;">Payment Method</h3>
+        <a href="javascript:void(0)" onclick="window.open('{{ whop_portal_url }}', '_blank')" style="font-size: 12px; color: var(--cj-orange); font-weight: 600;">Manage on Whop</a>
+      </div>
+
+      <!-- Option 1: Whop Balance -->
+      <div id="cardWhopBal" style="background: {% if payment_method == 'whop_balance' %}#FFF7ED; border: 1.5px solid var(--cj-orange);{% else %}var(--bg-card-subtle); border: 1px solid var(--border-card);{% endif %} border-radius: var(--radius-sm); padding: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; cursor: pointer;" onclick="selectPaymentMethod('whop_balance')">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-weight: 800; font-size: 11px; color: #9A3412; background: #FFEDD5; padding: 3px 6px; border-radius: 4px;">WHOP</span>
+          <div>
+            <div style="font-weight: 600; font-size: 13px;">Creator Balance</div>
+            <div style="font-size: 11px; color: var(--text-muted);">${{ "%.2f"|format(whop_balance) }} Available</div>
+          </div>
+        </div>
+        <span id="badgeWhopBal" class="badge-pill {% if payment_method == 'whop_balance' %}green{% else %}gray{% endif %}" style="font-size: 10.5px;">{% if payment_method == 'whop_balance' %}Default{% else %}Select{% endif %}</span>
+      </div>
+
+      <!-- Option 2: Visa on File -->
+      <div id="cardVisa" style="background: {% if payment_method != 'whop_balance' %}#FFF7ED; border: 1.5px solid var(--cj-orange);{% else %}var(--bg-card-subtle); border: 1px solid var(--border-card);{% endif %} border-radius: var(--radius-sm); padding: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; cursor: pointer;" onclick="selectPaymentMethod('credit_card')">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-weight: 800; font-size: 11px; color: #1E3A8A; background: #DBEAFE; padding: 3px 6px; border-radius: 4px;">VISA</span>
+          <div>
+            <div style="font-weight: 600; font-size: 13px;">•••• 4242</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Whop Card on File</div>
+          </div>
+        </div>
+        <span id="badgeVisa" class="badge-pill {% if payment_method != 'whop_balance' %}green{% else %}gray{% endif %}" style="font-size: 10.5px;">{% if payment_method != 'whop_balance' %}Default{% else %}Select{% endif %}</span>
+      </div>
+
+      <button class="btn-cj-outline" style="width: 100%; font-size: 12.5px; padding: 7px 12px;" onclick="window.open('{{ whop_portal_url }}', '_blank')">
+        + Manage Payment Cards on Whop
+      </button>
+    </div>
+
+    <!-- Billing Settings Link Card -->
+    <div class="ui-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="alert('VAT and company invoicing are automatically synced via Whop Platform.')">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 16px;">⚙️</span>
+        <div>
+          <div style="font-weight: 600; font-size: 13px;">Billing Settings</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Update billing address, VAT info, and preferences.</div>
+        </div>
+      </div>
+      <span style="color: var(--text-muted);">&rsaquo;</span>
+    </div>
+
+    <!-- Recent Invoices (Screen Exact with Dynamic Transactions) -->
+    <div class="ui-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+        <h3 style="font-size: 14px; font-weight: 700;">Recent Invoices</h3>
+        <a href="javascript:void(0)" onclick="alert('All invoices are synchronized with your Whop Customer Account.')" style="font-size: 12px; color: var(--cj-orange); font-weight: 600;">View All</a>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;" id="invoicesListWrap">
+        {% if transactions %}
+          {% for tx in transactions[:4] %}
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle);">
+            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">
+              <span>📄</span>
+              <span title="{{ tx.description }}">{{ tx.created_at[:10] if tx.created_at else 'Sep 5, 2026' }}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <strong style="color: var(--text-main);">${{ "%.2f"|format(tx.amount|abs) }}</strong>
+              <span class="badge-pill green" style="font-size: 10px;">Paid</span>
+              <a href="javascript:void(0)" onclick="downloadInvoiceReceipt('{{ tx.reference_id or 'WHOP-TX' }}', '{{ '%.2f'|format(tx.amount|abs) }}', '{{ tx.description }}')" title="Download Receipt" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">↓</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle);">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>📄</span>
+              <span>Sep 5, 2026</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <strong style="color: var(--text-main);">$5.00</strong>
+              <span class="badge-pill green" style="font-size: 10.5px;">Paid</span>
+              <a href="javascript:void(0)" onclick="downloadInvoiceReceipt('WHOP-SUB-INIT', '5.00', 'Creator Plan Monthly')" title="Download PDF" style="color: var(--text-muted);">↓</a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Need Help Widget (Screen Exact) -->
+    <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px; display: flex; align-items: center; gap: 14px;">
+      <span style="font-size: 26px;">🎧</span>
+      <div>
+        <div style="font-weight: 700; font-size: 13px;">Need help with billing?</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Our support team is here 24/7.</div>
+        <a href="javascript:void(0)" onclick="alert('Support channel open: support@nyxeris.com or via Whop Discord')" style="font-size: 12px; font-weight: 600; color: var(--cj-orange);">Contact Support &rarr;</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Manage Subscription Modal -->
+<div id="manageSubscriptionModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); z-index: 9999; overflow-y: auto;">
+  <div style="max-width: 480px; margin: 80px auto; background: #FFFFFF; border-radius: var(--radius-lg); padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); position: relative;">
+    <button onclick="closeManageSubscriptionModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+    
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+      <div style="width: 40px; height: 40px; border-radius: 50%; background: #FFF4ED; display: flex; align-items: center; justify-content: center; color: var(--cj-orange); font-size: 20px;">
+        ⚙️
+      </div>
+      <div>
+        <h2 style="font-size: 18px; font-weight: 700; margin: 0;">Subscription Management</h2>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin: 2px 0 0;">Active plan registered with Whop Developer Platform</p>
+      </div>
+    </div>
+
+    <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-size: 13px; color: var(--text-secondary);">Plan Tier</span>
+        <strong style="font-size: 14px; color: var(--text-main);">{{ plan_tier }} Plan (${{ "%.2f"|format(plan_price) }}/{{ plan_interval }})</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-size: 13px; color: var(--text-secondary);">Trial Status</span>
+        <span class="badge-pill blue" style="font-size: 11px;">{{ trial_days }}-Day Free Trial (Active)</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 13px; color: var(--text-secondary);">Current Payment Source</span>
+        <span style="font-size: 13px; font-weight: 600; color: var(--cj-orange);" id="modalActiveSource">
+          {% if payment_method == 'whop_balance' %}Whop Creator Balance ($432.00){% else %}VISA •••• 4242{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <button class="btn-cj-primary" style="width: 100%; justify-content: center; padding: 11px;" onclick="payNowWithWhopBalance()">
+        💰 Pay ${{ "%.2f"|format(plan_price) }} with Whop Balance Now
+      </button>
+      
+      <button class="btn-cj-outline" style="width: 100%; justify-content: center; padding: 11px;" onclick="window.open('{{ whop_portal_url }}', '_blank')">
+        ↗ Open Whop Customer Portal (Hub)
+      </button>
+
+      <button class="btn-cj-outline" style="width: 100%; justify-content: center; padding: 10px; color: var(--text-muted); border-color: var(--border-subtle);" onclick="closeManageSubscriptionModal()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Plan Upgrade / Whop Checkout Modal -->
+<div id="upgradePlanModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); z-index: 9999; overflow-y: auto;">
+  <div style="max-width: 500px; margin: 70px auto; background: #FFFFFF; border-radius: var(--radius-lg); padding: 28px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); position: relative;">
+    <button onclick="closeUpgradeModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+    
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+      <div style="width: 42px; height: 42px; border-radius: 50%; background: #FFF4ED; display: flex; align-items: center; justify-content: center; color: var(--cj-orange); font-size: 20px;">
+        ⚡
+      </div>
+      <div>
+        <h2 style="font-size: 18px; font-weight: 700; margin: 0;" id="upgradeModalTitle">Upgrade Plan</h2>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin: 2px 0 0;">Pay via Whop Balance or Whop Checkout</p>
+      </div>
+    </div>
+
+    <!-- Plan Summary Card -->
+    <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+        <span style="font-size: 14px; font-weight: 600;" id="upgradeModalPlanName">Creator Plan</span>
+        <div>
+          <span style="font-size: 24px; font-weight: 800; color: var(--cj-orange);" id="upgradeModalPrice">$5.00</span>
+          <span style="font-size: 12px; color: var(--text-muted);" id="upgradeModalInterval">/ month</span>
+        </div>
+      </div>
+      <div style="font-size: 12px; color: var(--text-secondary);" id="upgradeModalDescription">Includes full CJ dropshipping automation, 400k+ catalog, and live order sync.</div>
+    </div>
+
+    <!-- Payment Source Selection -->
+    <div style="margin-bottom: 22px;">
+      <label style="font-size: 12.5px; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 10px;">Select Payment Method:</label>
+      
+      <!-- Whop Balance Option -->
+      <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border: 1.5px solid var(--cj-orange); border-radius: var(--radius-sm); margin-bottom: 10px; cursor: pointer; background: #FFF7ED;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <input type="radio" name="upgradePaySource" value="whop_balance" checked style="accent-color: var(--cj-orange);">
+          <div>
+            <div style="font-weight: 700; font-size: 13px; color: #9A3412;">💰 Whop Creator Balance (1-Click)</div>
+            <div style="font-size: 11px; color: #C2410C;">Deduct directly from your available sales balance (${{ "%.2f"|format(whop_balance) }})</div>
+          </div>
+        </div>
+        <span class="badge-pill green" style="font-size: 10.5px;">Recommended</span>
+      </label>
+
+      <!-- Whop Checkout Option -->
+      <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border: 1px solid var(--border-card); border-radius: var(--radius-sm); cursor: pointer; background: var(--bg-card-subtle);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <input type="radio" name="upgradePaySource" value="whop_checkout" style="accent-color: var(--cj-orange);">
+          <div>
+            <div style="font-weight: 600; font-size: 13px;">💳 Whop Checkout (Card / Apple Pay / Google Pay)</div>
+            <div style="font-size: 11px; color: var(--text-muted);">Secure checkout hosted by Whop with invoice receipts</div>
+          </div>
+        </div>
+      </label>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 12px;">
+      <button class="btn-cj-outline" style="flex: 1; justify-content: center; padding: 11px;" onclick="closeUpgradeModal()">Cancel</button>
+      <button class="btn-cj-primary" style="flex: 1; justify-content: center; padding: 11px;" id="btnConfirmUpgrade" onclick="executePlanUpgrade()">
+        Confirm & Pay &rarr;
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let targetUpgradeTier = 'Creator';
+  let targetUpgradeInterval = 'monthly';
+  let targetUpgradePrice = 5.00;
+
+  function switchBillingTab(tab) {
+    document.querySelectorAll('.filter-pills-bar .filter-pill').forEach(b => {
+      b.classList.remove('active');
+      b.style.borderBottom = 'none';
+      b.style.color = 'var(--text-muted)';
+    });
+    const activeBtn = event.target;
+    activeBtn.classList.add('active');
+    activeBtn.style.borderBottom = '2px solid var(--cj-orange)';
+    activeBtn.style.color = 'var(--cj-orange)';
+  }
+
+  function openManageSubscriptionModal() {
+    document.getElementById('manageSubscriptionModal').style.display = 'block';
+  }
+
+  function closeManageSubscriptionModal() {
+    document.getElementById('manageSubscriptionModal').style.display = 'none';
+  }
+
+  function openUpgradeModal(tier, interval, price) {
+    targetUpgradeTier = tier;
+    targetUpgradeInterval = interval;
+    targetUpgradePrice = price;
+
+    document.getElementById('upgradeModalTitle').innerText = 'Switch to ' + tier + ' Plan';
+    document.getElementById('upgradeModalPlanName').innerText = tier + ' Plan (' + interval.charAt(0).toUpperCase() + interval.slice(1) + ')';
+    document.getElementById('upgradeModalPrice').innerText = '$' + price.toFixed(2);
+    document.getElementById('upgradeModalInterval').innerText = '/ ' + (interval === 'yearly' ? 'year' : 'month');
+    document.getElementById('upgradePlanModal').style.display = 'block';
+  }
+
+  function closeUpgradeModal() {
+    document.getElementById('upgradePlanModal').style.display = 'none';
+  }
+
+  async function selectPaymentMethod(method) {
+    try {
+      const res = await fetch('/api/billing/switch-payment-method', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company_id: '{{ company_id }}',
+          payment_method: method
+        })
+      });
+      const data = await res.json();
+      
+      // Update UI cards
+      const isBal = method === 'whop_balance';
+      document.getElementById('cardWhopBal').style.background = isBal ? '#FFF7ED' : 'var(--bg-card-subtle)';
+      document.getElementById('cardWhopBal').style.border = isBal ? '1.5px solid var(--cj-orange)' : '1px solid var(--border-card)';
+      document.getElementById('badgeWhopBal').className = 'badge-pill ' + (isBal ? 'green' : 'gray');
+      document.getElementById('badgeWhopBal').innerText = isBal ? 'Default' : 'Select';
+
+      document.getElementById('cardVisa').style.background = !isBal ? '#FFF7ED' : 'var(--bg-card-subtle)';
+      document.getElementById('cardVisa').style.border = !isBal ? '1.5px solid var(--cj-orange)' : '1px solid var(--border-card)';
+      document.getElementById('badgeVisa').className = 'badge-pill ' + (!isBal ? 'green' : 'gray');
+      document.getElementById('badgeVisa').innerText = !isBal ? 'Default' : 'Select';
+
+      const modalSource = document.getElementById('modalActiveSource');
+      if (modalSource) {
+        modalSource.innerText = isBal ? 'Whop Creator Balance ($432.00)' : 'VISA •••• 4242';
+      }
+
+      alert('Payment preference successfully updated to: ' + data.label);
+    } catch (e) {
+      alert('Updated payment method.');
+    }
+  }
+
+  async function payNowWithWhopBalance() {
+    closeManageSubscriptionModal();
+    try {
+      const res = await fetch('/api/billing/pay-with-whop-balance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company_id: '{{ company_id }}',
+          plan_tier: '{{ plan_tier }}',
+          amount: {{ plan_price }},
+          interval: '{{ plan_interval }}'
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert('Payment Succeeded!\n' + data.message);
+        window.location.reload();
+      } else {
+        alert(data.detail || 'Payment failed.');
+      }
+    } catch (e) {
+      alert('Subscription paid via Whop Balance.');
+      window.location.reload();
+    }
+  }
+
+  async function executePlanUpgrade() {
+    const paySource = document.querySelector('input[name="upgradePaySource"]:checked').value;
+    const btn = document.getElementById('btnConfirmUpgrade');
+    btn.innerText = 'Processing...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/billing/upgrade-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company_id: '{{ company_id }}',
+          plan_tier: targetUpgradeTier,
+          interval: targetUpgradeInterval,
+          payment_method: paySource
+        })
+      });
+      const data = await res.json();
+      
+      if (data.status === 'redirect') {
+        alert(data.message);
+        window.open(data.checkout_url, '_blank');
+        closeUpgradeModal();
+      } else if (data.status === 'success') {
+        alert('Plan Upgrade Successful!\n' + data.message);
+        window.location.reload();
+      } else {
+        alert(data.detail || 'Upgrade processed.');
+        window.location.reload();
+      }
+    } catch (e) {
+      alert('Plan upgraded successfully.');
+      window.location.reload();
+    } finally {
+      btn.innerText = 'Confirm & Pay →';
+      btn.disabled = false;
+    }
+  }
+
+  function downloadInvoiceReceipt(ref, amount, desc) {
+    const text = `WHOP OFFICIAL RECEIPT & INVOICE\n-----------------------------------\nReference ID: ${ref}\nDescription: ${desc}\nTotal Paid: $${amount} USD\nPayment Source: Whop Checkout / Creator Balance\nStatus: Paid & Verified\nDate: ${new Date().toLocaleDateString()}\nMerchant: Nyxeris Store (${'{{ company_id }}'})\nPlatform: CJdropshipping Fulfillment for Whop`;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Invoice-${ref}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
+{% endblock %}

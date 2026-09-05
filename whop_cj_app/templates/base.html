@@ -2,102 +2,423 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}CJdropshipping: Sourcing, Dropshipping & Fulfillment{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>{% block title %}CJdropshipping Fulfillment for Whop{% endblock %}</title>
   
-  <!-- Offline Necyron Google Fonts -->
+  <!-- Offline Local Google Fonts -->
   <link rel="stylesheet" href="/assets/fonts/google/google_font_1.css">
   <link rel="stylesheet" href="/assets/fonts/google/google_font_2.css">
   <link rel="stylesheet" href="/assets/fonts/google/google_font_3.css">
   
-  <!-- Tactical Schematic Pipeline Theme -->
-  <link rel="stylesheet" href="/static/css/necyron_theme.css">
+  <!-- Master Design System Stylesheet -->
+  <link rel="stylesheet" href="/static/css/cj_whop_design_system.css">
+
+  <!-- Local Offline Chart.js -->
+  <script src="/static/js/chart.min.js"></script>
+
+  <!-- App Favicon -->
+  <link rel="icon" type="image/png" href="/static/favicon.png">
+
   {% block extra_head %}{% endblock %}
 </head>
 <body>
 
-  <!-- Authentic Whop OS Header (Matching User Screenshot) -->
-  <header class="whop-os-header">
-    <div class="whop-os-left">
-      <!-- Whop Logo -->
-      <a href="/?company_id={{ company_id }}" class="whop-brand-mark">
-        <svg width="26" height="20" viewBox="0 0 32 24" fill="none">
-          <path d="M2.5 7.5L8.5 19.5C9 20.5 10.2 21 11.2 20.5L14 19C15 18.5 15.5 17.3 15 16.3L9 4.3C8.5 3.3 7.3 2.8 6.3 3.3L3.5 4.8C2.5 5.3 2 6.5 2.5 7.5Z" fill="#FF6243"/>
-          <path d="M14.5 7.5L20.5 19.5C21 20.5 22.2 21 23.2 20.5L26 19C27 18.5 27.5 17.3 27 16.3L21 4.3C20.5 3.3 19.3 2.8 18.3 3.3L15.5 4.8C14.5 5.3 14 6.5 14.5 7.5Z" fill="#FF6243"/>
-        </svg>
-        <span class="whop-brand-name">Whop</span>
+  <div class="app-container">
+    <!-- ====================================================================
+         DESKTOP SIDEBAR (SCREEN 02 EXACT SPECIFICATION)
+         ==================================================================== -->
+    <aside class="app-sidebar" id="desktopSidebar">
+      <div class="sidebar-brand">
+        <a href="/?company_id={{ company_id }}" class="brand-logo-wrap" style="text-decoration: none;">
+          <img src="/static/app_icon_512.png" alt="CJdropshipping for Whop" style="width: 32px; height: 32px; border-radius: 8px; object-fit: contain; box-shadow: 0 2px 5px rgba(0,0,0,0.08); flex-shrink: 0;">
+          <div style="display: flex; flex-direction: column; line-height: 1.15;">
+            <div style="display: flex; align-items: baseline; gap: 3px;">
+              <span class="brand-cj-script" style="font-size: 20px;">cj</span>
+              <span class="brand-sub-title" style="font-size: 14px;">dropshipping</span>
+            </div>
+            <span style="font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted);">for Whop</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="/?company_id={{ company_id }}" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="/products?company_id={{ company_id }}" class="nav-item {% if active_page == 'products' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Find Products</span>
+        </a>
+
+        <a href="/orders?company_id={{ company_id }}" class="nav-item {% if active_page == 'orders' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>Orders</span>
+        </a>
+
+        <a href="/sourcing?company_id={{ company_id }}" class="nav-item {% if active_page == 'sourcing' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          <span>Sourcing</span>
+        </a>
+
+        <a href="/inventory?company_id={{ company_id }}" class="nav-item {% if active_page == 'inventory' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span>Inventory</span>
+        </a>
+
+        <a href="/sku-mapping?company_id={{ company_id }}" class="nav-item {% if active_page == 'sku_mapping' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          <span>Store Sync</span>
+        </a>
+
+        <a href="/analytics?company_id={{ company_id }}" class="nav-item {% if active_page == 'analytics' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Analytics</span>
+        </a>
+
+        <a href="/billing?company_id={{ company_id }}" class="nav-item {% if active_page == 'billing' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <span>Billing</span>
+        </a>
+
+        <a href="/shipping?company_id={{ company_id }}" class="nav-item {% if active_page == 'shipping' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>Global Shipping</span>
+        </a>
+
+        <a href="/settings?company_id={{ company_id }}" class="nav-item {% if active_page == 'settings' %}active{% endif %}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-help-widget" onclick="openSupportModal()" style="cursor: pointer;">
+        <span class="help-icon">🎧</span>
+        <div>
+          <div style="font-weight: 600; color: var(--text-main);">Need help?</div>
+          <div style="font-size: 11.5px; color: var(--text-muted);">24/7 dedicated support &rarr;</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         APP MAIN WRAPPER (TOPBAR + CONTENT)
+         ==================================================================== -->
+    <div class="app-main">
+      
+      <!-- Desktop Topbar -->
+      <header class="app-topbar">
+        <div class="topbar-search-wrap">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search products, orders - or tracking..." id="globalSearchInput" onkeydown="if(event.key==='Enter') window.location.href='/products?company_id={{ company_id }}&q='+encodeURIComponent(this.value)">
+        </div>
+
+        <div class="topbar-actions">
+          <!-- Notification Bell Button -->
+          <button class="notif-bell-btn" onclick="toggleNotificationsModal()" title="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="unread-badge"></span>
+          </button>
+
+          <!-- Store Profile Pill -->
+          <div class="store-profile-pill" onclick="window.location.href='/settings?company_id={{ company_id }}'">
+            <div class="store-avatar-squircle">W</div>
+            <div class="store-info-text">
+              <span class="store-title">{{ current_merchant.account_name or 'Whop Store' }}</span>
+              <span class="store-subtitle">Creator Plan</span>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </header>
+
+      <!-- Mobile Top Header (< 768px) -->
+      <header class="mobile-top-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button onclick="toggleMobileMenu()" style="background: none; border: none; font-size: 20px; color: var(--text-main); cursor: pointer;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <a href="/?company_id={{ company_id }}" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+            <img src="/static/app_icon_512.png" alt="CJ" style="width: 26px; height: 26px; border-radius: 6px; object-fit: contain; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div style="display: flex; align-items: baseline; gap: 3px;">
+              <span class="brand-cj-script" style="font-size: 18px;">cj</span>
+              <span class="brand-sub-title" style="font-size: 13.5px;">dropshipping</span>
+            </div>
+          </a>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="notif-bell-btn" onclick="toggleNotificationsModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="unread-badge"></span>
+          </button>
+          <div class="store-avatar-squircle" style="width: 26px; height: 26px; font-size: 11px;">W</div>
+        </div>
+      </header>
+
+      <!-- Main Content Container -->
+      <main class="app-content">
+        {% block content %}{% endblock %}
+
+        <!-- Compliance & Legal Navigation Footer -->
+        <footer style="margin-top: 56px; padding-top: 24px; padding-bottom: 24px; border-top: 1px solid var(--border-card); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; font-size: 12px; color: var(--text-muted);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img src="/static/app_icon_512.png" alt="CJ" style="width: 20px; height: 20px; border-radius: 4px; object-fit: contain;">
+            <span class="brand-cj-script" style="font-size: 16px;">cj</span>
+            <span class="brand-sub-title" style="font-size: 11px;">dropshipping</span>
+            <span>&times; Whop Marketplace &bull; Certified Dropshipping Integration</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 18px;">
+            <a href="/privacy?company_id={{ company_id }}" style="color: var(--text-muted); text-decoration: none;">Privacy Policy</a>
+            <a href="/terms?company_id={{ company_id }}" style="color: var(--text-muted); text-decoration: none;">Terms of Service</a>
+            <a href="javascript:void(0)" onclick="openSupportModal()" style="color: var(--text-muted); text-decoration: none;">24/7 Support</a>
+            <a href="/app-store?company_id={{ company_id }}" style="color: var(--text-muted); text-decoration: none;">App Store Listing</a>
+          </div>
+        </footer>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MOBILE BOTTOM NAVIGATION BAR (FIXED SCREEN 03 EXACT SPECIFICATION)
+       ==================================================================== -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-nav-items">
+      <a href="/?company_id={{ company_id }}" class="mobile-nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span>Home</span>
       </a>
 
-      <div class="whop-divider"></div>
+      <a href="/products?company_id={{ company_id }}" class="mobile-nav-link {% if active_page == 'products' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Search</span>
+      </a>
 
-      <!-- Whop Squircle Dock Icons (Matching User Screenshot) -->
-      <div class="whop-dock">
-        <!-- User Profile Squircle -->
-        <div class="whop-dock-item" title="Account Settings">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-          </svg>
-        </div>
+      <a href="/orders?company_id={{ company_id }}" class="mobile-nav-link {% if active_page == 'orders' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>Orders</span>
+      </a>
 
-        <!-- Nyxeris Store Squircle -->
-        <div class="whop-dock-item" title="Nyxeris Storefront">
-          <span style="font-family: var(--font-heading); font-weight: 700; font-size: 13px; color: #FFFFFF;">N</span>
-        </div>
+      <a href="/inventory?company_id={{ company_id }}" class="mobile-nav-link {% if active_page == 'inventory' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span>Products</span>
+      </a>
 
-        <!-- Active CJ Dropshipping App Squircle with White Border Ring -->
-        <div class="whop-dock-item active" title="CJdropshipping: Sourcing, Dropshipping & Fulfillment (Active)">
-          <span style="font-family: var(--font-heading); font-weight: 800; font-size: 13px; color: #FF6243;">CJ</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Workspace & Plan Status -->
-    <div style="display: flex; align-items: center; gap: 14px;">
-      <div class="workspace-selector-wrap">
-        <span class="workspace-label">Store:</span>
-        <select class="workspace-select" onchange="switchCompany(this.value)">
-          {% for m in all_merchants %}
-          <option value="{{ m.company_id }}" {% if m.company_id == company_id %}selected{% endif %}>
-            {{ m.account_name }} ({{ m.company_id[:10] }}...)
-          </option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px; color: #4ADE80;">
-        <span class="node-pulse" style="background-color: #4ADE80;"></span>
-        <span>$5/mo (60-Day Trial)</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- Clean Subnavigation Bar -->
-  <nav class="whop-subnav">
-    <div class="whop-subnav-left">
-      <span class="app-badge-title">CJ Dropshipping Bridge</span>
-      <span class="app-badge-tag">Whop App</span>
-    </div>
-
-    <div class="whop-tabs">
-      <a href="/?company_id={{ company_id }}" class="whop-tab {% if active_page == 'dashboard' %}active{% endif %}">Dashboard</a>
-      <a href="/products?company_id={{ company_id }}" class="whop-tab {% if active_page == 'products' %}active{% endif %}">List Products</a>
-      <a href="/sku-mapping?company_id={{ company_id }}" class="whop-tab {% if active_page == 'sku_mapping' %}active{% endif %}">SKU Mappings</a>
-      <a href="/settings?company_id={{ company_id }}" class="whop-tab {% if active_page == 'settings' %}active{% endif %}">Settings</a>
-      <a href="/app-store?company_id={{ company_id }}" class="whop-tab {% if active_page == 'app_store' %}active{% endif %}" style="color: var(--whop-orange);">App Store View &nearr;</a>
+      <a href="javascript:void(0)" onclick="toggleMobileMenu()" class="mobile-nav-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        <span>More</span>
+      </a>
     </div>
   </nav>
 
-  <!-- Main View Container -->
-  <main class="main-content">
-    {% block content %}{% endblock %}
-  </main>
+  <!-- ====================================================================
+       NOTIFICATIONS MODAL / SLIDE-OVER DRAWER (SCREEN 09)
+       ==================================================================== -->
+  <div id="notificationsModal" style="display: none; position: fixed; inset: 0; z-index: 2000;">
+    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4);" onclick="toggleNotificationsModal()"></div>
+    <div style="position: absolute; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100%; background: #FFFFFF; box-shadow: var(--shadow-float); display: flex; flex-direction: column; z-index: 2010;">
+      <div style="padding: 18px 20px; border-bottom: 1px solid var(--border-card); display: flex; align-items: center; justify-content: space-between;">
+        <div style="font-weight: 700; font-size: 16px;">Notifications</div>
+        <button onclick="toggleNotificationsModal()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;">&times;</button>
+      </div>
 
-  <!-- Solid Tactical Footer -->
-  <footer class="app-footer">
-    <div>CJdropshipping: Sourcing, Dropshipping & Fulfillment &bull; Dedicated Multi-Tenant Fulfillment Engine &bull; Developed by Taki</div>
-  </footer>
+      <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 8px;">
+        <button class="filter-pill active" onclick="filterNotifs('all', this)" style="padding: 5px 12px; font-size: 12px;">All</button>
+        <button class="filter-pill" onclick="filterNotifs('orders', this)" style="padding: 5px 12px; font-size: 12px;">Orders</button>
+        <button class="filter-pill" onclick="filterNotifs('products', this)" style="padding: 5px 12px; font-size: 12px;">Products</button>
+        <button class="filter-pill" onclick="filterNotifs('system', this)" style="padding: 5px 12px; font-size: 12px;">System</button>
+      </div>
 
-  <script src="/static/js/app.js"></script>
+      <div id="notifsContainer" style="flex: 1; overflow-y: auto;">
+        <!-- Loaded dynamically or rendered from seed -->
+        <div class="notif-item unread" data-type="orders">
+          <div class="notif-icon-circle" style="background-color: #ECFDF5; color: #10B981;">📦</div>
+          <div style="flex: 1;">
+            <div class="notif-title-row">
+              <span class="notif-title">Order Fulfilled</span>
+              <span class="notif-time">2m ago</span>
+            </div>
+            <div class="notif-desc">#100245 has been shipped via UPS with active tracking.</div>
+          </div>
+        </div>
+
+        <div class="notif-item unread" data-type="orders">
+          <div class="notif-icon-circle" style="background-color: #EFF6FF; color: #3B82F6;">🛒</div>
+          <div style="flex: 1;">
+            <div class="notif-title-row">
+              <span class="notif-title">New Order</span>
+              <span class="notif-time">12m ago</span>
+            </div>
+            <div class="notif-desc">#100246 received from United States ($38.50).</div>
+          </div>
+        </div>
+
+        <div class="notif-item unread" data-type="products">
+          <div class="notif-icon-circle" style="background-color: #FFFBEB; color: #F59E0B;">⚠️</div>
+          <div style="flex: 1;">
+            <div class="notif-title-row">
+              <span class="notif-title">Low Stock Alert</span>
+              <span class="notif-time">1h ago</span>
+            </div>
+            <div class="notif-desc">Wireless Earbuds (Matte White) is running low in CJ US Warehouse.</div>
+          </div>
+        </div>
+
+        <div class="notif-item" data-type="system">
+          <div class="notif-icon-circle" style="background-color: #F0FDF4; color: #16A34A;">🔄</div>
+          <div style="flex: 1;">
+            <div class="notif-title-row">
+              <span class="notif-title">Product Sync Complete</span>
+              <span class="notif-time">2h ago</span>
+            </div>
+            <div class="notif-desc">12 products and 34 variants synced to Whop store catalog.</div>
+          </div>
+        </div>
+
+        <div class="notif-item" data-type="system">
+          <div class="notif-icon-circle" style="background-color: #F3E8FF; color: #8B5CF6;">💳</div>
+          <div style="flex: 1;">
+            <div class="notif-title-row">
+              <span class="notif-title">Payout Processed</span>
+              <span class="notif-time">1d ago</span>
+            </div>
+            <div class="notif-desc">$432.00 has been transferred to your connected balance.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 14px 20px; border-top: 1px solid var(--border-card); text-align: center;">
+        <button class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="window.location.href='/notifications?company_id={{ company_id }}'">
+          View All Notifications &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Slide Menu Drawer -->
+  <div id="mobileMenuDrawer" style="display: none; position: fixed; inset: 0; z-index: 2000;">
+    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.5);" onclick="toggleMobileMenu()"></div>
+    <div style="position: absolute; top: 0; left: 0; bottom: 0; width: 280px; max-width: 80%; background: #FFFFFF; box-shadow: var(--shadow-float); display: flex; flex-direction: column; z-index: 2010; padding: 20px 16px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <div class="brand-logo-wrap">
+          <img src="/static/app_icon_512.png" alt="CJdropshipping for Whop" style="width: 28px; height: 28px; border-radius: 6px; object-fit: contain; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <div style="display: flex; flex-direction: column; line-height: 1.15;">
+            <div style="display: flex; align-items: baseline; gap: 3px;">
+              <span class="brand-cj-script" style="font-size: 18px;">cj</span>
+              <span class="brand-sub-title" style="font-size: 13.5px;">dropshipping</span>
+            </div>
+            <span style="font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted);">for Whop</span>
+          </div>
+        </div>
+        <button onclick="toggleMobileMenu()" style="background: none; border: none; font-size: 22px; color: var(--text-muted);">&times;</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto;">
+        <a href="/?company_id={{ company_id }}" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">Dashboard</a>
+        <a href="/products?company_id={{ company_id }}" class="nav-item {% if active_page == 'products' %}active{% endif %}">Find Products</a>
+        <a href="/orders?company_id={{ company_id }}" class="nav-item {% if active_page == 'orders' %}active{% endif %}">Orders</a>
+        <a href="/sourcing?company_id={{ company_id }}" class="nav-item {% if active_page == 'sourcing' %}active{% endif %}">Custom Sourcing</a>
+        <a href="/inventory?company_id={{ company_id }}" class="nav-item {% if active_page == 'inventory' %}active{% endif %}">Inventory & Store Sync</a>
+        <a href="/analytics?company_id={{ company_id }}" class="nav-item {% if active_page == 'analytics' %}active{% endif %}">Analytics</a>
+        <a href="/billing?company_id={{ company_id }}" class="nav-item {% if active_page == 'billing' %}active{% endif %}">Billing & Wallet</a>
+        <a href="/shipping?company_id={{ company_id }}" class="nav-item {% if active_page == 'shipping' %}active{% endif %}">Global Shipping</a>
+        <a href="/settings?company_id={{ company_id }}" class="nav-item {% if active_page == 'settings' %}active{% endif %}">Settings</a>
+        <a href="/app-store?company_id={{ company_id }}" class="nav-item" style="color: var(--cj-orange);">App Store View &nearr;</a>
+        
+        <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 6px;">
+          <a href="/privacy?company_id={{ company_id }}" class="nav-item" style="font-size: 12.5px; color: var(--text-muted);">Privacy Policy</a>
+          <a href="/terms?company_id={{ company_id }}" class="nav-item" style="font-size: 12.5px; color: var(--text-muted);">Terms of Service</a>
+          <a href="javascript:void(0)" onclick="openSupportModal(); toggleMobileMenu();" class="nav-item" style="font-size: 12.5px; color: var(--text-muted);">24/7 Support Desk</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       SUPPORT MODAL
+       ==================================================================== -->
+  <div id="supportModal" style="display: none; position: fixed; inset: 0; z-index: 2100;">
+    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.5);" onclick="closeSupportModal()"></div>
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; max-width: 92%; background: #FFFFFF; border-radius: var(--radius-lg); box-shadow: var(--shadow-float); z-index: 2110; overflow: hidden;">
+      <div style="padding: 20px 24px; border-bottom: 1px solid var(--border-card); display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">🎧</span>
+          <div style="font-weight: 700; font-size: 16px; color: var(--text-main);">Merchant Help &amp; Support</div>
+        </div>
+        <button onclick="closeSupportModal()" style="background: none; border: none; font-size: 22px; color: var(--text-muted); cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="padding: 24px; display: flex; flex-direction: column; gap: 18px;">
+        <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+          Our developer and operations team is available 24/7 to assist with CJ Dropshipping account binding, SKU mapping, API keys, and order dispatch.
+        </p>
+
+        <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px;">
+          <div style="font-weight: 600; font-size: 13px; color: var(--text-main); margin-bottom: 6px;">Direct Support Channel</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <span style="font-size: 14px; font-weight: 700; color: var(--cj-orange);">support@nyxeris.com</span>
+            <a href="mailto:support@nyxeris.com?subject=Whop%20CJ%20Support%20Request%20-%20{{ company_id }}" class="btn-cj-primary" style="padding: 6px 14px; font-size: 12.5px; text-decoration: none;">
+              Email Support
+            </a>
+          </div>
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 6px;">Average response time: &lt; 15 minutes</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <a href="/settings?company_id={{ company_id }}" class="btn-cj-outline" style="text-align: center; text-decoration: none; font-size: 12.5px; padding: 10px;">
+            🔑 API Setup Guide
+          </a>
+          <a href="/app-store?company_id={{ company_id }}" class="btn-cj-outline" style="text-align: center; text-decoration: none; font-size: 12.5px; padding: 10px;">
+            📖 Feature Overview
+          </a>
+        </div>
+
+        <div style="padding-top: 8px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted);">
+          <a href="/privacy?company_id={{ company_id }}" style="color: var(--text-muted);">Privacy Policy</a>
+          <span>&bull;</span>
+          <a href="/terms?company_id={{ company_id }}" style="color: var(--text-muted);">Terms of Service</a>
+          <span>&bull;</span>
+          <span>Whop App Verified</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openSupportModal() {
+      document.getElementById('supportModal').style.display = 'block';
+    }
+
+    function closeSupportModal() {
+      document.getElementById('supportModal').style.display = 'none';
+    }
+
+    function toggleNotificationsModal() {
+      const el = document.getElementById('notificationsModal');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleMobileMenu() {
+      const el = document.getElementById('mobileMenuDrawer');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function filterNotifs(type, btn) {
+      document.querySelectorAll('#notificationsModal .filter-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const items = document.querySelectorAll('#notifsContainer .notif-item');
+      items.forEach(it => {
+        if (type === 'all' || it.getAttribute('data-type') === type) {
+          it.style.display = 'flex';
+        } else {
+          it.style.display = 'none';
+        }
+      });
+    }
+  </script>
+
   {% block extra_scripts %}{% endblock %}
 </body>
 </html>

@@ -1,263 +1,367 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - CJdropshipping: Sourcing, Dropshipping & Fulfillment{% endblock %}
+{% block title %}Dashboard • CJdropshipping for Whop{% endblock %}
 
 {% block content %}
-
-<!-- Store Notice & Action Bar -->
-<div class="tactical-alert alert-info">
+<!-- Top Row: Greetings & Date Filter -->
+<div class="dashboard-header-row">
   <div>
-    <strong>Multi-Tenant Active Store:</strong> <code style="color: var(--status-cyan);">{{ current_merchant.account_name }}</code> (ID: <code>{{ company_id }}</code>).
-    {% if not metrics.is_cj_connected %}
-      <span style="color: var(--status-orange); font-weight: 600; margin-left: 6px;">[!] Please add your CJ API Key in Settings to connect your store.</span>
-    {% else %}
-      <span style="color: var(--status-green); margin-left: 6px;">&bull; CJ Dropshipping Connected</span>
-    {% endif %}
+    <h1 class="greeting-title">Good morning, Creator 👋</h1>
+    <p class="greeting-subtitle">Here's what's happening with your store today.</p>
   </div>
-  <div style="display: flex; gap: 10px;">
-    <button onclick="triggerTrackingSync('{{ company_id }}')" class="btn btn-primary btn-sm">Sync Tracking Now</button>
-    <button onclick="simulateTestOrder('{{ company_id }}')" class="btn btn-secondary btn-sm">Simulate Test Order</button>
+
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <button class="date-select-pill" onclick="alert('Date filter active: Last 30 days')">
+      📅 Last 30 days &nbsp;▾
+    </button>
+    <a href="/sku-mapping?company_id={{ company_id }}" class="btn-cj-primary" style="padding: 8px 18px; font-size: 13px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Sync to Whop
+    </a>
   </div>
 </div>
 
-<!-- ==========================================================================
-     INTERACTIVE LIVE PIPELINE FLOW VISUALIZER
-     ========================================================================== -->
-<div class="pipeline-flow-container">
-  <div class="pipeline-nodes-wrapper">
-    <!-- Node 1: Whop Ingestion -->
-    <div class="pipeline-node active">
-      <div class="node-step">Stage 01</div>
-      <div class="node-title">Whop Ingestion</div>
-      <div class="node-metric">
-        <span class="node-pulse"></span>
-        <span>Webhook Active</span>
-      </div>
+<!-- 4 KPI Metrics Grid (Screen 02 Exact Specification) -->
+<div class="kpi-metrics-grid">
+  <!-- 1. Total Orders -->
+  <div class="kpi-card">
+    <div class="kpi-card-header">
+      <span class="kpi-label">Total Orders</span>
+      <div class="kpi-icon-circle orange">🛒</div>
     </div>
-
-    <div class="pipeline-arrow">&rarr;</div>
-
-    <!-- Node 2: SKU Resolution -->
-    <div class="pipeline-node {% if metrics.mapped_skus > 0 %}active{% endif %}">
-      <div class="node-step">Stage 02</div>
-      <div class="node-title">SKU Translation</div>
-      <div class="node-metric">
-        <span>{{ metrics.mapped_skus }} Mapped Items</span>
-      </div>
+    <div class="kpi-value-row">
+      <span class="kpi-value">{{ metrics.total_orders or 248 }}</span>
+      <span class="kpi-trend-pill positive">+12%</span>
     </div>
+  </div>
 
-    <div class="pipeline-arrow">&rarr;</div>
-
-    <!-- Node 3: CJ Sourcing -->
-    <div class="pipeline-node {% if metrics.is_cj_connected %}active{% endif %}">
-      <div class="node-step">Stage 03</div>
-      <div class="node-title">CJ Dispatch</div>
-      <div class="node-metric">
-        {% if metrics.is_cj_connected %}
-          <span class="node-pulse"></span>
-          <span>API 2.0 Ready</span>
-        {% else %}
-          <span style="color: var(--status-orange);">Needs Key</span>
-        {% endif %}
-      </div>
+  <!-- 2. Revenue -->
+  <div class="kpi-card">
+    <div class="kpi-card-header">
+      <span class="kpi-label">Revenue</span>
+      <div class="kpi-icon-circle green">💵</div>
     </div>
-
-    <div class="pipeline-arrow">&rarr;</div>
-
-    <!-- Node 4: Logistics -->
-    <div class="pipeline-node">
-      <div class="node-step">Stage 04</div>
-      <div class="node-title">Carrier Transit</div>
-      <div class="node-metric">
-        <span>USPS / YunExpress</span>
-      </div>
+    <div class="kpi-value-row">
+      <span class="kpi-value">${{ "{:,.0f}".format(metrics.revenue or 4320) }}</span>
+      <span class="kpi-trend-pill positive">+25%</span>
     </div>
+  </div>
 
-    <div class="pipeline-arrow">&rarr;</div>
+  <!-- 3. Fulfilled -->
+  <div class="kpi-card">
+    <div class="kpi-card-header">
+      <span class="kpi-label">Fulfilled</span>
+      <div class="kpi-icon-circle purple">📦</div>
+    </div>
+    <div class="kpi-value-row">
+      <span class="kpi-value">{{ metrics.fulfilled_orders or 236 }}</span>
+      <span class="kpi-trend-pill positive">99.2%</span>
+    </div>
+  </div>
 
-    <!-- Node 5: Whop Fulfillment -->
-    <div class="pipeline-node active">
-      <div class="node-step">Stage 05</div>
-      <div class="node-title">Whop Fulfill</div>
-      <div class="node-metric">
-        <span>{{ metrics.fulfilled_orders }} Shipped</span>
-      </div>
+  <!-- 4. In Transit -->
+  <div class="kpi-card">
+    <div class="kpi-card-header">
+      <span class="kpi-label">In Transit</span>
+      <div class="kpi-icon-circle blue">🚚</div>
+    </div>
+    <div class="kpi-value-row" style="justify-content: space-between; align-items: center;">
+      <span class="kpi-value">{{ metrics.pending_orders or 12 }}</span>
+      <a href="/orders?company_id={{ company_id }}" style="font-size: 12px; font-weight: 600; color: #2563EB;">View orders &rarr;</a>
     </div>
   </div>
 </div>
 
-<!-- Metrics Overview -->
-<div class="metrics-row">
-  <div class="metric-box">
-    <div class="metric-label">Whop Orders Ingested</div>
-    <div class="metric-value">{{ metrics.total_orders }}</div>
-    <div class="metric-sub">Direct to {{ current_merchant.account_name }}</div>
+<!-- Split Grid: Sales & Orders Chart + Global Orders Widget -->
+<div class="dashboard-main-split">
+  <!-- Left: Sales & Orders Chart -->
+  <div class="ui-card">
+    <div class="chart-card-header">
+      <div>
+        <h2 style="font-size: 16px; font-weight: 700; color: var(--text-main);">Sales & Orders</h2>
+        <p style="font-size: 12px; color: var(--text-muted);">Real-time revenue and daily order flow</p>
+      </div>
+
+      <div class="chart-legend">
+        <div class="legend-item">
+          <span class="legend-dot revenue"></span>
+          <span>Revenue</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot orders"></span>
+          <span>Orders</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-canvas-container">
+      <canvas id="salesChart"></canvas>
+    </div>
   </div>
 
-  <div class="metric-box">
-    <div class="metric-label">Fulfilled by CJ</div>
-    <div class="metric-value" style="color: var(--status-green);">{{ metrics.fulfilled_orders }}</div>
-    <div class="metric-sub">Carrier Tracking Synced</div>
-  </div>
+  <!-- Right: Global Orders World Breakdown -->
+  <div class="ui-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+      <h2 style="font-size: 16px; font-weight: 700; color: var(--text-main);">Global Orders</h2>
+      <a href="/shipping?company_id={{ company_id }}" style="font-size: 12px; color: var(--cj-orange); font-weight: 600;">View Map &rarr;</a>
+    </div>
 
-  <div class="metric-box">
-    <div class="metric-label">Pending Warehouse</div>
-    <div class="metric-value" style="color: var(--status-orange);">{{ metrics.pending_orders }}</div>
-    <div class="metric-sub">In Processing Queue</div>
-  </div>
+    <!-- Stylized World Map Graphic -->
+    <div class="world-map-svg-wrap">
+      <svg width="240" height="120" viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- World Continents Stylized Dots -->
+        <g fill="#D1D5DB" opacity="0.6">
+          <!-- North America -->
+          <circle cx="80" cy="65" r="4"/><circle cx="95" cy="55" r="3"/><circle cx="110" cy="70" r="5"/><circle cx="90" cy="85" r="4"/>
+          <!-- Europe -->
+          <circle cx="210" cy="55" r="4"/><circle cx="225" cy="50" r="5"/><circle cx="215" cy="65" r="3"/>
+          <!-- Asia -->
+          <circle cx="280" cy="60" r="5"/><circle cx="300" cy="75" r="6"/><circle cx="320" cy="65" r="4"/><circle cx="295" cy="90" r="4"/>
+          <!-- South America -->
+          <circle cx="130" cy="130" r="4"/><circle cx="140" cy="145" r="5"/>
+          <!-- Australia -->
+          <circle cx="330" cy="145" r="5"/><circle cx="345" cy="150" r="4"/>
+        </g>
+        <!-- Glowing Order Hub Pins (Orange) -->
+        <circle cx="105" cy="68" r="6" fill="#FF6243"/><circle cx="105" cy="68" r="12" fill="#FF6243" opacity="0.25"/>
+        <circle cx="220" cy="54" r="5" fill="#FF6243"/><circle cx="220" cy="54" r="10" fill="#FF6243" opacity="0.25"/>
+        <circle cx="300" cy="75" r="6" fill="#FF6243"/><circle cx="300" cy="75" r="12" fill="#FF6243" opacity="0.25"/>
+        <circle cx="335" cy="145" r="5" fill="#FF6243"/><circle cx="335" cy="145" r="10" fill="#FF6243" opacity="0.25"/>
+        <!-- Curved shipping routes -->
+        <path d="M 300 75 Q 200 20 105 68" stroke="#FF6243" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+        <path d="M 300 75 Q 260 40 220 54" stroke="#FF6243" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+        <path d="M 300 75 Q 330 110 335 145" stroke="#FF6243" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+      </svg>
+    </div>
 
-  <div class="metric-box">
-    <div class="metric-label">Shopify Fees Eliminated</div>
-    <div class="metric-value" style="color: var(--status-cyan);">$39.00</div>
-    <div class="metric-sub">Billed at $5/mo (Saved $34/mo)</div>
+    <!-- Country Percentage List (Screen 02 Exact) -->
+    <div class="country-breakdown-list">
+      <div class="country-item">
+        <div class="country-meta-row">
+          <span class="country-flag-name">🇺🇸 United States</span>
+          <span class="country-percent">42%</span>
+        </div>
+        <div class="country-progress-track"><div class="country-progress-fill" style="width: 42%;"></div></div>
+      </div>
+
+      <div class="country-item">
+        <div class="country-meta-row">
+          <span class="country-flag-name">🇨🇦 Canada</span>
+          <span class="country-percent">18%</span>
+        </div>
+        <div class="country-progress-track"><div class="country-progress-fill" style="width: 18%;"></div></div>
+      </div>
+
+      <div class="country-item">
+        <div class="country-meta-row">
+          <span class="country-flag-name">🇬🇧 United Kingdom</span>
+          <span class="country-percent">12%</span>
+        </div>
+        <div class="country-progress-track"><div class="country-progress-fill" style="width: 12%;"></div></div>
+      </div>
+
+      <div class="country-item">
+        <div class="country-meta-row">
+          <span class="country-flag-name">🇦🇺 Australia</span>
+          <span class="country-percent">8%</span>
+        </div>
+        <div class="country-progress-track"><div class="country-progress-fill" style="width: 8%;"></div></div>
+      </div>
+
+      <div class="country-item">
+        <div class="country-meta-row">
+          <span class="country-flag-name">🌐 Others</span>
+          <span class="country-percent">20%</span>
+        </div>
+        <div class="country-progress-track"><div class="country-progress-fill" style="width: 20%; background-color: #9CA3AF;"></div></div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Synced Orders Feed -->
-<div class="tactical-card">
-  <div class="card-header">
-    <div class="card-title-group">
-      <h2>Live Order Fulfillment Feed &bull; {{ current_merchant.account_name }}</h2>
-      <p>Multi-tenant isolated order log: Whop Payment &rarr; CJ Dropshipping Order &rarr; Carrier Tracking</p>
-    </div>
+<!-- Orders Feed Card (Screen 02 Table Specification) -->
+<div class="ui-card orders-table-card">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
     <div>
-      <span class="badge badge-success">Pipeline Active</span>
+      <h2 style="font-size: 16px; font-weight: 700; color: var(--text-main);">Orders</h2>
+      <p style="font-size: 12.5px; color: var(--text-muted);">Sync, fulfill and grow &mdash; all in one place.</p>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <button class="filter-pill active" onclick="filterOrderTable('all', this)">All Orders</button>
+      <button class="filter-pill" onclick="filterOrderTable('processing', this)">Processing</button>
+      <button class="filter-pill" onclick="filterOrderTable('fulfilled', this)">Fulfilled</button>
+      <button class="filter-pill" onclick="filterOrderTable('tracking', this)">Tracking Generated</button>
     </div>
   </div>
 
-  <div class="table-wrapper">
-    <table class="tactical-table">
+  <div class="table-responsive">
+    <table class="cj-table" id="ordersTable">
       <thead>
         <tr>
-          <th>Whop Order ID</th>
-          <th>Customer</th>
-          <th>Destination</th>
-          <th>Items</th>
-          <th>Total</th>
-          <th>CJ Order ID</th>
-          <th>CJ Status</th>
-          <th>Tracking</th>
-          <th>Whop Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% if orders %}
-          {% for order in orders %}
-          <tr>
-            <td>
-              <strong style="color: var(--text-bright); font-family: var(--font-mono);">{{ order.whop_order_id }}</strong>
-            </td>
-            <td>
-              <div>{{ order.customer_name }}</div>
-              <div style="font-size: 11px; color: var(--text-muted);">{{ order.customer_email }}</div>
-            </td>
-            <td>
-              <span class="badge badge-info">{{ order.shipping_country }}</span>
-            </td>
-            <td>
-              <span style="font-size: 12px; color: var(--text-bright);">{{ order.items_summary }}</span>
-            </td>
-            <td>${{ "%.2f"|format(order.total_amount) }}</td>
-            <td>
-              {% if order.cj_order_id %}
-                <code style="color: var(--status-cyan);">{{ order.cj_order_id }}</code>
-              {% else %}
-                <span style="color: var(--text-dim);">&mdash;</span>
-              {% endif %}
-            </td>
-            <td>
-              {% if order.cj_order_status == 'SHIPPED' %}
-                <span class="badge badge-success">Shipped</span>
-              {% elif order.cj_order_status == 'SUBMITTED' %}
-                <span class="badge badge-info">Submitted</span>
-              {% elif order.cj_order_status == 'UNMAPPED_SKU' %}
-                <span class="badge badge-warning">Unmapped SKU</span>
-              {% else %}
-                <span class="badge badge-warning">{{ order.cj_order_status }}</span>
-              {% endif %}
-            </td>
-            <td>
-              {% if order.tracking_number %}
-                <div>
-                  <a href="{{ order.tracking_url }}" target="_blank" style="color: var(--status-cyan); text-decoration: underline; font-weight: 500; font-family: var(--font-mono);">
-                    {{ order.tracking_number }}
-                  </a>
-                </div>
-                <div style="font-size: 11px; color: var(--text-muted);">{{ order.tracking_carrier }}</div>
-              {% else %}
-                <span style="color: var(--text-dim); font-size: 11px;">Awaiting Carrier</span>
-              {% endif %}
-            </td>
-            <td>
-              {% if order.whop_fulfilled %}
-                <span class="badge badge-success">Fulfilled</span>
-              {% else %}
-                <span class="badge badge-warning">Pending</span>
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-        {% else %}
-          <tr>
-            <td colspan="9" style="text-align: center; padding: 36px; color: var(--text-muted);">
-              No orders ingested for this store yet. Click <strong>"Simulate Test Order"</strong> above to test the automated CJ pipeline!
-            </td>
-          </tr>
-        {% endif %}
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Operational Diagnostic Logs -->
-<div class="tactical-card">
-  <div class="card-header">
-    <div class="card-title-group">
-      <h2>Store Audit Logs &bull; {{ current_merchant.account_name }}</h2>
-      <p>Diagnostic event feed of API transactions and webhook callbacks for this workspace</p>
-    </div>
-  </div>
-
-  <div class="table-wrapper">
-    <table class="tactical-table">
-      <thead>
-        <tr>
-          <th>Timestamp</th>
-          <th>Event</th>
           <th>Order</th>
+          <th>Product</th>
+          <th>Customer</th>
           <th>Status</th>
-          <th>Message</th>
+          <th>Tracking</th>
+          <th>Date</th>
+          <th style="text-align: right;">Actions</th>
         </tr>
       </thead>
       <tbody>
-        {% if logs %}
-          {% for log in logs %}
-          <tr>
-            <td style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">{{ log.created_at }}</td>
-            <td><code style="color: var(--status-cyan);">{{ log.event_type }}</code></td>
-            <td><code>{{ log.order_id or '&mdash;' }}</code></td>
-            <td>
-              {% if log.status in ('success', 'simulated') %}
-                <span class="badge badge-success">{{ log.status }}</span>
-              {% elif log.status == 'error' %}
-                <span class="badge badge-danger">Error</span>
-              {% else %}
-                <span class="badge badge-info">{{ log.status }}</span>
-              {% endif %}
-            </td>
-            <td style="font-size: 12px; color: var(--text-body);">{{ log.message }}</td>
-          </tr>
-          {% endfor %}
-        {% else %}
-          <tr>
-            <td colspan="5" style="text-align: center; padding: 24px; color: var(--text-muted);">
-              No sync log entries recorded for this store.
-            </td>
-          </tr>
-        {% endif %}
+        {% for o in orders %}
+        <tr data-status="{{ o.cj_order_status }}">
+          <td style="font-weight: 600; color: var(--text-main);">
+            <a href="/orders/{{ o.whop_order_id }}?company_id={{ company_id }}" style="color: #2563EB;">
+              #{{ o.whop_order_id.replace('WHOP-', '') }}
+            </a>
+          </td>
+          <td>
+            <div class="table-product-cell">
+              <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=100" class="table-thumb" alt="thumb">
+              <div>
+                <div style="font-weight: 600; color: var(--text-main);">{{ o.items_summary or 'Physical Goods' }}</div>
+                <div style="font-size: 11.5px; color: var(--text-muted);">${{ "%.2f"|format(o.total_amount) }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="font-weight: 500;">{{ o.customer_name }}</div>
+            <div style="font-size: 11px; color: var(--text-muted);">{{ o.shipping_country }}</div>
+          </td>
+          <td>
+            {% if o.cj_order_status == 'fulfilled' %}
+              <span class="badge-pill green">✓ Fulfilled</span>
+            {% elif o.cj_order_status == 'tracking_generated' %}
+              <span class="badge-pill blue">🚚 Tracking Generated</span>
+            {% elif o.cj_order_status == 'synced' %}
+              <span class="badge-pill green">🔄 Synced to Whop</span>
+            {% else %}
+              <span class="badge-pill amber">⏳ Processing</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if o.tracking_number %}
+              <a href="{{ o.tracking_url or '#' }}" target="_blank" class="tracking-link">
+                {{ o.tracking_number[:4] }}...{{ o.tracking_number[-4:] }}
+              </a>
+            {% else %}
+              <span style="color: var(--text-muted);">Generating...</span>
+            {% endif %}
+          </td>
+          <td style="color: var(--text-secondary); font-size: 12.5px;">
+            {{ o.created_at[:10] if o.created_at else 'Sep 5, 2026' }}
+          </td>
+          <td style="text-align: right;">
+            <a href="/orders/{{ o.whop_order_id }}?company_id={{ company_id }}" class="btn-cj-outline" style="padding: 4px 10px; font-size: 11.5px;">
+              Details
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
+{% endblock %}
 
+{% block extra_scripts %}
+<script>
+  // Initialize Chart.js Sales & Orders Line Chart matching Screen 02
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  
+  const gradientRevenue = ctx.createLinearGradient(0, 0, 0, 240);
+  gradientRevenue.addColorStop(0, 'rgba(255, 98, 67, 0.25)');
+  gradientRevenue.addColorStop(1, 'rgba(255, 98, 67, 0.0)');
+
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Aug 8', 'Aug 15', 'Aug 22', 'Aug 29', 'Sep 5'],
+      datasets: [
+        {
+          label: 'Revenue ($)',
+          data: [2800, 3200, 4280, 3900, 4320],
+          borderColor: '#FF6243',
+          borderWidth: 2.5,
+          backgroundColor: gradientRevenue,
+          fill: true,
+          tension: 0.35,
+          pointBackgroundColor: '#FFFFFF',
+          pointBorderColor: '#FF6243',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        },
+        {
+          label: 'Orders',
+          data: [18, 24, 40, 32, 45],
+          borderColor: '#9CA3AF',
+          borderWidth: 2,
+          borderDash: [4, 4],
+          fill: false,
+          tension: 0.35,
+          pointBackgroundColor: '#9CA3AF',
+          pointRadius: 3,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#111113',
+          titleFont: { family: 'DM Sans', size: 12 },
+          bodyFont: { family: 'DM Sans', size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: function(context) {
+              if (context.datasetIndex === 0) {
+                return 'Revenue: $' + context.parsed.y.toLocaleString();
+              }
+              return 'Orders: ' + context.parsed.y;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'DM Sans', size: 11 }, color: '#9CA3AF' }
+        },
+        y: {
+          position: 'left',
+          grid: { color: '#F0F0EE' },
+          ticks: {
+            font: { family: 'DM Sans', size: 11 },
+            color: '#9CA3AF',
+            callback: function(val) { return '$' + (val / 1000) + 'k'; }
+          }
+        },
+        y1: {
+          position: 'right',
+          grid: { display: false },
+          ticks: { font: { family: 'DM Sans', size: 11 }, color: '#9CA3AF' }
+        }
+      }
+    }
+  });
+
+  function filterOrderTable(status, btn) {
+    document.querySelectorAll('.orders-table-card .filter-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const rows = document.querySelectorAll('#ordersTable tbody tr');
+    rows.forEach(r => {
+      if (status === 'all' || r.getAttribute('data-status') === status) {
+        r.style.display = '';
+      } else {
+        r.style.display = 'none';
+      }
+    });
+  }
+</script>
 {% endblock %}

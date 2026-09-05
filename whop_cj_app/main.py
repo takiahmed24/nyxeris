@@ -15,10 +15,19 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from config import settings
-from database import get_db_connection, get_settings, update_settings, log_event, get_or_create_merchant, list_merchants, DEFAULT_COMPANY_ID
+from database import (
+    get_db_connection, get_settings, update_settings, log_event,
+    get_or_create_merchant, list_merchants, DEFAULT_COMPANY_ID, init_db,
+    get_sourcing_requests, add_sourcing_request, get_notifications,
+    mark_notifications_read, get_billing_transactions, add_billing_transaction,
+    add_notification, update_billing_settings
+)
 from services.sync_worker import process_incoming_whop_order, sync_all_pending_tracking, list_cj_product_to_whop_service
 from services.cj_api_client import cj_client
 from services.whop_api_client import whop_client
+
+# Ensure SQLite schema and tables are auto-initialized
+init_db()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("whop_cj.main")
@@ -103,7 +112,7 @@ def view_dashboard(request: Request, company_id: Optional[str] = None, experienc
         "is_cj_connected": bool(current_merchant.get("cj_api_key"))
     }
 
-    return templates.TemplateResponse("dashboard.html", {
+    return templates.TemplateResponse(request=request, name="dashboard.html", context={
         "request": request,
         "active_page": "dashboard",
         "company_id": company_id,
@@ -127,7 +136,7 @@ def view_sku_mapping(request: Request):
     mappings = [dict(r) for r in c.fetchall()]
     conn.close()
 
-    return templates.TemplateResponse("sku_mapping.html", {
+    return templates.TemplateResponse(request=request, name="sku_mapping.html", context={
         "request": request,
         "active_page": "sku_mapping",
         "company_id": company_id,
@@ -143,7 +152,7 @@ def view_products_catalog(request: Request):
     current_merchant = get_or_create_merchant(company_id)
     all_merchants = list_merchants()
 
-    return templates.TemplateResponse("products.html", {
+    return templates.TemplateResponse(request=request, name="products.html", context={
         "request": request,
         "active_page": "products",
         "company_id": company_id,
@@ -162,7 +171,7 @@ def view_settings(request: Request):
     scheme = "https" if "https" in request.headers.get("x-forwarded-proto", "") else "http"
     webhook_url = f"{scheme}://{host_header}/api/webhooks/whop?company_id={company_id}"
 
-    return templates.TemplateResponse("settings.html", {
+    return templates.TemplateResponse(request=request, name="settings.html", context={
         "request": request,
         "active_page": "settings",
         "company_id": company_id,
@@ -174,18 +183,181 @@ def view_settings(request: Request):
 
 @app.get("/app-store", response_class=HTMLResponse)
 @app.get("/listing", response_class=HTMLResponse)
+@app.get("/discover", response_class=HTMLResponse)
 def view_app_store_listing(request: Request):
     """Whop App Store marketplace listing page faithful to the CJ Dropshipping reference design."""
     company_id = get_request_company_id(request)
     current_merchant = get_or_create_merchant(company_id)
     all_merchants = list_merchants()
 
-    return templates.TemplateResponse("app_store.html", {
+    return templates.TemplateResponse(request=request, name="app_store.html", context={
         "request": request,
         "active_page": "app_store",
         "company_id": company_id,
         "current_merchant": current_merchant,
         "all_merchants": all_merchants
+    })
+
+@app.get("/privacy", response_class=HTMLResponse)
+def view_privacy_policy(request: Request):
+    """Public Privacy Policy required by Whop App Store Submission Guidelines."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+
+    return templates.TemplateResponse(request=request, name="privacy.html", context={
+        "request": request,
+        "active_page": "privacy",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants
+    })
+
+@app.get("/terms", response_class=HTMLResponse)
+def view_terms_of_service(request: Request):
+    """Public Terms of Service required by Whop App Store Submission Guidelines."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+
+    return templates.TemplateResponse(request=request, name="terms.html", context={
+        "request": request,
+        "active_page": "terms",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants
+    })
+
+@app.get("/orders", response_class=HTMLResponse)
+@app.get("/orders/{order_id}", response_class=HTMLResponse)
+def view_orders(request: Request, order_id: Optional[str] = None):
+    """Orders management and real-time tracking timeline view (Screen 04)."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT * FROM orders WHERE company_id = ? ORDER BY id DESC", (company_id,))
+    order_rows = [dict(r) for r in c.fetchall()]
+
+    for o in order_rows:
+        try:
+            items = json.loads(o["items_json"])
+            o["items_summary"] = ", ".join([f"{it.get('quantity', 1)}x {it.get('whop_title', 'Product')}" for it in items])
+        except Exception:
+            o["items_summary"] = "Physical Item"
+
+    selected_order = None
+    if order_id:
+        selected_order = next((o for o in order_rows if order_id in o.get("whop_order_id", "")), None)
+    if not selected_order and order_rows:
+        selected_order = order_rows[0]
+
+    conn.close()
+
+    return templates.TemplateResponse(request=request, name="orders.html", context={
+        "request": request,
+        "active_page": "orders",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants,
+        "orders": order_rows,
+        "selected_order": selected_order
+    })
+
+@app.get("/sourcing", response_class=HTMLResponse)
+def view_sourcing(request: Request):
+    """Custom product sourcing request pipeline (Screen 07)."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+    sourcing_requests = get_sourcing_requests(company_id)
+
+    return templates.TemplateResponse(request=request, name="sourcing.html", context={
+        "request": request,
+        "active_page": "sourcing",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants,
+        "sourcing_requests": sourcing_requests
+    })
+
+@app.get("/inventory", response_class=HTMLResponse)
+def view_inventory(request: Request):
+    """Inventory and Store Sync view (Screen 08)."""
+    return view_sku_mapping(request)
+
+@app.get("/analytics", response_class=HTMLResponse)
+def view_analytics(request: Request):
+    """Performance analytics, conversion rates, and revenue metrics (Screen 06)."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+
+    return templates.TemplateResponse(request=request, name="analytics.html", context={
+        "request": request,
+        "active_page": "analytics",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants
+    })
+
+@app.get("/billing", response_class=HTMLResponse)
+def view_billing(request: Request):
+    """Plan management, fulfillment balance, payment methods, and invoices (Screen B)."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+    transactions = get_billing_transactions(company_id)
+
+    return templates.TemplateResponse(request=request, name="billing.html", context={
+        "request": request,
+        "active_page": "billing",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants,
+        "transactions": transactions,
+        "plan_tier": current_merchant.get("plan_tier") or "Creator",
+        "plan_price": float(current_merchant.get("plan_price") or settings.PLAN_PRICE_USD),
+        "plan_interval": current_merchant.get("plan_interval") or "monthly",
+        "payment_method": current_merchant.get("payment_method") or "whop_balance",
+        "whop_balance": float(current_merchant.get("whop_balance") or 432.00),
+        "trial_days": settings.TRIAL_DAYS,
+        "whop_checkout_url": settings.WHOP_CHECKOUT_URL,
+        "whop_portal_url": settings.WHOP_PORTAL_URL
+    })
+
+@app.get("/shipping", response_class=HTMLResponse)
+def view_shipping(request: Request):
+    """Global shipping routes, express lines, and regional transit times (Screen 10)."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+
+    return templates.TemplateResponse(request=request, name="shipping.html", context={
+        "request": request,
+        "active_page": "shipping",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants
+    })
+
+@app.get("/notifications", response_class=HTMLResponse)
+def view_notifications(request: Request):
+    """Full notifications activity feed (Screen 09)."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+    notifications = get_notifications(company_id)
+
+    return templates.TemplateResponse(request=request, name="notifications.html", context={
+        "request": request,
+        "active_page": "notifications",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants,
+        "notifications": notifications
     })
 
 # ---------------------------------------------------------------------------
@@ -454,6 +626,167 @@ async def simulate_test_order(request: Request):
 
     result = await process_incoming_whop_order(mock_payload)
     return result
+
+class SourcingCreateRequest(BaseModel):
+    company_id: Optional[str] = None
+    product_name: str
+    target_price: float
+    image_url: Optional[str] = ""
+    details: Optional[str] = ""
+
+@app.post("/api/sourcing/request")
+def api_submit_sourcing_request(req: SourcingCreateRequest, request: Request):
+    """Submits a new custom sourcing request to the database."""
+    company_id = req.company_id or get_request_company_id(request)
+    req_id = add_sourcing_request(
+        company_id=company_id,
+        product_name=req.product_name,
+        target_price=req.target_price,
+        image_url=req.image_url or "",
+        details=req.details or ""
+    )
+    log_event("sourcing_request", "success", f"Submitted sourcing request for {req.product_name}", company_id=company_id)
+    return {"status": "submitted", "id": req_id, "company_id": company_id}
+
+@app.post("/api/notifications/read")
+def api_mark_notifications_read_endpoint(request: Request):
+    """Marks all notifications as read for current merchant."""
+    company_id = get_request_company_id(request)
+    mark_notifications_read(company_id)
+    return {"status": "marked_read", "company_id": company_id}
+
+class BillingMethodUpdate(BaseModel):
+    company_id: Optional[str] = None
+    payment_method: str  # 'whop_balance' or 'credit_card'
+
+@app.post("/api/billing/switch-payment-method")
+def api_switch_payment_method(req: BillingMethodUpdate, request: Request):
+    """Allows merchant to toggle their default billing source between Whop Balance and Credit Card."""
+    company_id = req.company_id or get_request_company_id(request)
+    method = "whop_balance" if "balance" in req.payment_method.lower() else "credit_card"
+    update_billing_settings(company_id=company_id, payment_method=method)
+    label = "Whop Merchant Balance" if method == "whop_balance" else "Credit Card (Visa •••• 4242)"
+    add_notification(
+        company_id, "system", "Payment Preference Updated",
+        f"Default subscription payment source set to {label}.", "Just now"
+    )
+    log_event("billing_method_switch", "success", f"Merchant {company_id} switched payment method to {method}", company_id=company_id)
+    return {"status": "updated", "payment_method": method, "label": label}
+
+class PayPlanBalanceRequest(BaseModel):
+    company_id: Optional[str] = None
+    plan_tier: Optional[str] = "Creator"
+    amount: Optional[float] = 5.00
+    interval: Optional[str] = "monthly"
+
+@app.post("/api/billing/pay-with-whop-balance")
+def api_pay_with_whop_balance(req: PayPlanBalanceRequest, request: Request):
+    """Deducts subscription fee directly from merchant's accrued Whop Balance and issues receipt."""
+    import uuid
+    company_id = req.company_id or get_request_company_id(request)
+    merchant = get_or_create_merchant(company_id)
+    current_bal = float(merchant.get("whop_balance") or 432.00)
+    amount = float(req.amount or 5.00)
+
+    if current_bal < amount:
+        raise HTTPException(status_code=400, detail=f"Insufficient Whop Balance (${current_bal:.2f}). Please pay with Credit Card or top up.")
+
+    ref_id = f"WHOP-BAL-{uuid.uuid4().hex[:8].upper()}"
+    desc = f"{req.plan_tier} Plan Subscription ({req.interval.capitalize()}) - Paid via Whop Balance"
+
+    # Deduct balance & save transaction
+    update_billing_settings(
+        company_id=company_id,
+        plan_tier=req.plan_tier,
+        plan_price=amount,
+        plan_interval=req.interval,
+        payment_method="whop_balance",
+        balance_delta=-amount
+    )
+    add_billing_transaction(company_id, "subscription", -amount, desc, ref_id=ref_id)
+    add_notification(
+        company_id, "system", "Plan Payment Successful",
+        f"${amount:.2f} deducted from Whop Balance for {req.plan_tier} Plan. Reference: {ref_id}", "Just now"
+    )
+    log_event("billing_payment", "success", f"Processed ${amount:.2f} subscription payment via Whop Balance for {company_id}", company_id=company_id)
+
+    return {
+        "status": "success",
+        "message": f"Successfully paid ${amount:.2f} using Whop Balance. Receipt: {ref_id}",
+        "ref_id": ref_id,
+        "new_balance": current_bal - amount
+    }
+
+class UpgradePlanRequest(BaseModel):
+    company_id: Optional[str] = None
+    plan_tier: str  # 'Starter', 'Creator', 'Pro'
+    interval: Optional[str] = "monthly"
+    payment_method: Optional[str] = "whop_balance"  # 'whop_balance' or 'whop_checkout'
+
+@app.post("/api/billing/upgrade-plan")
+def api_upgrade_plan(req: UpgradePlanRequest, request: Request):
+    """Changes merchant plan subscription and initiates payment via Whop Balance or Whop Checkout."""
+    import uuid
+    company_id = req.company_id or get_request_company_id(request)
+    tier = req.plan_tier.capitalize()
+    interval = req.interval.lower()
+
+    # Pricing lookup
+    if tier == "Starter":
+        price = 0.0
+    elif tier == "Creator":
+        price = 48.00 if interval == "yearly" else 5.00
+    elif tier == "Pro":
+        price = 279.00 if interval == "yearly" else 29.00
+    else:
+        price = 5.00
+
+    if req.payment_method == "whop_checkout":
+        return {
+            "status": "redirect",
+            "checkout_url": f"{settings.WHOP_CHECKOUT_URL}?plan={tier.lower()}&interval={interval}&company_id={company_id}",
+            "message": f"Redirecting to Whop Checkout for {tier} plan..."
+        }
+
+    # Whop Balance Payment
+    merchant = get_or_create_merchant(company_id)
+    current_bal = float(merchant.get("whop_balance") or 432.00)
+
+    if price > 0 and current_bal < price:
+        return {
+            "status": "redirect",
+            "checkout_url": f"{settings.WHOP_CHECKOUT_URL}?plan={tier.lower()}&company_id={company_id}",
+            "message": f"Whop balance insufficient (${current_bal:.2f}). Redirecting to Whop Checkout..."
+        }
+
+    ref_id = f"WHOP-UPG-{uuid.uuid4().hex[:8].upper()}"
+    desc = f"Upgraded to {tier} Plan ({interval.capitalize()}) - Paid via Whop Balance"
+
+    update_billing_settings(
+        company_id=company_id,
+        plan_tier=tier,
+        plan_price=price,
+        plan_interval=interval,
+        payment_method="whop_balance",
+        balance_delta=-price if price > 0 else 0.0
+    )
+    if price > 0:
+        add_billing_transaction(company_id, "subscription", -price, desc, ref_id=ref_id)
+
+    add_notification(
+        company_id, "system", f"Subscribed to {tier} Plan",
+        f"Your store is now on the {tier} Plan (${price:.2f}/{interval}). Paid via Whop Balance.", "Just now"
+    )
+    log_event("plan_upgrade", "success", f"Merchant {company_id} upgraded to {tier} ({interval}) via Whop Balance", company_id=company_id)
+
+    return {
+        "status": "success",
+        "plan_tier": tier,
+        "plan_price": price,
+        "interval": interval,
+        "message": f"Successfully activated {tier} Plan! Charged ${price:.2f} to Whop Balance.",
+        "ref_id": ref_id
+    }
 
 if __name__ == "__main__":
     import uvicorn

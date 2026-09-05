@@ -27,6 +27,8 @@ class Settings:
     PLAN_NAME: str = "CJ Dropshipping Automation"
     PLAN_PRICE_USD: float = 5.00
     TRIAL_DAYS: int = 60
+    WHOP_CHECKOUT_URL: str = os.getenv("WHOP_CHECKOUT_URL", "https://whop.com/checkout/plan_cjdropshipping_automation")
+    WHOP_PORTAL_URL: str = os.getenv("WHOP_PORTAL_URL", "https://whop.com/hub")
 
     # CJ Dropshipping Open API 2.0
     CJ_API_BASE: str = "https://developers.cjdropshipping.com/api2.0/v1"

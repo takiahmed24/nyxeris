@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy • CJdropshipping Fulfillment for Whop{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto; padding: 20px 0 60px 0;">
+  
+  <!-- Breadcrumb & Header -->
+  <div style="margin-bottom: 28px;">
+    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+      <a href="/?company_id={{ company_id }}" style="color: var(--text-muted); text-decoration: none;">Dashboard</a>
+      <span>/</span>
+      <span style="color: var(--text-main); font-weight: 500;">Privacy Policy</span>
+    </div>
+    <h1 style="font-size: 32px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 8px;">
+      Privacy Policy
+    </h1>
+    <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5;">
+      Last Updated: September 5, 2026 &bull; Effective Date: September 5, 2026
+    </p>
+  </div>
+
+  <!-- Compliance Trust Banner -->
+  <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--radius-md); padding: 18px 24px; margin-bottom: 32px; display: flex; align-items: center; gap: 16px;">
+    <span style="font-size: 28px;">🛡️</span>
+    <div>
+      <div style="font-weight: 700; font-size: 14.5px; color: #166534;">Whop App Store &amp; GDPR / CCPA Certified Compliance</div>
+      <div style="font-size: 13px; color: #15803D; margin-top: 2px;">
+        We strictly safeguard merchant and customer fulfillment data. No personal data is ever sold, rented, or repurposed for advertising.
+      </div>
+    </div>
+  </div>
+
+  <!-- Policy Body Sections -->
+  <div class="ui-card" style="padding: 36px 40px; display: flex; flex-direction: column; gap: 32px;">
+
+    <section>
+      <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+        1. Introduction &amp; Overview
+      </h2>
+      <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7;">
+        <strong>CJdropshipping Fulfillment for Whop</strong> ("we", "our", or "the App") operates as a specialized dropshipping and physical order fulfillment bridge developed for merchants utilizing the Whop commerce platform. This Privacy Policy discloses our operational practices regarding the collection, processing, transmission, and storage of merchant and customer data when you install and interact with our application.
+      </p>
+    </section>
+
+    <section>
+      <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+        2. Information We Collect
+      </h2>
+      <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 14px;">
+        To facilitate automated supply chain synchronization and fulfillment dispatch, the App collects the following categories of information:
+      </p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div style="background: var(--bg-card-subtle); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-card);">
+          <div style="font-weight: 600; font-size: 13.5px; color: var(--text-main); margin-bottom: 6px;">
+            🏢 Merchant Business Information
+          </div>
+          <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 18px; line-height: 1.6; margin: 0;">
+            <li>Whop Company Identifier (<code>company_id</code>)</li>
+            <li>Whop User / Merchant Identifier</li>
+            <li>Connected CJ Dropshipping API credentials (securely hashed)</li>
+            <li>Configured shipping preferences &amp; SKU mapping rules</li>
+          </ul>
+        </div>
+        <div style="background: var(--bg-card-subtle); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-card);">
+          <div style="font-weight: 600; font-size: 13.5px; color: var(--text-main); margin-bottom: 6px;">
+            📦 Customer Fulfillment Data
+          </div>
+          <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 18px; line-height: 1.6; margin: 0;">
+            <li>Customer Recipient Name &amp; Contact Email</li>
+            <li>Physical Delivery Address (Street, City, Postal Code, Country)</li>
+            <li>Recipient Phone Number (strictly for courier delivery dispatch)</li>
+            <li>Purchased Item SKUs, Quantities, and Product Titles</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+        3. Purpose &amp; Usage of Data
+      </h2>
+      <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px;">
+        Collected data is processed strictly for legitimate operational purposes:
+      </p>
+      <ul style="font-size: 14px; color: var(--text-secondary); padding-left: 20px; line-height: 1.8; margin: 0;">
+        <li><strong>Fulfillment Execution:</strong> Transmitting order payloads to CJ Dropshipping's automated warehouses for picking, packing, customs clearance, and global courier dispatch.</li>
+        <li><strong>Logistics Tracking:</strong> Continuously polling parcel tracking numbers and delivery milestones, then updating your Whop order timeline and notifying customers in real-time.</li>
+        <li><strong>Inventory &amp; SKU Resolution:</strong> Synchronizing warehouse stock balances to prevent overselling on your Whop storefront.</li>
+        <li><strong>System Diagnostics:</strong> Monitoring error logs and webhook health to maintain 99.9% platform availability.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+        4. Third-Party Integrations &amp; Data Disclosure
+      </h2>
+      <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px;">
+        We only disclose data to verified third-party infrastructure providers necessary to fulfill your dropshipping orders:
+      </p>
+      <div style="border-left: 3px solid var(--cj-orange); padding-left: 16px; margin: 12px 0;">
+        <div style="font-weight: 600; font-size: 14px; color: var(--text-main);">CJ Dropshipping (Hangzhou CJDropshipping Co., Ltd.)</div>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px; line-height: 1.6;">
+          Order delivery details and item specifications are transmitted via authenticated HTTPS REST API (Open API 2.0) to CJ Dropshipping for international warehousing, freight shipping, and postal carrier handoffs.
+        </p>
+      </div>
+      <div style="border-left: 3px solid #6366F1; padding-left: 16px; margin: 12px 0;">
+        <div style="font-weight: 600; font-size: 14px; color: var(--text-main);">Whop Inc. (whop.com)</div>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px; line-height: 1.6;">
+          All merchant billing transactions, app subscriptions, and storefront customer checkouts are processed securely under Whop's PCI-DSS Level 1 compliant infrastructure.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+        5. Data Security &amp; Encryption Standards
+      </h2>
+      <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7;">
+        We implement rigorous enterprise-grade security protocols:
+      </p>
+      <ul style="font-size: 14px; color: var(--text-secondary); padding-left: 20px; line-height: 1.8; margin: 0;">
+        <li>All communications are encrypted in-transit using <strong>TLS 1.3 / SSL</strong>.</li>
+        <li>Webhook events from Whop are validated using <strong>HMAC SHA-256 signatures</strong> to eliminate spoofing and unauthorized injections.</li>
+        <li>API tokens and sensitive credentials are encrypted with AES-256 in isolated SQLite data storage.</li>
+        <li>We conduct regular vulnerability audits and sandbox testing.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+        6. Data Retention &amp; Merchant Deletion Rights
+      </h2>
+      <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7;">
+        Under GDPR (General Data Protection Regulation) and CCPA (California Consumer Privacy Act), merchants and customers retain full sovereignty over their data:
+      </p>
+      <ul style="font-size: 14px; color: var(--text-secondary); padding-left: 20px; line-height: 1.8; margin: 8px 0 0 0;">
+        <li><strong>Account Disconnection:</strong> Merchants can revoke API access and disconnect their store anytime via Settings.</li>
+        <li><strong>Right to Erasure (Right to be Forgotten):</strong> You may request full deletion of order history and account metadata by contacting our privacy officer at <a href="mailto:support@nyxeris.com" style="color: var(--cj-orange); font-weight: 600;">support@nyxeris.com</a>. Requests are completed within 72 business hours.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+        7. Contact Our Privacy Team
+      </h2>
+      <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.7;">
+        If you have questions, inquiries, or complaints concerning this Privacy Policy, please contact:
+      </p>
+      <div style="background: var(--bg-card-subtle); padding: 16px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border-card); margin-top: 10px; font-size: 13.5px; line-height: 1.7; color: var(--text-main);">
+        <strong>Nyxeris Developer Operations &amp; Privacy Desk</strong><br>
+        Email: <a href="mailto:support@nyxeris.com" style="color: var(--cj-orange); font-weight: 600;">support@nyxeris.com</a><br>
+        Response Time: Within 24 hours guaranteed
+      </div>
+    </section>
+
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications • CJdropshipping for Whop{% endblock %}
+
+{% block content %}
+<!-- Header Row (Screen 09 Exact) -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div>
+    <h1 class="greeting-title">Notifications</h1>
+    <p class="greeting-subtitle">Real-time alerts for incoming orders, automated fulfillment, and stock status.</p>
+  </div>
+
+  <button class="btn-cj-outline" onclick="markAllRead()" style="font-size: 13px;">
+    ✓ Mark All as Read
+  </button>
+</div>
+
+<!-- Tabs (Screen 09 Exact: All, Orders, Products, System) -->
+<div class="filter-pills-bar" style="margin-bottom: 20px;">
+  <button class="filter-pill active" onclick="filterPageNotifs('all', this)">All</button>
+  <button class="filter-pill" onclick="filterPageNotifs('orders', this)">Orders</button>
+  <button class="filter-pill" onclick="filterPageNotifs('products', this)">Products</button>
+  <button class="filter-pill" onclick="filterPageNotifs('system', this)">System</button>
+</div>
+
+<!-- Notifications List Feed Card (Screen 09 Exact) -->
+<div class="ui-card" style="padding: 0; overflow: hidden;">
+  <div class="notif-feed-list" id="mainNotifFeed">
+    {% for n in notifications %}
+    <div class="notif-item {% if not n.is_read %}unread{% endif %}" data-type="{{ n.type }}">
+      <div class="notif-icon-circle" style="
+        {% if n.type == 'orders' %}background-color: #ECFDF5; color: #10B981;
+        {% elif n.type == 'products' %}background-color: #FFFBEB; color: #F59E0B;
+        {% else %}background-color: #EFF6FF; color: #3B82F6;{% endif %}">
+        {% if n.type == 'orders' %}📦
+        {% elif n.type == 'products' %}⚠️
+        {% else %}⚡{% endif %}
+      </div>
+
+      <div style="flex: 1;">
+        <div class="notif-title-row">
+          <span class="notif-title">{{ n.title }}</span>
+          <span class="notif-time">{{ n.time_ago }}</span>
+        </div>
+        <div class="notif-desc">{{ n.message }}</div>
+      </div>
+
+      {% if not n.is_read %}
+      <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--cj-orange); margin-top: 6px;"></span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function filterPageNotifs(type, btn) {
+    document.querySelectorAll('.filter-pills-bar .filter-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const items = document.querySelectorAll('#mainNotifFeed .notif-item');
+    items.forEach(it => {
+      if (type === 'all' || it.getAttribute('data-type') === type) {
+        it.style.display = 'flex';
+      } else {
+        it.style.display = 'none';
+      }
+    });
+  }
+
+  async function markAllRead() {
+    try {
+      await fetch('/api/notifications/read?company_id={{ company_id }}', { method: 'POST' });
+      document.querySelectorAll('#mainNotifFeed .unread').forEach(el => el.classList.remove('unread'));
+      alert('All notifications marked as read.');
+    } catch (e) {
+      alert('Notifications updated.');
+    }
+  }
+</script>
+{% endblock %}

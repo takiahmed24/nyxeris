@@ -175,7 +175,7 @@ def test_pipeline():
     # Test GET /products HTML View
     res_prod_view = client.get(f"/products?company_id={alpha_id}")
     assert res_prod_view.status_code == 200
-    assert "List Products to Whop" in res_prod_view.text
+    assert "Find Products" in res_prod_view.text
     print("       Products UI GET '/products?company_id=biz_alpha_test_101' -> 200 OK")
 
     # Test GET /api/cj/products
@@ -267,15 +267,12 @@ def test_pipeline():
     res_appstore = client.get(f"/app-store?company_id={alpha_id}")
     assert res_appstore.status_code == 200
     html_text = res_appstore.text
-    assert "Whop App Store" in html_text
-    assert "CJdropshipping: Sourcing, Dropshipping & Fulfillment" in html_text
-    assert "Developed by Taki" in html_text
-    assert "Free to install" in html_text
-    assert "btn-install-pill" in html_text
-    assert "Product sourcing and auto-listing feature" in html_text
-    assert "+ 8 more" in html_text
-    assert "4.9" in html_text
-    print("       App Store UI GET '/app-store' -> 200 OK (Faithful to Shopify App Store Screenshot)")
+    assert "Everything you need to sell globally" in html_text
+    assert "Connect Your Whop Store" in html_text
+    assert "App Store Showcase Gallery" in html_text
+    assert "Transparent Pricing" in html_text
+    assert "60-Day Free Trial" in html_text
+    print("       App Store UI GET '/app-store' -> 200 OK (Screen 01 & Showcase Gallery Fidelity)")
 
     res_alias = client.get(f"/listing?company_id={alpha_id}")
     assert res_alias.status_code == 200

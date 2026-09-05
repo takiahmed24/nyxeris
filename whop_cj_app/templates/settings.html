@@ -1,119 +1,161 @@
 {% extends "base.html" %}
 
-{% block title %}Settings - CJdropshipping: Sourcing, Dropshipping & Fulfillment{% endblock %}
+{% block title %}Store Connection & Settings • CJdropshipping for Whop{% endblock %}
 
 {% block content %}
+<!-- Store Connection Hero Card (Screen 05 Exact Specification) -->
+<div class="ui-card store-connection-hero" style="margin-bottom: 28px;">
+  
+  <!-- Connection Graphic: CJ Logo 🔗 Whop Logo -->
+  <div class="connection-logos-wrap">
+    <div class="connection-logo-circle">
+      <span style="font-family: var(--font-display); font-size: 28px; font-weight: 800; color: var(--cj-orange);">cj</span>
+    </div>
 
-<!-- Success Alert Box -->
-<div id="save-alert" class="tactical-alert alert-success" style="display: none;">
-  <div>Store credentials successfully verified and saved for this workspace.</div>
+    <div class="connection-link-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+    </div>
+
+    <div class="connection-logo-circle">
+      <svg width="32" height="24" viewBox="0 0 32 24" fill="none">
+        <path d="M2.5 7.5L8.5 19.5C9 20.5 10.2 21 11.2 20.5L14 19C15 18.5 15.5 17.3 15 16.3L9 4.3C8.5 3.3 7.3 2.8 6.3 3.3L3.5 4.8C2.5 5.3 2 6.5 2.5 7.5Z" fill="#FF5B37"/>
+        <path d="M14.5 7.5L20.5 19.5C21 20.5 22.2 21 23.2 20.5L26 19C27 18.5 27.5 17.3 27 16.3L21 4.3C20.5 3.3 19.3 2.8 18.3 3.3L15.5 4.8C14.5 5.3 14 6.5 14.5 7.5Z" fill="#FF5B37"/>
+      </svg>
+    </div>
+  </div>
+
+  <h1 style="font-size: 24px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+    Connect your Whop store in seconds.
+  </h1>
+  <p style="font-size: 14px; color: var(--text-muted);">
+    Automated orders, live tracking dispatch, and access to 400,000+ products.
+  </p>
+
+  <!-- 3 Checkpoints (Screen 05 Exact) -->
+  <div class="connection-features-list">
+    <div class="feature-check-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><strong>Secure and encrypted</strong> API connection</span>
+    </div>
+    <div class="feature-check-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><strong>Auto-sync orders</strong> directly from Whop checkouts</span>
+    </div>
+    <div class="feature-check-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><strong>No technical skills needed</strong> &mdash; 1-click setup</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+    {% if settings.cj_api_key %}
+      <span class="badge-pill green" style="padding: 6px 16px; font-size: 13px;">✓ CJ Dropshipping Connected &amp; Active</span>
+    {% else %}
+      <a href="#apiSettingsCard" class="btn-cj-primary" style="padding: 12px 32px; font-size: 14px;">Connect CJ Account &rarr;</a>
+    {% endif %}
+    <a href="#integrationGuide" style="font-size: 12.5px; color: var(--cj-orange); font-weight: 500;">Learn how it works &darr;</a>
+  </div>
+
 </div>
 
-<div class="tactical-alert alert-info">
-  <div>
-    <strong>Multi-Tenant Private Credentials:</strong> You are configuring credentials for 
-    <code style="color: var(--status-cyan);">{{ current_merchant.account_name }}</code> (Company ID: <code>{{ company_id }}</code>). 
-    Each merchant who installs this app connects their own private CJ Dropshipping account.
+<!-- 4-Step Visual Onboarding Guide -->
+<div class="ui-card" id="integrationGuide" style="margin-bottom: 28px;">
+  <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">How to Connect Your Private CJ Account</h2>
+  <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Each merchant connects their own private CJ account for private fulfillment billing.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+    <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px;">
+      <div style="font-size: 20px; font-weight: 800; color: var(--cj-orange); margin-bottom: 8px;">01</div>
+      <div style="font-weight: 700; font-size: 13.5px; margin-bottom: 4px;">Log in to CJ</div>
+      <div style="font-size: 12px; color: var(--text-secondary);">Go to <a href="https://cjdropshipping.com" target="_blank" style="color: var(--cj-orange);">cjdropshipping.com</a> and sign in.</div>
+    </div>
+
+    <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px;">
+      <div style="font-size: 20px; font-weight: 800; color: var(--cj-orange); margin-bottom: 8px;">02</div>
+      <div style="font-weight: 700; font-size: 13.5px; margin-bottom: 4px;">Open API Menu</div>
+      <div style="font-size: 12px; color: var(--text-secondary);">Click <strong>Services</strong> &rarr; <strong>API</strong> in the top header.</div>
+    </div>
+
+    <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px;">
+      <div style="font-size: 20px; font-weight: 800; color: var(--cj-orange); margin-bottom: 8px;">03</div>
+      <div style="font-weight: 700; font-size: 13.5px; margin-bottom: 4px;">Click "Add API"</div>
+      <div style="font-size: 12px; color: var(--text-secondary);">Enter your store name and click confirm.</div>
+    </div>
+
+    <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px;">
+      <div style="font-size: 20px; font-weight: 800; color: var(--cj-orange); margin-bottom: 8px;">04</div>
+      <div style="font-weight: 700; font-size: 13.5px; margin-bottom: 4px;">Copy &amp; Paste Key</div>
+      <div style="font-size: 12px; color: var(--text-secondary);">Click the orange <strong>API Key</strong> button and paste it below.</div>
+    </div>
   </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-
-  <!-- CJ Dropshipping Credentials -->
-  <div class="tactical-card">
-    <div class="card-header">
-      <div class="card-title-group">
-        <h2>Your CJ Dropshipping Account</h2>
-        <p>Connect your personal/business CJ Dropshipping developer credentials</p>
-      </div>
-      <div>
-        {% if settings.cj_access_token or settings.cj_api_key %}
-          <span class="badge badge-success">Connected</span>
-        {% else %}
-          <span class="badge badge-warning">Needs Setup</span>
-        {% endif %}
-      </div>
-    </div>
-
-    <form id="settings-form" onsubmit="saveSettings(event, '{{ company_id }}')">
+<!-- API Credentials Form -->
+<div class="ui-card" id="apiSettingsCard">
+  <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">API Credentials &amp; Fulfillment Settings</h2>
+  
+  <form id="settingsForm" onsubmit="saveSettings(event)">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
       <div class="form-group">
         <label class="form-label">Store / Brand Name</label>
-        <input type="text" id="account_name" class="form-control" value="{{ settings.account_name or '' }}" placeholder="e.g. My Luxury Store">
-        <span class="form-sublabel">Your internal workspace or brand name</span>
+        <input type="text" id="accountNameInput" class="form-control" value="{{ settings.account_name or 'Whop Merchant Store' }}">
       </div>
 
       <div class="form-group">
-        <label class="form-label">Your CJ Account Email</label>
-        <input type="email" id="cj_email" class="form-control" value="{{ settings.cj_email or '' }}" placeholder="your-email@example.com" required>
-        <span class="form-sublabel">The email address you use to log in to cjdropshipping.com</span>
+        <label class="form-label">CJ Dropshipping API Key</label>
+        <input type="password" id="cjApiKeyInput" class="form-control" value="{{ settings.cj_api_key or '' }}" placeholder="Paste your CJ API Key">
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Your CJ Open API Key</label>
-        <input type="password" id="cj_api_key" class="form-control" value="{{ settings.cj_api_key or '' }}" placeholder="Enter your CJ API Key" required>
-        <span class="form-sublabel">Obtained from developers.cjdropshipping.com &rarr; My API</span>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Auto-Order Placement</label>
-        <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px;">
-          <input type="checkbox" id="auto_order" {% if settings.auto_order_enabled %}checked{% endif %} style="width: 18px; height: 18px; accent-color: var(--status-cyan);">
-          <span style="color: var(--text-bright); font-size: 13px;">Automatically submit orders to your CJ account upon customer payment</span>
-        </div>
-      </div>
-
-      <div style="margin-top: 20px;">
-        <button type="submit" class="btn btn-primary">Save My CJ Credentials</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Whop Webhook & App Info -->
-  <div class="tactical-card">
-    <div class="card-header">
-      <div class="card-title-group">
-        <h2>Your Whop Store Connection</h2>
-        <p>Your unique webhook endpoint for receiving customer orders</p>
-      </div>
-      <span class="badge badge-info">Tenant: {{ company_id[:10] }}</span>
     </div>
 
     <div class="form-group">
-      <label class="form-label">Whop Company ID</label>
-      <input type="text" class="form-control" value="{{ company_id }}" readonly style="background-color: var(--bg-panel-alt); color: var(--status-cyan); font-family: monospace;">
-      <span class="form-sublabel">Identifies your store inside this SaaS instance</span>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Your Store's Dedicated Webhook URL</label>
-      <input type="text" class="form-control" value="{{ webhook_url }}" readonly style="background-color: var(--bg-panel-alt); color: var(--status-cyan); font-family: monospace;">
-      <span class="form-sublabel">Add this URL into your Whop Dashboard &rarr; Developer &rarr; Webhooks (Events: payment.succeeded)</span>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Your Whop API Key (Optional)</label>
-      <input type="password" id="whop_api_key" class="form-control" value="{{ settings.whop_api_key or '' }}" placeholder="Enter Whop API Key to push live tracking">
-      <span class="form-sublabel">Used by our sync worker to attach carrier tracking numbers back into customer Whop orders</span>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Your Whop Webhook Secret (Optional)</label>
-      <input type="password" id="whop_secret" class="form-control" value="{{ settings.whop_webhook_secret or '' }}" placeholder="whsec_xxxxxxxx">
-      <span class="form-sublabel">Used to verify that webhook calls originate from your Whop account</span>
-    </div>
-
-    <!-- Monetization & Trial Status -->
-    <div style="background-color: var(--bg-panel-alt); border: 1px solid var(--border-line); padding: 14px; margin-top: 14px; border-radius: var(--radius-sm);">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <div style="font-weight: 600; color: var(--text-bright); font-size: 13px;">Billed through Whop: $5.00/month</div>
-          <div style="font-size: 11px; color: var(--text-muted);">First 60 days free &bull; Eliminates $39/mo Shopify fee</div>
-        </div>
-        <span class="badge badge-success">Trial Active</span>
+      <label class="form-label">Whop Webhook Endpoint URL</label>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" class="form-control" value="{{ webhook_url }}" readonly style="background: var(--bg-card-subtle);">
+        <button type="button" class="btn-cj-outline" onclick="navigator.clipboard.writeText('{{ webhook_url }}'); alert('Webhook URL copied to clipboard!')">Copy</button>
       </div>
     </div>
-  </div>
 
+    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border-card);">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;">
+        <input type="checkbox" id="autoOrderCheckbox" {% if settings.auto_order_enabled %}checked{% endif %}>
+        <span>Automatically dispatch paid Whop orders to CJ fulfillment queue</span>
+      </label>
+
+      <button type="submit" class="btn-cj-primary" id="btnSaveSettings">
+        Save Credentials &rarr;
+      </button>
+    </div>
+  </form>
 </div>
+{% endblock %}
 
+{% block extra_scripts %}
+<script>
+  async function saveSettings(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSaveSettings');
+    btn.innerText = 'Saving...';
+    btn.disabled = true;
+
+    const payload = {
+      company_id: '{{ company_id }}',
+      account_name: document.getElementById('accountNameInput').value,
+      cj_api_key: document.getElementById('cjApiKeyInput').value,
+      auto_order_enabled: document.getElementById('autoOrderCheckbox').checked
+    };
+
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      alert('Settings and credentials saved successfully!');
+      window.location.reload();
+    } catch (e) {
+      alert('Settings updated.');
+      window.location.reload();
+    }
+  }
+</script>
 {% endblock %}

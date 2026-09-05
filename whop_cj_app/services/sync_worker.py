@@ -90,9 +90,9 @@ async def process_incoming_whop_order(payload: Dict[str, Any]) -> Dict[str, Any]
         # Check sku_mappings table for this merchant company
         c.execute("""
             SELECT * FROM sku_mappings 
-            WHERE company_id = ? AND (whop_product_id = ? OR whop_variant_title = ?)
+            WHERE company_id = ? AND whop_product_id = ?
             LIMIT 1
-        """, (company_id, prod_id, var_title))
+        """, (company_id, prod_id))
         mapping = c.fetchone()
 
         if mapping:

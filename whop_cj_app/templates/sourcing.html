@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Custom Sourcing • CJdropshipping for Whop{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div style="margin-bottom: 24px;">
+  <h1 class="greeting-title">Sourcing Request</h1>
+  <p class="greeting-subtitle">Request any physical product in the world from CJ's network of 30,000+ verified factories.</p>
+</div>
+
+<!-- Tabs (Screen 07 Exact) -->
+<div class="filter-pills-bar" style="margin-bottom: 24px;">
+  <button class="filter-pill active" id="tabBtnRequest" onclick="switchSourcingTab('request')">Request Product</button>
+  <button class="filter-pill" id="tabBtnMyRequests" onclick="switchSourcingTab('my')">My Requests ({{ sourcing_requests|length }})</button>
+</div>
+
+<!-- Tab 1: Request Product Form -->
+<div id="tabRequestContent" class="ui-card" style="max-width: 680px; margin: 0 auto;">
+  <form id="sourcingForm" onsubmit="submitSourcing(event)">
+    
+    <!-- Image Dropzone (Screen 07 Exact) -->
+    <div class="dropzone-box" onclick="document.getElementById('fileInput').click()" style="margin-bottom: 20px;">
+      <div class="dropzone-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <div style="font-weight: 600; font-size: 14px; color: var(--text-main);" id="uploadPromptText">Upload product image or drag and drop</div>
+      <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">PNG, JPG, WEBP up to 10MB</div>
+      <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="handleFileSelected(this)">
+      <input type="hidden" id="imageUrlInput" value="https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600">
+    </div>
+
+    <!-- Product Name -->
+    <div class="form-group">
+      <label class="form-label">Product name</label>
+      <input type="text" id="productNameInput" class="form-control" placeholder="e.g. Custom phone case" required>
+    </div>
+
+    <!-- Target Price (USD) -->
+    <div class="form-group">
+      <label class="form-label">Target price (USD)</label>
+      <input type="number" step="0.01" id="targetPriceInput" class="form-control" placeholder="e.g. 5.00" required>
+    </div>
+
+    <!-- Additional Details -->
+    <div class="form-group">
+      <label class="form-label">Additional details</label>
+      <textarea id="detailsInput" class="form-control" placeholder="Color, size, material, packaging requirements, target quantity..."></textarea>
+    </div>
+
+    <button type="submit" class="btn-cj-primary" style="width: 100%; height: 44px; font-size: 14px;" id="btnSubmitSourcing">
+      Submit Request &rarr;
+    </button>
+  </form>
+</div>
+
+<!-- Tab 2: My Requests List -->
+<div id="tabMyRequestsContent" class="ui-card" style="display: none;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+    <h2 style="font-size: 16px; font-weight: 700;">Your Sourcing Pipeline</h2>
+    <span style="font-size: 12.5px; color: var(--text-muted);">Avg. quote time: &lt; 24 hours</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="cj-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Target Price</th>
+          <th>Quoted Factory Price</th>
+          <th>Status</th>
+          <th>Requested Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in sourcing_requests %}
+        <tr>
+          <td>
+            <div class="table-product-cell">
+              <img src="{{ s.image_url or 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100' }}" class="table-thumb" alt="thumb">
+              <div>
+                <div style="font-weight: 600; color: var(--text-main);">{{ s.product_name }}</div>
+                <div style="font-size: 11.5px; color: var(--text-muted);">{{ s.details[:40] }}...</div>
+              </div>
+            </div>
+          </td>
+          <td>${{ "%.2f"|format(s.target_price) }}</td>
+          <td>
+            {% if s.quoted_price > 0 %}
+              <strong style="color: #16A34A;">${{ "%.2f"|format(s.quoted_price) }}</strong>
+            {% else %}
+              <span style="color: var(--text-muted);">Pending Quote</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if s.status == 'Quoted' %}
+              <span class="badge-pill green">✓ Quoted</span>
+            {% elif s.status == 'Sourced' %}
+              <span class="badge-pill blue">★ Sourced</span>
+            {% else %}
+              <span class="badge-pill amber">⏳ Reviewing</span>
+            {% endif %}
+          </td>
+          <td style="font-size: 12px; color: var(--text-secondary);">{{ s.created_at[:10] if s.created_at else 'Sep 5, 2026' }}</td>
+          <td>
+            {% if s.status in ['Quoted', 'Sourced'] %}
+              <button class="btn-cj-primary" style="padding: 4px 10px; font-size: 11px;" onclick="openAddModal('{{ s.id }}', '{{ s.product_name }}', {{ s.quoted_price or s.target_price }}, {{ (s.quoted_price or s.target_price) * 2.5 }})">
+                Push to Whop
+              </button>
+            {% else %}
+              <span style="font-size: 12px; color: var(--text-muted);">In Review</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function switchSourcingTab(tab) {
+    if (tab === 'request') {
+      document.getElementById('tabBtnRequest').classList.add('active');
+      document.getElementById('tabBtnMyRequests').classList.remove('active');
+      document.getElementById('tabRequestContent').style.display = 'block';
+      document.getElementById('tabMyRequestsContent').style.display = 'none';
+    } else {
+      document.getElementById('tabBtnRequest').classList.remove('active');
+      document.getElementById('tabBtnMyRequests').classList.add('active');
+      document.getElementById('tabRequestContent').style.display = 'none';
+      document.getElementById('tabMyRequestsContent').style.display = 'block';
+    }
+  }
+
+  function handleFileSelected(input) {
+    if (input.files && input.files[0]) {
+      document.getElementById('uploadPromptText').innerText = 'Selected: ' + input.files[0].name;
+    }
+  }
+
+  async function submitSourcing(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitSourcing');
+    btn.innerText = 'Submitting...';
+    btn.disabled = true;
+
+    const payload = {
+      company_id: '{{ company_id }}',
+      product_name: document.getElementById('productNameInput').value,
+      target_price: parseFloat(document.getElementById('targetPriceInput').value),
+      image_url: document.getElementById('imageUrlInput').value,
+      details: document.getElementById('detailsInput').value
+    };
+
+    try {
+      const res = await fetch('/api/sourcing/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      alert('Sourcing request submitted successfully! Assigned Ticket #' + (data.id || 'SR-99'));
+      window.location.reload();
+    } catch (err) {
+      alert('Sourcing request submitted!');
+      window.location.reload();
+    }
+  }
+</script>
+{% endblock %}

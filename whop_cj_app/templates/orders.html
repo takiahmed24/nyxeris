@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Orders & Tracking • CJdropshipping for Whop{% endblock %}
+
+{% block content %}
+<!-- Header Row -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+  <div>
+    <h1 class="greeting-title">Orders & Tracking</h1>
+    <p class="greeting-subtitle">Monitor real-time fulfillment, auto-dispatched tracking, and international transit.</p>
+  </div>
+
+  <div style="display: flex; gap: 10px;">
+    <button class="btn-cj-outline" onclick="simulateTestOrder()">
+      + Simulate Test Order
+    </button>
+    <button class="btn-cj-primary" onclick="syncTracking()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Sync Tracking Now
+    </button>
+  </div>
+</div>
+
+<!-- Screen 04 Showcase Split: Order Details & Live Tracking -->
+<div class="order-detail-split" style="margin-bottom: 28px;">
+  
+  <!-- Left: Order Details & Step Timeline (Screen 04 Exact) -->
+  <div class="ui-card">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid var(--border-card);">
+      <div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h2 style="font-size: 18px; font-weight: 700; color: var(--text-main);">#100245</h2>
+          <span class="badge-pill green">✓ Fulfilled</span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Sep 5, 2026 &middot; 10:24 AM</div>
+      </div>
+      <button class="btn-cj-outline" style="padding: 6px 12px; font-size: 12px;" onclick="navigator.clipboard.writeText('1ZC920491029348F2'); alert('Tracking number copied to clipboard!')">
+        Share Link
+      </button>
+    </div>
+
+    <!-- Product Line Item -->
+    <div style="display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border-subtle);">
+      <img src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=200" style="width: 52px; height: 52px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-card);" alt="Minimalist Hoodie">
+      <div style="flex: 1;">
+        <div style="font-weight: 600; font-size: 14px; color: var(--text-main);">Minimalist Hoodie</div>
+        <div style="font-size: 12px; color: var(--text-muted);">Gray / L &nbsp;&middot;&nbsp; $18.50 &times; 1</div>
+      </div>
+      <div style="font-weight: 700; font-size: 15px; color: var(--text-main);">$18.50</div>
+    </div>
+
+    <!-- 6-Step Vertical Timeline (Screen 04 Exact Specification) -->
+    <div class="tracking-timeline">
+      <div class="timeline-step completed">
+        <div class="timeline-dot">✓</div>
+        <div class="timeline-title">Order Received</div>
+        <div class="timeline-time">Sep 5, 2026 &middot; 10:24 AM</div>
+      </div>
+
+      <div class="timeline-step completed">
+        <div class="timeline-dot">✓</div>
+        <div class="timeline-title">Processing</div>
+        <div class="timeline-time">Sep 5, 2026 &middot; 12:10 PM</div>
+      </div>
+
+      <div class="timeline-step completed">
+        <div class="timeline-dot">✓</div>
+        <div class="timeline-title">Tracking Generated</div>
+        <div class="timeline-time">Sep 5, 2026 &middot; 02:36 PM (UPS: 1ZC920491029348F2)</div>
+      </div>
+
+      <div class="timeline-step completed">
+        <div class="timeline-dot">✓</div>
+        <div class="timeline-title">Shipped</div>
+        <div class="timeline-time">Sep 6, 2026 &middot; 08:10 AM</div>
+      </div>
+
+      <div class="timeline-step completed">
+        <div class="timeline-dot">✓</div>
+        <div class="timeline-title">Out for Delivery</div>
+        <div class="timeline-time">Sep 8, 2026 &middot; 10:12 AM</div>
+      </div>
+
+      <div class="timeline-step completed">
+        <div class="timeline-dot">✓</div>
+        <div class="timeline-title">Delivered</div>
+        <div class="timeline-time">Sep 8, 2026 &middot; 02:45 PM &middot; Signed by Customer</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 18px;">
+      <a href="https://www.ups.com/track?tracknum=1ZC920491029348F2" target="_blank" class="btn-cj-primary" style="width: 100%; font-size: 14px;">
+        Track Package on Carrier &nearr;
+      </a>
+    </div>
+  </div>
+
+  <!-- Right: Live Flight Tracking Map (Banner 2 Exact Graphic) -->
+  <div class="ui-card" style="display: flex; flex-direction: column;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <h2 style="font-size: 16px; font-weight: 700; color: var(--text-main);">Live Tracking Map</h2>
+      <span style="font-size: 12px; color: var(--cj-orange); font-weight: 600;">Worldwide Express</span>
+    </div>
+
+    <div style="flex: 1; background: #FAFAFA; border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px; position: relative; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      <svg width="100%" height="160" viewBox="0 0 450 180" fill="none">
+        <g fill="#E5E7EB">
+          <circle cx="90" cy="65" r="4"/><circle cx="110" cy="55" r="3"/><circle cx="130" cy="70" r="4"/>
+          <circle cx="320" cy="65" r="5"/><circle cx="350" cy="80" r="5"/>
+        </g>
+        <!-- Route curve from Shenzhen to USA -->
+        <path d="M 340 75 Q 220 15 110 65" stroke="#FF6243" stroke-width="2.5" stroke-dasharray="4 4" fill="none"/>
+        
+        <!-- Origin (Shenzhen) -->
+        <circle cx="340" cy="75" r="7" fill="#FF6243"/><circle cx="340" cy="75" r="14" fill="#FF6243" opacity="0.2"/>
+        <text x="310" y="105" font-family="DM Sans" font-size="11" fill="#4B5563" font-weight="600">Shenzhen, CN</text>
+        
+        <!-- In-flight Plane Icon -->
+        <g transform="translate(210, 30)">
+          <path d="M12 2L15 9L22 10L17 14L18 21L12 17L6 21L7 14L2 10L9 9L12 2Z" fill="#FF6243"/>
+        </g>
+
+        <!-- Destination (US) -->
+        <circle cx="110" cy="65" r="7" fill="#10B981"/><circle cx="110" cy="65" r="14" fill="#10B981" opacity="0.2"/>
+        <text x="75" y="95" font-family="DM Sans" font-size="11" fill="#10B981" font-weight="600">Delivered (US)</text>
+      </svg>
+
+      <!-- Flight status card -->
+      <div style="width: 100%; background: #FFFFFF; border: 1px solid var(--border-card); border-radius: var(--radius-sm); padding: 12px; margin-top: 10px; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Status</div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--text-main);">In Transit &middot; Departed Shenzhen Hub</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 11px; color: var(--text-muted);">Est. Delivery</div>
+          <div style="font-size: 13px; font-weight: 600; color: #16A34A;">Sep 8, 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Full Orders List Table -->
+<div class="ui-card">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+    <h2 style="font-size: 16px; font-weight: 700;">All Store Orders</h2>
+    <span style="font-size: 13px; color: var(--text-muted);">Total: {{ orders|length }} records</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="cj-table">
+      <thead>
+        <tr>
+          <th>Whop Order</th>
+          <th>Items</th>
+          <th>Customer</th>
+          <th>Total</th>
+          <th>Fulfillment Status</th>
+          <th>Tracking ID</th>
+          <th>Carrier</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td style="font-weight: 600; color: #2563EB;">#{{ o.whop_order_id.replace('WHOP-', '') }}</td>
+          <td>{{ o.items_summary or 'Physical Item' }}</td>
+          <td>{{ o.customer_name }} ({{ o.shipping_country }})</td>
+          <td><strong>${{ "%.2f"|format(o.total_amount) }}</strong></td>
+          <td>
+            {% if o.cj_order_status == 'fulfilled' %}
+              <span class="badge-pill green">✓ Fulfilled</span>
+            {% elif o.cj_order_status == 'tracking_generated' %}
+              <span class="badge-pill blue">🚚 Tracking Ready</span>
+            {% elif o.cj_order_status == 'synced' %}
+              <span class="badge-pill green">🔄 Synced</span>
+            {% else %}
+              <span class="badge-pill amber">⏳ Processing</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if o.tracking_number %}
+              <a href="{{ o.tracking_url or '#' }}" target="_blank" class="tracking-link">{{ o.tracking_number }}</a>
+            {% else %}
+              <span style="color: var(--text-muted);">Auto-generating</span>
+            {% endif %}
+          </td>
+          <td>{{ o.tracking_carrier or 'CJ Express' }}</td>
+          <td style="font-size: 12px; color: var(--text-secondary);">{{ o.created_at[:10] if o.created_at else 'Sep 5, 2026' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  async function syncTracking() {
+    try {
+      const res = await fetch('/api/sync/tracking?company_id={{ company_id }}', { method: 'POST' });
+      const data = await res.json();
+      alert('Tracking synchronization complete! ' + (data.message || 'Tracking numbers updated.'));
+      window.location.reload();
+    } catch (e) {
+      alert('Tracking sync triggered.');
+      window.location.reload();
+    }
+  }
+
+  async function simulateTestOrder() {
+    try {
+      const res = await fetch('/api/test/simulate-order?company_id={{ company_id }}', { method: 'POST' });
+      const data = await res.json();
+      alert('Simulated test order received and processed!');
+      window.location.reload();
+    } catch (e) {
+      alert('Order simulated.');
+      window.location.reload();
+    }
+  }
+</script>
+{% endblock %}

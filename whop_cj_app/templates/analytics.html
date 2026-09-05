@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics • CJdropshipping for Whop{% endblock %}
+
+{% block content %}
+<!-- Header Row -->
+<div class="dashboard-header-row">
+  <div>
+    <h1 class="greeting-title">Analytics</h1>
+    <p class="greeting-subtitle">Track fulfillment volume, conversion rates, and global store performance.</p>
+  </div>
+
+  <button class="date-select-pill">
+    📅 Last 30 days &nbsp;▾
+  </button>
+</div>
+
+<!-- Tabs (Screen 06 Exact) -->
+<div class="filter-pills-bar" style="margin-bottom: 24px;">
+  <button class="filter-pill active" id="tabBtnOverview" onclick="switchAnalyticsTab('overview')">Overview</button>
+  <button class="filter-pill" id="tabBtnProducts" onclick="switchAnalyticsTab('products')">Products</button>
+  <button class="filter-pill" id="tabBtnCountries" onclick="switchAnalyticsTab('countries')">Countries</button>
+</div>
+
+<!-- 4 KPI Metrics Grid (Screen 06 Exact Specification) -->
+<div class="kpi-metrics-grid">
+  <!-- 1. Revenue -->
+  <div class="kpi-card">
+    <div class="kpi-card-header">
+      <span class="kpi-label">Revenue</span>
+      <div class="kpi-icon-circle green">💵</div>
+    </div>
+    <div class="kpi-value-row">
+      <span class="kpi-value">$4,320</span>
+      <span class="kpi-trend-pill positive">+28%</span>
+    </div>
+  </div>
+
+  <!-- 2. Orders -->
+  <div class="kpi-card">
+    <div class="kpi-card-header">
+      <span class="kpi-label">Orders</span>
+      <div class="kpi-icon-circle orange">🛒</div>
+    </div>
+    <div class="kpi-value-row">
+      <span class="kpi-value">248</span>
+      <span class="kpi-trend-pill positive">+12%</span>
+    </div>
+  </div>
+
+  <!-- 3. Conversion Rate -->
+  <div class="kpi-card">
+    <div class="kpi-card-header">
+      <span class="kpi-label">Conversion Rate</span>
+      <div class="kpi-icon-circle purple">📈</div>
+    </div>
+    <div class="kpi-value-row">
+      <span class="kpi-value">3.4%</span>
+      <span class="kpi-trend-pill positive">+0.8%</span>
+    </div>
+  </div>
+
+  <!-- 4. AOV (Average Order Value) -->
+  <div class="kpi-card">
+    <div class="kpi-card-header">
+      <span class="kpi-label">AOV</span>
+      <div class="kpi-icon-circle blue">🏷️</div>
+    </div>
+    <div class="kpi-value-row">
+      <span class="kpi-value">$17.42</span>
+      <span class="kpi-trend-pill positive">+6%</span>
+    </div>
+  </div>
+</div>
+
+<!-- Tab 1: Overview (Bar Chart) -->
+<div id="analyticsOverviewCard" class="ui-card" style="margin-bottom: 24px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <div>
+      <h2 style="font-size: 16px; font-weight: 700;">Revenue & Daily Volume</h2>
+      <p style="font-size: 12px; color: var(--text-muted);">Daily performance over the last 30 days</p>
+    </div>
+    <span style="font-size: 13px; font-weight: 600; color: var(--cj-orange);">Average $144/day</span>
+  </div>
+
+  <div style="height: 280px; width: 100%; position: relative;">
+    <canvas id="analyticsBarChart"></canvas>
+  </div>
+</div>
+
+<!-- Tab 2: Products Performance Table -->
+<div id="analyticsProductsCard" class="ui-card" style="display: none; margin-bottom: 24px;">
+  <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Top Performing Products</h2>
+  <div class="table-responsive">
+    <table class="cj-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Units Sold</th>
+          <th>Gross Revenue</th>
+          <th>CJ Sourcing Cost</th>
+          <th>Net Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Minimalist Heavyweight Hoodie</strong></td>
+          <td>84 units</td>
+          <td>$3,359.16</td>
+          <td>$1,192.80</td>
+          <td><strong style="color: #16A34A;">+$2,166.36 (64.5%)</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Wireless Over-Ear Headphones</strong></td>
+          <td>62 units</td>
+          <td>$1,859.38</td>
+          <td>$793.60</td>
+          <td><strong style="color: #16A34A;">+$1,065.78 (57.3%)</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Smart Fitness Tracker Watch</strong></td>
+          <td>48 units</td>
+          <td>$2,399.52</td>
+          <td>$782.40</td>
+          <td><strong style="color: #16A34A;">+$1,617.12 (67.4%)</strong></td>
+        </tr>
+        <tr>
+          <td><strong>LED Aluminum Eye-Care Desk Lamp</strong></td>
+          <td>35 units</td>
+          <td>$874.65</td>
+          <td>$297.50</td>
+          <td><strong style="color: #16A34A;">+$577.15 (66.0%)</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Tab 3: Countries Performance Table -->
+<div id="analyticsCountriesCard" class="ui-card" style="display: none; margin-bottom: 24px;">
+  <h2 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Country Revenue Breakdown</h2>
+  <div class="table-responsive">
+    <table class="cj-table">
+      <thead>
+        <tr>
+          <th>Country</th>
+          <th>Orders</th>
+          <th>Total Revenue</th>
+          <th>Avg. Shipping Time</th>
+          <th>Share</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🇺🇸 United States</td>
+          <td>104 orders</td>
+          <td>$1,814.40</td>
+          <td>6.2 business days</td>
+          <td><strong>42%</strong></td>
+        </tr>
+        <tr>
+          <td>🇨🇦 Canada</td>
+          <td>45 orders</td>
+          <td>$777.60</td>
+          <td>7.5 business days</td>
+          <td><strong>18%</strong></td>
+        </tr>
+        <tr>
+          <td>🇬🇧 United Kingdom</td>
+          <td>30 orders</td>
+          <td>$518.40</td>
+          <td>5.8 business days</td>
+          <td><strong>12%</strong></td>
+        </tr>
+        <tr>
+          <td>🇦🇺 Australia</td>
+          <td>20 orders</td>
+          <td>$345.60</td>
+          <td>8.1 business days</td>
+          <td><strong>8%</strong></td>
+        </tr>
+        <tr>
+          <td>🌐 Rest of World</td>
+          <td>49 orders</td>
+          <td>$864.00</td>
+          <td>9.4 business days</td>
+          <td><strong>20%</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function switchAnalyticsTab(tab) {
+    document.querySelectorAll('.filter-pills-bar .filter-pill').forEach(b => b.classList.remove('active'));
+    document.getElementById('analyticsOverviewCard').style.display = 'none';
+    document.getElementById('analyticsProductsCard').style.display = 'none';
+    document.getElementById('analyticsCountriesCard').style.display = 'none';
+
+    if (tab === 'overview') {
+      document.getElementById('tabBtnOverview').classList.add('active');
+      document.getElementById('analyticsOverviewCard').style.display = 'block';
+    } else if (tab === 'products') {
+      document.getElementById('tabBtnProducts').classList.add('active');
+      document.getElementById('analyticsProductsCard').style.display = 'block';
+    } else {
+      document.getElementById('tabBtnCountries').classList.add('active');
+      document.getElementById('analyticsCountriesCard').style.display = 'block';
+    }
+  }
+
+  // Render Bar Chart matching Screen 06
+  const ctx = document.getElementById('analyticsBarChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23', '25', '27', '29', '30'],
+      datasets: [
+        {
+          label: 'Revenue ($)',
+          data: [90, 140, 220, 110, 190, 250, 180, 280, 160, 310, 240, 195, 340, 290, 420, 380],
+          backgroundColor: '#FF6243',
+          borderRadius: 4,
+          borderSkipped: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#9CA3AF' } },
+        y: { grid: { color: '#F0F0EE' }, ticks: { color: '#9CA3AF', callback: v => '$' + v } }
+      }
+    }
+  });
+</script>
+{% endblock %}
