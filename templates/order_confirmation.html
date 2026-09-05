@@ -13,93 +13,142 @@
       width: 100%;
     }
     .confirmation-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-card);
-      border-radius: 16px;
-      padding: 40px;
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      padding: 44px 40px;
     }
     .confirm-status-banner {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
       margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #e8e8e8;
     }
     .status-check-circle {
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid #10b981;
+      background: #edf7ed;
+      border: 1px solid #b3ccb2;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #10b981;
+      color: #2e7d32;
       font-size: 22px;
+      font-weight: 700;
       flex-shrink: 0;
     }
     .timeline-track {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin: 32px 0;
+      margin: 28px 0;
     }
     .timeline-step {
-      background: var(--bg-black);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
+      background: #f7f5f4;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
       padding: 14px 12px;
       text-align: center;
+      transition: all 0.2s ease;
     }
     .timeline-step.completed {
-      border-color: #10b981;
+      border-color: #b3ccb2;
+      background: #edf7ed;
     }
     .timeline-step.active {
-      border-color: #ffffff;
+      border-color: #324632;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(50, 70, 50, 0.08);
     }
     .step-number {
       font-size: 11px;
       font-weight: 700;
-      color: var(--text-muted);
+      color: #767676;
       margin-bottom: 4px;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
     }
-    .timeline-step.completed .step-number { color: #10b981; }
-    .timeline-step.active .step-number { color: #ffffff; }
+    .timeline-step.completed .step-number { color: #2e7d32; }
+    .timeline-step.active .step-number { color: #324632; }
 
     .step-name {
       font-size: 12.5px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: #1f1919;
     }
     .receipt-action-bar {
       display: flex;
       gap: 16px;
-      margin: 30px 0;
-      padding: 20px;
-      background: var(--bg-black);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
+      margin: 28px 0;
+      padding: 22px 24px;
+      background: #f7f5f4;
+      border: 1px solid #e8e8e8;
+      border-radius: 4px;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
+    }
+    .btn-receipt-download {
+      background: #324632;
+      color: #ffffff !important;
+      border: none;
+      border-radius: 4px;
+      padding: 11px 22px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-receipt-download:hover {
+      background: #273827;
+      box-shadow: 0 4px 12px rgba(50, 70, 50, 0.25);
+    }
+    .btn-receipt-preview {
+      background: #ffffff;
+      color: #1f1919 !important;
+      border: 1px solid #1f1919;
+      border-radius: 4px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-receipt-preview:hover {
+      background: #f7f5f4;
     }
     @media (max-width: 640px) {
       .timeline-track {
         grid-template-columns: 1fr 1fr;
       }
+      .confirmation-card {
+        padding: 24px 18px;
+      }
     }
   </style>
 </head>
-<body>
-  <div class="page-wrapper">
+<body style="background-color: #ffffff;">
+  <div class="page-wrapper" style="background-color: #ffffff;">
     <!-- Header -->
     <header class="site-header">
       <div class="header-container">
-        <a href="/" class="brand-mark">
-          <span class="brand-name">NYXERIS</span>
+        <a href="/" class="brand-mark" style="text-decoration: none;">
+          <span class="brand-name" style="font-family: 'Libre Baskerville', Georgia, serif; font-size: 20px; letter-spacing: 3px; color: #1f1919; font-weight: 700;">NYXERIS</span>
         </a>
-        <a href="/" class="btn-outline-subtle" style="font-size: 12.5px; padding: 6px 16px;">
+        <a href="/" style="font-size: 12.5px; padding: 7px 18px; border: 1px solid #e8e8e8; border-radius: 4px; color: #1f1919; text-decoration: none; font-weight: 600; background: #ffffff;">
           Return to Store
         </a>
       </div>
@@ -111,14 +160,14 @@
         <div class="confirm-status-banner">
           <div class="status-check-circle">✓</div>
           <div>
-            <div style="font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #10b981; font-weight: 700;">
+            <div style="font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #2e7d32; font-weight: 700;">
               Payment Authorized & Verified
             </div>
-            <h1 style="font-size: 24px; font-weight: 800; color: #ffffff; margin-top: 2px;">
+            <h1 style="font-family: 'Libre Baskerville', Georgia, serif; font-size: 26px; font-weight: 700; color: #1f1919; margin: 4px 0 0;">
               Thank you, {{ order.customer_name }}
             </h1>
-            <p style="font-size: 13.5px; color: var(--text-secondary); margin-top: 4px;">
-              Order Number: <strong style="color: #ffffff;">{{ order.order_id }}</strong> • Official purchase receipt dispatched to <strong>{{ order.customer_email }}</strong>.
+            <p style="font-size: 13.5px; color: #555555; margin-top: 4px;">
+              Order Reference: <strong style="color: #1f1919; font-family: 'JetBrains Mono', monospace;">{{ order.order_id }}</strong> • Official white-labeled receipt dispatched to <strong style="color: #1f1919;">{{ order.customer_email }}</strong>.
             </p>
           </div>
         </div>
@@ -145,20 +194,20 @@
 
         <!-- Tracking Details if Shipped -->
         {% if order.tracking_number %}
-        <div style="background: var(--bg-black); border: 1px solid var(--border-card); border-radius: 10px; padding: 18px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="background: #f7f5f4; border: 1px solid #e8e8e8; border-radius: 4px; padding: 18px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
           <div>
-            <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.08em;">
+            <div style="font-size: 11px; text-transform: uppercase; color: #767676; font-weight: 700; letter-spacing: 0.08em;">
               Parcel En Route
             </div>
-            <div style="font-size: 14px; color: #ffffff; font-weight: 700; margin-top: 2px;">
+            <div style="font-size: 14px; color: #1f1919; font-weight: 700; margin-top: 2px;">
               Carrier: {{ order.carrier or 'Courier Service' }}
             </div>
-            <div style="font-size: 13px; font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); margin-top: 2px;">
+            <div style="font-size: 13px; font-family: 'JetBrains Mono', monospace; color: #424242; margin-top: 2px;">
               Tracking: {{ order.tracking_number }}
             </div>
           </div>
           {% if order.tracking_url %}
-          <a href="{{ order.tracking_url }}" target="_blank" class="btn-solid-white" style="font-size: 12.5px; padding: 8px 18px;">
+          <a href="{{ order.tracking_url }}" target="_blank" style="font-size: 12.5px; padding: 8px 18px; background: #324632; color: #ffffff; border-radius: 4px; text-decoration: none; font-weight: 600;">
             Track on Carrier Site ↗
           </a>
           {% endif %}
@@ -168,42 +217,44 @@
         <!-- Nyxeris Official PDF Receipt Download Bar -->
         <div class="receipt-action-bar">
           <div>
-            <div style="font-size: 15px; font-weight: 700; color: #ffffff;">
+            <div style="font-size: 15px; font-weight: 700; color: #1f1919; display: flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#324632" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
               Official Nyxeris Purchase Receipt (PDF)
             </div>
-            <div style="font-size: 12.5px; color: var(--text-secondary); margin-top: 2px;">
-              Itemized invoice with 30-Day Nyxeris Quality & Transit Guarantee validation. Zero third-party branding.
+            <div style="font-size: 12.5px; color: #555555; margin-top: 4px;">
+              Itemized invoice with 30-Day Nyxeris Quality & Transit Guarantee validation. Pure white-label.
             </div>
           </div>
-          <div style="display: flex; gap: 10px;">
-            <a href="/api/orders/{{ order.order_id }}/receipt" target="_blank" class="btn-solid-white" style="padding: 10px 20px; font-size: 13px;">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="/api/orders/{{ order.order_id }}/receipt" target="_blank" class="btn-receipt-download">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
               Download PDF Receipt
             </a>
-            <a href="/api/orders/{{ order.order_id }}/email-preview" target="_blank" class="btn-outline-subtle" style="padding: 10px 16px; font-size: 13px;">
+            <a href="/api/orders/{{ order.order_id }}/email-preview" target="_blank" class="btn-receipt-preview">
               Preview HTML Email
             </a>
           </div>
         </div>
 
         <!-- Order Items & Shipping Breakdown -->
-        <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; margin-top: 28px;">
+        <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 28px; margin-top: 32px;">
           <!-- Items List -->
           <div>
-            <h3 style="font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.04em;">
+            <h3 style="font-family: 'Libre Baskerville', Georgia, serif; font-size: 15px; font-weight: 700; color: #1f1919; margin-bottom: 16px;">
               Purchased Hardware
             </h3>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; flex-direction: column; gap: 14px;">
               {% for itm in items %}
-              <div style="display: flex; gap: 14px; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);">
-                <img src="{{ itm.image_url }}" alt="{{ itm.product_title }}" style="width: 50px; height: 50px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-subtle); background: #141418;" />
+              <div style="display: flex; gap: 14px; align-items: center; padding-bottom: 14px; border-bottom: 1px solid #e8e8e8;">
+                <img src="{{ itm.image_url }}" alt="{{ itm.product_title }}" style="width: 54px; height: 54px; border-radius: 4px; object-fit: cover; border: 1px solid #e8e8e8; background: #f7f5f4;" />
                 <div style="flex: 1;">
-                  <div style="font-size: 13.5px; font-weight: 700; color: #ffffff;">{{ itm.product_title }}</div>
+                  <div style="font-size: 13.5px; font-weight: 600; color: #1f1919; line-height: 1.3;">{{ itm.product_title }}</div>
                   {% if itm.variant_title %}
-                  <div style="font-size: 11.5px; color: var(--text-muted);">{{ itm.variant_title }}</div>
+                  <div style="font-size: 12px; color: #767676; margin-top: 2px;">Variant: {{ itm.variant_title }}</div>
                   {% endif %}
-                  <div style="font-size: 12px; color: var(--text-secondary);">Qty: {{ itm.quantity }} × ${{ "%.2f"|format(itm.unit_price) }}</div>
+                  <div style="font-size: 12px; color: #555555; margin-top: 2px;">Qty: {{ itm.quantity }} × ${{ "%.2f"|format(itm.unit_price) }}</div>
                 </div>
-                <div style="font-weight: 700; color: #ffffff; font-size: 14px;">
+                <div style="font-weight: 700; color: #1f1919; font-size: 14px;">
                   ${{ "%.2f"|format(itm.total_price) }}
                 </div>
               </div>
@@ -213,41 +264,41 @@
 
           <!-- Destination & Financials -->
           <div style="display: flex; flex-direction: column; gap: 16px;">
-            <div style="background: var(--bg-black); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 18px;">
-              <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 8px;">
+            <div style="background: #f7f5f4; border: 1px solid #e8e8e8; border-radius: 4px; padding: 20px;">
+              <div style="font-size: 11px; text-transform: uppercase; color: #767676; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 8px;">
                 Physical Shipping Destination
               </div>
-              <div style="font-size: 13.5px; font-weight: 700; color: #ffffff;">{{ order.customer_name }}</div>
-              <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 4px;">
+              <div style="font-size: 14px; font-weight: 700; color: #1f1919;">{{ order.customer_name }}</div>
+              <div style="font-size: 13px; color: #424242; line-height: 1.5; margin-top: 4px;">
                 {{ order.shipping_address_line1 }}{% if order.shipping_address_line2 %}, {{ order.shipping_address_line2 }}{% endif %}<br/>
                 {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}<br/>
                 {{ order.shipping_country }}
               </div>
-              <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 8px;">
-                Method: <strong>{{ order.shipping_method }}</strong>
+              <div style="font-size: 12px; color: #767676; margin-top: 10px; padding-top: 8px; border-top: 1px solid #e8e8e8;">
+                Method: <strong style="color: #1f1919;">{{ order.shipping_method }}</strong>
               </div>
             </div>
 
-            <div style="background: var(--bg-black); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 18px;">
-              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">
+            <div style="background: #f7f5f4; border: 1px solid #e8e8e8; border-radius: 4px; padding: 20px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555555; margin-bottom: 8px;">
                 <span>Subtotal</span>
-                <span>${{ "%.2f"|format(order.subtotal) }}</span>
+                <span style="color: #1f1919; font-weight: 500;">${{ "%.2f"|format(order.subtotal) }}</span>
               </div>
-              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555555; margin-bottom: 8px;">
                 <span>Insured Courier Shipping</span>
-                <span>{% if order.shipping_fee == 0 %}FREE{% else %}${{ "%.2f"|format(order.shipping_fee) }}{% endif %}</span>
+                <span style="color: #1f1919; font-weight: 500;">{% if order.shipping_fee == 0 %}FREE{% else %}${{ "%.2f"|format(order.shipping_fee) }}{% endif %}</span>
               </div>
               {% if order.packaging_fee and order.packaging_fee > 0 %}
-              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">
-                <span>Nyxeris Signature Luxury Box</span>
-                <span>${{ "%.2f"|format(order.packaging_fee) }}</span>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555555; margin-bottom: 8px;">
+                <span>Nyxeris Signature Box</span>
+                <span style="color: #1f1919; font-weight: 500;">${{ "%.2f"|format(order.packaging_fee) }}</span>
               </div>
               {% endif %}
-              <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px;">
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555555; margin-bottom: 8px;">
                 <span>Sales Tax (8%)</span>
-                <span>${{ "%.2f"|format(order.tax) }}</span>
+                <span style="color: #1f1919; font-weight: 500;">${{ "%.2f"|format(order.tax) }}</span>
               </div>
-              <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; color: #ffffff; padding-top: 8px; border-top: 1px solid var(--border-subtle);">
+              <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #1f1919; padding-top: 10px; border-top: 1px solid #1f1919;">
                 <span>Total Paid (USD)</span>
                 <span>${{ "%.2f"|format(order.total_amount) }}</span>
               </div>
@@ -255,8 +306,9 @@
           </div>
         </div>
 
-        <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--text-muted); text-align: center;">
-          Assistance: <strong>{{ support_email }}</strong>. Mention Order #<strong>{{ order.order_id }}</strong>.
+        <div style="margin-top: 36px; padding-top: 20px; border-top: 1px solid #e8e8e8; font-size: 12px; color: #767676; text-align: center; line-height: 1.6;">
+          <div>Customer Care: <strong style="color: #1f1919;">{{ support_email }}</strong> • Mention Order Reference #<strong style="color: #1f1919;">{{ order.order_id }}</strong></div>
+          <div style="margin-top: 4px; font-size: 11.5px;">All items covered under the Nyxeris 30-Day Transit & Quality Guarantee.</div>
         </div>
       </div>
     </div>

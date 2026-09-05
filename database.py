@@ -49,6 +49,8 @@ def init_db():
         cursor.execute("ALTER TABLE products ADD COLUMN whop_product_id TEXT")
     if "whop_checkout_url" not in columns:
         cursor.execute("ALTER TABLE products ADD COLUMN whop_checkout_url TEXT")
+    if "featured_order" not in columns:
+        cursor.execute("ALTER TABLE products ADD COLUMN featured_order INTEGER DEFAULT 9999")
 
     # Create Orders table
     cursor.execute("""

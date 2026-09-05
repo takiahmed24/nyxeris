@@ -56,9 +56,9 @@ def list_products(category: Optional[str] = None):
     conn = get_db_connection()
     cursor = conn.cursor()
     if category and category != "All":
-        cursor.execute("SELECT * FROM products WHERE category = ? ORDER BY price DESC", (category,))
+        cursor.execute("SELECT * FROM products WHERE category = ? ORDER BY featured_order ASC, price ASC", (category,))
     else:
-        cursor.execute("SELECT * FROM products ORDER BY price DESC")
+        cursor.execute("SELECT * FROM products ORDER BY featured_order ASC, price ASC")
     rows = cursor.fetchall()
 
     # Aggregate reviews map

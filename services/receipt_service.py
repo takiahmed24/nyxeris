@@ -52,15 +52,15 @@ def generate_nyxeris_receipt_pdf(order: Dict[str, Any], items: List[Dict[str, An
 
     styles = getSampleStyleSheet()
 
-    # Custom Color Palette (Nyxeris Cyber-Luxe)
-    brand_primary = colors.HexColor("#0f172a")     # Deep Charcoal slate
-    brand_accent = colors.HexColor("#00838f")      # Clean Cyan/Teal accent
-    brand_cyan = colors.HexColor("#0ea5e9")        # Neon cyan blue
-    text_dark = colors.HexColor("#1e293b")         # Charcoal Dark text
-    text_muted = colors.HexColor("#64748b")        # Muted grey text
-    border_color = colors.HexColor("#e2e8f0")      # Divider border
-    table_header_bg = colors.HexColor("#f8fafc")   # Table header background
-    badge_green = colors.HexColor("#059669")       # Paid confirmation green
+    # Custom Color Palette (Nyxeris Editorial Luxury)
+    brand_primary = colors.HexColor("#1f1919")     # Nyxeris Deep Charcoal
+    brand_accent = colors.HexColor("#324632")      # Forest Olive Accent
+    brand_cyan = colors.HexColor("#324632")        # Forest Olive
+    text_dark = colors.HexColor("#1f1919")         # Deep Charcoal Dark text
+    text_muted = colors.HexColor("#767676")        # Muted grey text
+    border_color = colors.HexColor("#e8e8e8")      # Divider hairline border
+    table_header_bg = colors.HexColor("#f7f5f4")   # Table header background
+    badge_green = colors.HexColor("#2e7d32")       # Paid confirmation green
 
     # Typography Styles
     style_brand = ParagraphStyle(
@@ -389,14 +389,14 @@ def generate_nyxeris_email_html(order: Dict[str, Any], items: List[Dict[str, Any
     for itm in items:
         items_html += f"""
         <tr>
-            <td style="padding: 10px 0; border-bottom: 1px solid #27272a; color: #f4f4f5; font-size: 14px;">
+            <td style="padding: 12px 0; border-bottom: 1px solid #e8e8e8; color: #1f1919; font-size: 13.5px;">
                 <strong>{itm.get('product_title')}</strong>
-                {f'<br/><span style="color: #a1a1aa; font-size: 12px;">Variant: {itm.get("variant_title")}</span>' if itm.get('variant_title') else ''}
+                {f'<br/><span style="color: #767676; font-size: 12px;">Variant: {itm.get("variant_title")}</span>' if itm.get('variant_title') else ''}
             </td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #27272a; color: #a1a1aa; font-size: 14px; text-align: center;">
+            <td style="padding: 12px 0; border-bottom: 1px solid #e8e8e8; color: #424242; font-size: 13.5px; text-align: center;">
                 {itm.get('quantity')}
             </td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #27272a; color: #00e5ff; font-size: 14px; text-align: right; font-weight: bold;">
+            <td style="padding: 12px 0; border-bottom: 1px solid #e8e8e8; color: #1f1919; font-size: 13.5px; text-align: right; font-weight: 700;">
                 ${itm.get('total_price', 0.0):,.2f}
             </td>
         </tr>
@@ -405,9 +405,9 @@ def generate_nyxeris_email_html(order: Dict[str, Any], items: List[Dict[str, Any
     tracking_section = ""
     if tracking:
         tracking_section = f"""
-        <div style="background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 8px; padding: 14px; margin: 20px 0;">
-            <p style="margin: 0; color: #00e5ff; font-weight: bold; font-size: 13px;">PARCEL DISPATCHED & TRACKED</p>
-            <p style="margin: 4px 0 0; color: #e4e4e7; font-size: 14px;">Carrier: <strong>{carrier or 'Courier'}</strong> | Tracking: <strong>{tracking}</strong></p>
+        <div style="background: #edf4ed; border: 1px solid #b3ccb2; border-radius: 4px; padding: 14px; margin: 20px 0;">
+            <p style="margin: 0; color: #324632; font-weight: bold; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase;">PARCEL DISPATCHED & TRACKED</p>
+            <p style="margin: 4px 0 0; color: #1f1919; font-size: 13.5px;">Carrier: <strong>{carrier or 'Courier'}</strong> | Tracking: <strong>{tracking}</strong></p>
         </div>
         """
 
@@ -416,8 +416,8 @@ def generate_nyxeris_email_html(order: Dict[str, Any], items: List[Dict[str, Any
     if pkg_fee > 0 or order.get("packaging_tier") == "premium":
         pkg_row = f"""
         <tr>
-            <td style="color: #a1a1aa; font-size: 14px; padding: 4px 0;">Nyxeris Signature Box:</td>
-            <td style="color: #f4f4f5; font-size: 14px; text-align: right; padding: 4px 0;">${pkg_fee if pkg_fee > 0 else 2.99:,.2f}</td>
+            <td style="color: #555555; font-size: 13.5px; padding: 6px 0;">Nyxeris Signature Box:</td>
+            <td style="color: #1f1919; font-size: 13.5px; text-align: right; padding: 6px 0;">${pkg_fee if pkg_fee > 0 else 2.99:,.2f}</td>
         </tr>"""
 
     return f"""
@@ -427,27 +427,27 @@ def generate_nyxeris_email_html(order: Dict[str, Any], items: List[Dict[str, Any
         <meta charset="utf-8">
         <title>Order Confirmation - {order_id} | Nyxeris</title>
     </head>
-    <body style="margin: 0; padding: 0; background-color: #121214; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f4f4f5;">
-        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #121214; padding: 30px 15px;">
+    <body style="margin: 0; padding: 0; background-color: #f7f5f4; font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1f1919;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f7f5f4; padding: 40px 15px;">
             <tr>
                 <td align="center">
-                    <table width="600" cellpadding="0" cellspacing="0" style="background-color: #1a1a1e; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 32px; text-align: left;">
+                    <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border: 1px solid #e8e8e8; border-radius: 4px; padding: 36px; text-align: left; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);">
                         <tr>
                             <td>
-                                <h1 style="margin: 0; color: #ffffff; font-size: 24px; letter-spacing: 2px;">NYXERIS</h1>
-                                <p style="margin: 4px 0 20px; color: #00e5ff; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Official Purchase Confirmation & Receipt</p>
-                                <div style="height: 1px; background: linear-gradient(90deg, #00e5ff, rgba(0, 229, 255, 0)); margin-bottom: 24px;"></div>
+                                <h1 style="margin: 0; color: #1f1919; font-family: 'Libre Baskerville', Georgia, serif; font-size: 24px; letter-spacing: 3px;">NYXERIS</h1>
+                                <p style="margin: 6px 0 20px; color: #767676; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">Official Purchase Confirmation & Receipt</p>
+                                <div style="height: 1px; background: #e8e8e8; margin-bottom: 24px;"></div>
                                 
-                                <p style="color: #f4f4f5; font-size: 16px; margin-bottom: 8px;">Hello <strong>{cust_name}</strong>,</p>
-                                <p style="color: #a1a1aa; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
-                                    Thank you for your order with Nyxeris. Your payment has been successfully authorized and your physical items are being prepared for dispatch.
+                                <p style="color: #1f1919; font-size: 15px; margin-bottom: 8px;">Hello <strong>{cust_name}</strong>,</p>
+                                <p style="color: #555555; font-size: 13.5px; line-height: 1.6; margin-bottom: 20px;">
+                                    Thank you for choosing Nyxeris. Your payment has been authorized and your curated items are being assembled at our logistics fulfillment hub.
                                 </p>
 
-                                <div style="background-color: #141416; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
-                                    <p style="margin: 0; font-size: 12px; color: #a1a1aa;">ORDER NUMBER</p>
-                                    <p style="margin: 2px 0 10px; font-size: 16px; font-weight: bold; color: #ffffff;">{order_id}</p>
-                                    <p style="margin: 0; font-size: 12px; color: #a1a1aa;">DESTINATION</p>
-                                    <p style="margin: 2px 0 0; font-size: 14px; color: #f4f4f5;">
+                                <div style="background-color: #f7f5f4; border: 1px solid #e8e8e8; border-radius: 4px; padding: 16px; margin-bottom: 24px;">
+                                    <p style="margin: 0; font-size: 11px; color: #767676; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">ORDER NUMBER</p>
+                                    <p style="margin: 2px 0 12px; font-size: 15px; font-weight: bold; color: #1f1919; font-family: 'JetBrains Mono', monospace;">{order_id}</p>
+                                    <p style="margin: 0; font-size: 11px; color: #767676; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">DESTINATION</p>
+                                    <p style="margin: 2px 0 0; font-size: 13.5px; color: #424242; line-height: 1.4;">
                                         {order.get('shipping_address_line1')}, {order.get('shipping_city')}, {order.get('shipping_state')} {order.get('shipping_postal_code')}, {order.get('shipping_country')}
                                     </p>
                                 </div>
@@ -457,9 +457,9 @@ def generate_nyxeris_email_html(order: Dict[str, Any], items: List[Dict[str, Any
                                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
                                     <thead>
                                         <tr>
-                                            <th style="text-align: left; padding-bottom: 8px; color: #a1a1aa; font-size: 12px; border-bottom: 1px solid #3f3f46;">ITEM</th>
-                                            <th style="text-align: center; padding-bottom: 8px; color: #a1a1aa; font-size: 12px; border-bottom: 1px solid #3f3f46;">QTY</th>
-                                            <th style="text-align: right; padding-bottom: 8px; color: #a1a1aa; font-size: 12px; border-bottom: 1px solid #3f3f46;">TOTAL</th>
+                                            <th style="text-align: left; padding-bottom: 8px; color: #767676; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e8e8e8;">ITEM</th>
+                                            <th style="text-align: center; padding-bottom: 8px; color: #767676; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e8e8e8;">QTY</th>
+                                            <th style="text-align: right; padding-bottom: 8px; color: #767676; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e8e8e8;">TOTAL</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -469,30 +469,30 @@ def generate_nyxeris_email_html(order: Dict[str, Any], items: List[Dict[str, Any
 
                                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 10px; margin-bottom: 24px;">
                                     <tr>
-                                        <td style="color: #a1a1aa; font-size: 14px; padding: 4px 0;">Subtotal:</td>
-                                        <td style="color: #f4f4f5; font-size: 14px; text-align: right; padding: 4px 0;">${order.get('subtotal', 0.0):,.2f}</td>
+                                        <td style="color: #555555; font-size: 13.5px; padding: 6px 0;">Subtotal:</td>
+                                        <td style="color: #1f1919; font-size: 13.5px; text-align: right; padding: 6px 0;">${order.get('subtotal', 0.0):,.2f}</td>
                                     </tr>
                                     <tr>
-                                        <td style="color: #a1a1aa; font-size: 14px; padding: 4px 0;">Insured Shipping:</td>
-                                        <td style="color: #f4f4f5; font-size: 14px; text-align: right; padding: 4px 0;">${order.get('shipping_fee', 0.0):,.2f}</td>
+                                        <td style="color: #555555; font-size: 13.5px; padding: 6px 0;">Insured Shipping:</td>
+                                        <td style="color: #1f1919; font-size: 13.5px; text-align: right; padding: 6px 0;">${order.get('shipping_fee', 0.0):,.2f}</td>
                                     </tr>{pkg_row}
                                     <tr>
-                                        <td style="color: #a1a1aa; font-size: 14px; padding: 4px 0;">Sales Tax:</td>
-                                        <td style="color: #f4f4f5; font-size: 14px; text-align: right; padding: 4px 0;">${order.get('tax', 0.0):,.2f}</td>
+                                        <td style="color: #555555; font-size: 13.5px; padding: 6px 0;">Sales Tax:</td>
+                                        <td style="color: #1f1919; font-size: 13.5px; text-align: right; padding: 6px 0;">${order.get('tax', 0.0):,.2f}</td>
                                     </tr>
                                     <tr>
-                                        <td style="color: #ffffff; font-size: 16px; font-weight: bold; padding: 8px 0; border-top: 1px solid #3f3f46;">Total Paid:</td>
-                                        <td style="color: #00e5ff; font-size: 18px; font-weight: bold; text-align: right; padding: 8px 0; border-top: 1px solid #3f3f46;">{total}</td>
+                                        <td style="color: #1f1919; font-size: 15px; font-weight: 700; padding: 10px 0; border-top: 1px solid #1f1919;">Total Paid (USD):</td>
+                                        <td style="color: #1f1919; font-size: 16px; font-weight: 700; text-align: right; padding: 10px 0; border-top: 1px solid #1f1919;">{total}</td>
                                     </tr>
                                 </table>
 
                                 <div style="text-align: center; margin: 30px 0;">
-                                    <a href="{settings.BASE_URL}/order-confirmation/{order_id}" style="background-color: #00e5ff; color: #121214; font-weight: bold; padding: 12px 28px; border-radius: 6px; text-decoration: none; display: inline-block; font-size: 14px;">View Order & Download Official PDF Receipt</a>
+                                    <a href="{settings.BASE_URL}/order-confirmation/{order_id}" style="background-color: #324632; color: #ffffff; font-weight: 600; padding: 12px 28px; border-radius: 4px; text-decoration: none; display: inline-block; font-size: 13px; letter-spacing: 0.04em;">View Order & Download Official PDF Receipt</a>
                                 </div>
 
-                                <div style="font-size: 12px; color: #71717a; border-top: 1px solid #27272a; padding-top: 16px; line-height: 1.4;">
+                                <div style="font-size: 11.5px; color: #767676; border-top: 1px solid #e8e8e8; padding-top: 16px; line-height: 1.5;">
                                     <p style="margin: 0 0 6px;">Nyxeris Global Fulfillment Network | Customer Care: {settings.STORE_SUPPORT_EMAIL}</p>
-                                    <p style="margin: 0;">30-Day Quality & Transit Guarantee applies to all customer shipments.</p>
+                                    <p style="margin: 0;">30-Day Quality & Transit Guarantee applies to all customer shipments. Zero third-party branding.</p>
                                 </div>
                             </td>
                         </tr>

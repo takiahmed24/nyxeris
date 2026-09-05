@@ -698,14 +698,10 @@ const NyxerisStore = {
                   </div>
                   <span style="color: #2e6b36; font-size: 11.5px; font-weight: 600;">Free Shipping</span>
                 </div>
-                <div class="catalog-actions-group">
-                  <button type="button" class="btn-buy-direct" onclick="NyxerisStore.quickBuy('${prod.id}')" title="Instant Direct Checkout">
-                    <span>BUY NOW</span>
-                  </button>
-                  <button type="button" class="btn-add-cart" onclick="NyxerisStore.addToCart('${prod.id}')">
-                    ADD TO BAG
-                  </button>
-                </div>
+                <button type="button" class="btn-catalog-add-bag" onclick="NyxerisStore.addToCart('${prod.id}')">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                  <span>Add to Bag</span>
+                </button>
               </div>
             </div>
           </article>
