@@ -5,7 +5,7 @@ and customer order tracking.
 
 from typing import Optional, Dict, Any, List
 from fastapi import APIRouter, HTTPException, Request, Response, Cookie, Depends
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
 from services.auth_service import (
     create_customer,
@@ -27,7 +27,7 @@ router = APIRouter(prefix="/api/auth", tags=["Customer Authentication"])
 
 class RegisterRequest(BaseModel):
     full_name: str = Field(..., min_length=2, max_length=100)
-    email: EmailStr
+    email: str = Field(..., min_length=3, max_length=255)
     password: str = Field(..., min_length=6, max_length=128)
     phone: Optional[str] = None
     address_line1: Optional[str] = None
@@ -39,7 +39,7 @@ class RegisterRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 
