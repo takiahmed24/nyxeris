@@ -44,7 +44,48 @@
     11. *Notifications* (`/notifications`): Slide-over drawer and full page with All / Orders / Products / System tabs.
   * **Full Mobile Responsiveness**: Implemented native mobile header and bottom fixed navigation bar (`Home`, `Search`, `Orders`, `Products`, `More`).
   * **Programmatic & Visual Verification**: All 12 endpoints verified with HTTP 200 OK via `TestClient`. Full responsive desktop and mobile viewport screenshots captured via Chrome CDP.
-  * **Git Repository**: Synced to GitHub repository `https://github.com/takiahmed24/cjdropshipping-whop.git` (commit `d3ed0d4`).
+* **[2026-09-05] Whop Native Checkout & Balance Payment Architecture Complete**:
+  * **Whop Balance & Card Integration**: Enabled direct payments for app subscriptions via Whop Balance (creator wallet funds) or Whop Checkout (Stripe, Apple Pay, Google Pay).
+  * **Dynamic Billing Endpoints**:
+    * `POST /api/billing/switch-payment-method`: Instant toggle between Whop Creator Balance and Connected Card.
+    * `POST /api/billing/pay-with-whop-balance`: 1-click subscription deduction from seller balance with automated receipt generation and system notification.
+    * `POST /api/billing/upgrade-plan`: Handles tier upgrades (Starter, Creator, Pro) with monthly/yearly discounts and Whop Checkout redirect.
+  * **Interactive Modals**: Integrated "Manage Subscription" and "Plan Upgrade" modals directly into `/billing` with zero page flicker, automated invoice generation, and TXT/PDF invoice downloads.
+  * **SQLite WAL Concurrency**: Configured `PRAGMA journal_mode=WAL` and `PRAGMA busy_timeout=30000` in `database.py` to prevent locks during high-concurrency writes.
+  * **Git Repository**: Synced to GitHub repository `https://github.com/takiahmed24/cjdropshipping-whop.git` (commit `d5e732b`).
+* **[2026-09-05] Deep Comprehensive Test Suite Execution (100% Pass Rate)**:
+  * **Automated End-to-End Test Suite (`scratch/deep_test_suite.py`)**: Built and executed automated test suite covering all 8 core platform subsystems:
+    1. *All 11 HTML Views*: Verified HTTP 200 with zero unrendered Jinja tags.
+    2. *Catalog Search & Whop 1-Click Listing*: Verified live product search and automated SKU mapping creation.
+    3. *Order Simulation & Automated Fulfillment*: Fixed variant matching bug in `sync_worker.py` (enforced strict `whop_product_id` matching) and added graceful sandbox fallback for simulated orders in `cj_api_client.py`.
+    4. *Custom Sourcing Pipeline*: Tested submission, validation, and database persistence.
+    5. *Whop Billing & Balance Payments*: Tested 1-click Whop Balance deductions, receipt generation, ledger auditing, plan upgrades, and insufficient balance rejection.
+    6. *Notifications Feed*: Tested read status marking (`is_read = 1`).
+    7. *Settings Persistence*: Tested credential updates.
+    8. *Whop Webhook Security*: Verified rejection of invalid HMAC signatures (HTTP 401) and ingestion of valid signed webhooks.
+  * **Git Repository**: Synced to GitHub repository `https://github.com/takiahmed24/cjdropshipping-whop.git` (commit `c6135c6`).
+* **[2026-09-05] Nyxeris Storefront Mobile Responsiveness & Phone Optimization**:
+  * **Zero Horizontal Overflow**: Resolved critical bug where `scrollWidth` was 1,014px on 390px phone screens. Fixed root bounds so `scrollWidth === 390px` with 0 horizontal drift.
+  * **Minimalist Mobile Header**: Replaced wide desktop 5-link nav bar with a clean 3-part mobile header: hamburger menu trigger (`☰`), centered Libre Baskerville `NYXERIS` brand title, and compact Search + Cart icon button with item count badge.
+  * **Sliding Mobile Navigation Drawer**: Built `#pipeline-mobile-drawer` containing full section links (Catalog, Signature Selection, Lookbooks, Reviews, Concierge), Member Sign-In, and instant Order Tracking cards.
+  * **Collapsible Mobile Filter Accordion**: Added an interactive `[ ⚙ FILTERS & REFINEMENTS ▾ ]` accordion button above the catalog so mobile shoppers immediately see product cards without scrolling past 1,000px of desktop filter checkboxes.
+  * **Full-Screen Cart & Modals**: Configured Cart Drawer to take 100vw on mobile phones with sticky checkout CTA; scaled Search, Quick View, and Account modals to fit viewport comfortably.
+* **[2026-09-05] Whop App Store Developer Policy & Compliance Audit (100% Compliant)**:
+  * **Policy Gap Analysis**: Reviewed official Whop App Store submission criteria and developer guidelines. Identified 3 primary gaps: missing mandatory Privacy Policy (`/privacy`), missing Terms of Service (`/terms`), and unconfigured developer routing paths (`dashboardPath`, `discoverPath`).
+  * **Mandatory Legal & Privacy Framework**:
+    * Built `templates/privacy.html`: Comprehensive GDPR & CCPA disclosures detailing merchant metadata collection, customer delivery address handling, zero-sale of personal data, and exclusive transmission to CJ Dropshipping Open API 2.0 strictly for fulfillment.
+    * Built `templates/terms.html`: Detailed SaaS agreement explicitly stating the **60-day free trial**, flat **$5.00/month** recurring plan, 1-click Whop Hub cancellation terms, and separate CJ wallet billing disclaimer for wholesale goods and postal shipping fees.
+  * **Interactive 24/7 Support Desk**:
+    * Created dedicated `supportModal` accessible across all 11 views and mobile navigation drawer.
+    * Connected support triggers directly to `mailto:support@nyxeris.com` with pre-filled merchant subject lines.
+  * **Whop Developer Portal Synchronized via CDP (`app_K7qBzRHMMJSnv7`)**:
+    * Configured **Dashboard Path**: `/dashboard/[companyId]` so creators installing the app can launch their merchant dashboard directly within Whop.
+    * Configured **Discover Path**: `/discover` mapped to product catalog and app store showcase.
+    * Categorized as **B2B app** for business creators.
+    * App Store Description updated with transparent pricing disclosures and direct links to Privacy Policy (`https://3.91.100.74.sslip.io/privacy`) and Terms of Service (`https://3.91.100.74.sslip.io/terms`).
+  * **Code Verification & Deployment**:
+    * Tested all legal and compliance routes with HTTP 200 responses.
+    * Committed and pushed to GitHub `takiahmed24/cjdropshipping-whop` (commit `ff0e2be`).
 
 ---
 
@@ -56,7 +97,7 @@
   * Products: `https://3.91.100.74.sslip.io/products`
   * Orders & Tracking: `https://3.91.100.74.sslip.io/orders`
   * Custom Sourcing: `https://3.91.100.74.sslip.io/sourcing`
-  * Billing: `https://3.91.100.74.sslip.io/billing`
+  * Billing & Whop Checkout: `https://3.91.100.74.sslip.io/billing`
   * Settings / Setup Guide: `https://3.91.100.74.sslip.io/settings`
   * Webhooks: `https://3.91.100.74.sslip.io/api/webhooks/whop`
 * **Whop Developer Portal**: App `app_K7qBzRHMMJSnv7` (Status: **Under review**)
@@ -71,6 +112,9 @@
 - [x] 1:1 Re-skin and integration of all 10 UI screens from master design sheet.
 - [x] Implement Billing page matching uploaded mockup with adjusted $5/mo plan.
 - [x] Enable 100% mobile-flexible responsive layouts with bottom navigation.
+- [x] Integrate Whop Checkout & Whop Balance payment handling.
+- [x] Full Whop App Store Review & Developer Policy Compliance Audit:
+  * Privacy Policy (`/privacy`) and Terms of Service (`/terms`) implemented and publicly accessible.
+  * 24/7 dedicated merchant support desk and modal added (`support@nyxeris.com`).
+  * Whop Developer Portal configured with Dashboard Path (`/dashboard/[companyId]`), Discover Path (`/discover`), B2B Creator App type, and pricing transparency disclosures.
 - [ ] Monitor Whop app review process (2-3 business days) and public release.
-
-
