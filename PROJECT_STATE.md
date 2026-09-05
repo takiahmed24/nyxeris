@@ -15,6 +15,16 @@
 
 ## 📋 Recent Changes & Architectural Log
 
+* **[2026-09-05] Nyxeris v2.0 Editorial Luxury Redesign & Whop Website Section Launch**:
+  * **Whop Website Section Embedding (Option 2)**: Added HTTP security middleware in `main.py` configuring `Content-Security-Policy: frame-ancestors 'self' https://whop.com https://*.whop.com https://*.sslip.io;` and stripped blocking `X-Frame-Options` headers. Added clean `/embed` route and creator affiliate/referral tracking (`?ref=...` / `?creator=...`) so creators can implement the store inside their Whop Hub Website app tab, and we monetize through app subscriptions and fulfillment margins.
+  * **1:1 Implementation of 4 Master Mockups on Flagship Store**:
+    1. *Hero & Brand Language*: Re-skinned hero with *"Upgrade the way you work and live"*, dual CTAs (`Shop Best Sellers` in solid Forest Olive `#324632` + `Explore Collections` in outline).
+    2. *3-Pillar Trust Strip*: Added 3 circular trust cards below hero (*Free insured shipping over $150*, *Tracked Delivery*, *Secure Checkout*).
+    3. *Shop by Category 5 Visual Tiles*: Built 5 photography category tiles (*Workspace*, *Charging*, *Everyday Carry*, *Tech*, *Deals*) with dark gradient overlays.
+    4. *Slide-Over Cart Drawer*: Implemented dynamic Free Shipping Progress meter (*"You're $X.XX away from Free Shipping!"* + *$X.XX left*), solid Forest Olive `🔒 SECURE CHECKOUT` button, express payments row (Apple Pay, Google Pay, PayPal, Shop Pay), and 3 trust bullets.
+    5. *Product QuickView / PDP*: Integrated live Delivery Urgency Box (*"Order within [countdown] to get it by [dates]"*), `● In Stock` green badge, terracotta discount pills, dual action CTAs (`Add to Bag` + `Buy Now`), and payment trust strip.
+    6. *Catalog & Quick Filters*: Integrated horizontal quick category pills bar and dual status tags (`● In Stock` + `Fast Dispatch`) on product cards.
+  * **Production Deployment**: Pushed to GitHub `takiahmed24/nyxeris` (commit `fe9f04b`) and deployed live to AWS Lightsail production server (`http://54.251.148.171`). Verified live with HTTP 200 and visual screenshots.
 * **[2026-09-05] 1,024 Catalog Scale & Live Whop ID Synchronization**:
   * Scaled physical product catalog in `data/nyxeris.db` to 1,024 items across 5 departments.
   * Extracted and mapped all 1,024 official live Whop Product IDs (`prod_...`) and Plan checkout URLs (`plan_...`) directly from Whop's master export (`data/nyxeris_full_1024_catalog_mapping_FINAL.csv`).
