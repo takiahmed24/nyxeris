@@ -90,5 +90,47 @@
     "execution_count": 4,
     "last_executed": "2026-09-04T06:29:37Z",
     "status": "MASTERED"
+  },
+  "skill_whop_bulk_catalog_sync": {
+    "id": "skill_whop_bulk_catalog_sync",
+    "name": "Autonomous Whop 1000+ Catalog Synchronization & Rate-Limit Engine",
+    "description": "Learned directly from Whop execution: Automates complete catalog synchronization to Whop API with 80-character title sanitization, batch-of-100 throttling, dual-phase image CDN polling (files.create & files.retrieve), one-time plan generation, and automatic SQLite database ID mapping.",
+    "category": "Whop API & Storefront Automation",
+    "trigger_keywords": [
+      "sync whop",
+      "whop catalog",
+      "batch whop",
+      "publish 1000 products",
+      "whop mapping",
+      "whop rate limit"
+    ],
+    "learned_constraints_and_rules": {
+      "title_character_cap": 80,
+      "batch_size": 125,
+      "polling_interval_seconds": 2.0,
+      "endpoint_sequence": [
+        "POST /api/v2/products (create product with sanitized title <= 80 chars)",
+        "POST /api/v2/plans (create one-time purchase plan, returns checkout_url)",
+        "POST /api/v2/files (upload external image to Whop CDN)",
+        "GET /api/v2/files/{id} (poll until status is ready)",
+        "POST /api/v2/products/{id} (attach file ID to gallery_images)"
+      ]
+    },
+    "steps": [
+      "1. Truncate product title to 80 chars (title[:80]) to prevent Whop API 422 error; preserve full title in description and metadata.",
+      "2. Partition catalog into batches of 100\u2013125 items to prevent 429 rate caps.",
+      "3. Call POST /api/v2/products with account_id: 'biz_ea3gy6pg50A7px' and metadata: {'sku': sku, 'internal_id': id}.",
+      "4. Call POST /api/v2/plans with product_id, plan_type: 'one_time', price, and currency: 'usd'.",
+      "5. Upload image via POST /api/v2/files, poll GET /api/v2/files/{id} for completion, and attach to product gallery.",
+      "6. Write batch checkpoint to results_batch_X.jsonl to enable idempotent resume.",
+      "7. Update SQLite nyxeris.db with whop_product_id and whop_checkout_url for each internal_id.",
+      "8. Re-export whop_id_mapping.json, nyxeris_1000_catalog.json, whop_1000_products_catalog.csv, and deploy."
+    ],
+    "execution_type": "python_callable",
+    "mastery_score": 100,
+    "execution_count": 1,
+    "last_executed": "2026-09-05T06:06:37Z",
+    "status": "MASTERED",
+    "last_status": "SUCCESS"
   }
 }
