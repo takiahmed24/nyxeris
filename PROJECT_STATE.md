@@ -15,6 +15,36 @@
 
 ## 📋 Recent Changes & Architectural Log
 
+* **[2026-09-08] Whop CJ Dropshipping App: Dedicated Inventory Suite, Zero-Alert Toast Migration, Customer Portal & Billing Upgrades**:
+  * **Zero Browser `alert()` Warning Elimination**: Removed all 24 native browser `alert()` dialog calls across all templates. Replaced with sleek in-app toast notification system (`#cjWhopToastContainer`, `showToast(msg, type, title)`) and global `window.alert` override so external modal warnings can never pop up inside the Whop iframe.
+  * **Customer Portal Routing**: Fixed Whop Customer Portal link to point to `https://whop.com/orders/` instead of legacy `/hub/` redirect loops. Updated `config.py` and `whop_api_client.py`.
+  * **Interactive Yearly Plan Toggle & Whop Balance Support**: Added dynamic Monthly/Yearly toggle in `billing.html` with -20% annual discount ($48/yr Creator, $279/yr Pro), dynamic plan upgrade modal with Whop Balance deduction or direct card checkout with in-app success toasts and persistent SQLite updates.
+  * **Dedicated Global Warehouse Inventory Suite**:
+    * Created `templates/inventory.html` with 4 KPI cards (Tracked SKUs, Available Units, Fulfillment Hubs, Stock Health alerts).
+    * Integrated real-time search, region filtering pills (US, EU, CN), and status health badges (High Stock, Moderate, Low Stock).
+    * Created interactive stock adjustment modal wired to `POST /api/inventory/adjust` with instant DOM row update and `showToast()`.
+    * Implemented "Sync CJ Stock Now" button wired to `POST /api/inventory/sync` and CSV export utility.
+    * Added `inventory_items` SQLite schema and seed records across US East, US West, Frankfurt EU, Shenzhen & Yiwu China hubs in `database.py`.
+    * Extended `main.py` with `/inventory`, `/api/inventory/adjust`, `/api/inventory/sync`, and `/api/inventory/items`.
+  * **Programmatic Verification**: Added Suite 9 to `verify_cj_whop.py` checking all inventory endpoints, billing portal links, toggle buttons, and a 100% template audit verifying zero browser `alert()` calls. All 9 test suites passed cleanly.
+
+* **[2026-09-06] Ad Campaign 3: NYXERIS 3-in-1 Foldable Magnetic Wireless Charger ($59.99)**:
+  * **ChatGPT in Vivek Browser Profile**: Opened fresh tab in Vivek's browser profile window (`browserContextId: 9322AC47888611BEDF10918A4D848D1A`), triggered "New chat" under `vivekpoluru1p@gmail.com` (ChatGPT GO), and generated high-converting editorial ad copy and 8-second macro video generation prompt.
+  * **Google Flow Video Generation**: Prompted Flow project `6eedf091-cff9-40ac-aa2d-a2bc4b76a21a`, rendered photorealistic 720p 8-second commercial videos of the matte black CNC aerospace aluminum folding charger unfolding into a 60-degree floating stand on walnut desk with magnetic iPhone snapping and charging indicators. Downloaded clips (`Wireless_charger_unfolds_on_desk_202609061657.mp4`).
+  * **Kinetic Animated Captions**: Designed ASS subtitle specification with zoom/fade transitions ("THREE DEVICES. ONE ARCHITECTURAL FORM.", "UNFOLDS INTO A 60° FLOATING STAND", "15W PHONE • 5W WATCH • 5W AIRPODS", "NYXERIS 3-IN-1 • $59.99"). Burned into `scratch/nyxeris_charger3in1_animated_caption.mp4` via FFmpeg.
+  * **Live Whop Community Feed Publication**: Published to the live Nyxeris community feed (`https://whop.com/nyxeris/`) with product specs, guarantee, and direct checkout link (`https://whop.com/checkout/plan_cL2kzNNa0W0Kq`). Verified live publication via screenshot.
+
+* **[2026-09-06] Ad Campaign 2: Zenith Magnetic Induction Headphone Dock Mark 66 ($75.00)**:
+  * **ChatGPT Prompting**: Generated editorial ad copy and Flow prompt for the Zenith Headphone Dock in Vivek's browser window.
+  * **Google Flow Video Generation**: Injected prompt and generated 8s 720p video of CNC aerospace aluminum headphone dock with subtle wireless charging glow on dark walnut desk.
+  * **Kinetic Subtitles**: Burned kinetic animated typography into `scratch/nyxeris_dock_animated_caption.mp4` ("PRECISION. ENGINEERED.", "CNC AEROSPACE ALUMINUM", "ZENITH DOCK • $75").
+  * **Live Whop Feed Publishing**: Published to `whop.com/nyxeris/` feed with hook, feature bullets, and guarantee. Verified live publication via screenshot.
+
+* **[2026-09-06] Whop Feed Post Publication, Google Flow Video Generation & Animated Subtitles**:
+  * **ChatGPT Promotion & Script Engineering**: Prompted ChatGPT under session `05A831921C28A4DBD7E3308C5A619EBA` to synthesize an editorial Whop launch announcement for Nyxeris and an 8-scene cinematic video generation prompt with kinetic on-screen typography.
+  * **Google Flow Video Generation**: Injected prompt into Google Flow under `muhammadtakiahmed@gmail.com` (Project `6eedf091-cff9-40ac-aa2d-a2bc4b76a21a`). Generated two 8s 720p 16:9 videos (`nyxeris_desk_hero_1.mp4` and `nyxeris_desk_hero_2.mp4`) featuring precision anodized aluminum hardware, solid walnut monitor risers, and matte obsidian desk setups.
+  * **Animated Subtitles / Kinetic Captions**: Created custom ASS kinetic typography and burned animated subtitles into both clips (`nyxeris_animated_caption_clip1.mp4` and `nyxeris_animated_caption_clip2.mp4`) as well as a 16-second combined master commercial (`nyxeris_full_16s_animated_commercial.mp4`). Captions feature animated tracking, drop shadows, and high-converting marketing hooks ("ANODIZED ALUMINUM • SOLID WALNUT", "1,024+ CURATED PIECES", "ELEVATE YOUR WORKSPACE").
+  * **Live Whop Feed Publishing**: Navigated to the official Nyxeris Hub (`https://whop.com/nyxeris/`), opened the rich post composer, formatted the editorial announcement highlighting 1,232+ products, turnkey dropshipping, 30-day guarantee, and Atelier Access, and successfully published it to the live feed.
 * **[2026-09-05] Product Catalog Merchandising Curation & Post-Checkout Receipt Flow**:
   * **Database Merchandising Fix**: Added `featured_order` column to `products` table in `data/nyxeris.db`. Assigned priority ranks (1-10) to verified hardware flagships (Apex-65 Keyboard, 3-in-1 Wireless Charger, Desk Mat Pro, Horizon Pro Screenbar, Tech Organizer, Sphere ANC Earbuds, Minimalist RFID Wallet, 65W GaN Station, Monitor Riser, Key Light Screen Bar). Prioritized genuine CJ Dropshipping items at ranks 11+.
   * **Forklift Image Cleanup**: Removed all 25 synthetic warehouse forklift Unsplash images and replaced them with curated high-end tech, EDC, and desk architecture photography.
@@ -148,6 +178,21 @@
   * Uploaded both 16:9 high-resolution showcase marketing banners to Whop Developer Portal gallery.
   * Integrated new app icon and favicon across desktop sidebar, mobile topbar, footer, and `/app-store` view.
   * All 8 multi-tenant verification suites passing cleanly (`verify_cj_whop.py`).
-  * Pushed to GitHub `takiahmed24/cjdropshipping-whop` (commit `8615e56`).
+- [x] Full CJ Dropshipping API & Automated Order Flow End-to-End Testing:
+  * Upgraded Open API 2.0 auth in `services/cj_api_client.py` to pure `apiKey` payload format (fixed error `1600005`).
+  * Verified live CJ API connectivity and robust sandbox fallback for zero-downtime creator testing.
+  * Verified full order lifecycle: simulated Whop order creation (`WHOP-BIZ_-C232F1`), automatic CJ order dispatch (`CJ-BIZ_-C232F1`), live tracking synchronization with USPS Priority (`94001118995629280568`), and confirmed Orders UI renders HTTP 200.
+  * Pushed fixes to GitHub `takiahmed24/cjdropshipping-whop` (commit `ffca1cc`).
+- [x] Generated Ultra-Realistic Commercial Video via Google Flow (`flow.google.com`):
+  * Project: `CJ Dropshipping for Whop - Flow Demo` under authorized account `muhtakiahmed2004@gmail.com` (Pro Tier).
+  * 9-scene visual storyboard grid planned and rendered using Omni 1.1 Flash.
+  * Storyboard sequence: Creator in sunlit aesthetic studio publishing luxury product on MacBook -> Seamless transition to trendy customer in busy downtown ordering with 1-tap Whop Checkout -> Automated warehouse with robotic packing -> Cargo jet in golden hour skies -> Courier doorstep delivery ("Perfect, thank you so much!").
+  * Extracted and saved full 10-second 4K commercial video asset (3.48 MB) to `static/cj_whop_commercial.mp4` and brain artifacts.
+- [x] Enhanced Version 2 Commercial Video ("Make it more better"):
+  * Re-rendered in Google Flow Omni 1.1 Flash with upgraded dynamic pacing, dual voiceover narration, glowing green animated checkmark on Whop 1-Tap Checkout, laser-guided robotic fulfillment arms, dramatic golden hour takeoff, and close-up macro unboxing shot with character voice acting (*"Oh wow, this is absolutely beautiful!"*).
+  * Saved to `static/cj_whop_commercial_v2.mp4` and brain artifacts; committed & pushed to GitHub main (commit `ac33773`).
+- [x] Published Whop Community Posts (Nyxeris & Raydrim):
+  * **Nyxeris Community** (`https://whop.com/nyxeris/`): Published *"THE LUXURY CHRONOGRAPH DROP IS LIVE"* announcing automated global fulfillment, detailing the Nyxeris Chronos Automatic specifications, and linking directly to Whop 1-Tap Checkout. Verified live with success toast.
+  * **Raydrim Community** (`https://whop.com/raydrim/`): Published *"⚡ ENTERPRISE INFRASTRUCTURE DISPATCH: HIGH-THROUGHPUT DROPSHIPPING & AUTOMATED FULFILLMENT BRIDGES"* highlighting the multi-tenant architecture, automated tracking cron, and linking to `https://raydrim.com/vault`. Verified live with success toast.
 - [ ] Monitor Whop app review process (2-3 business days) and public release.
 

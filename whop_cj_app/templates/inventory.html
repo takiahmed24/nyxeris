@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+{% block title %}Warehouse Inventory & Stock Management • CJdropshipping for Whop{% endblock %}
+
+{% block content %}
+<!-- Header Row -->
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+  <div>
+    <h1 class="greeting-title">Global Warehouse Inventory</h1>
+    <p class="greeting-subtitle">Real-time stock monitoring across US, EU & China fulfillment centers with automated CJ synchronization.</p>
+  </div>
+
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <button class="btn-cj-outline" onclick="exportInventoryCsv()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export CSV
+    </button>
+    <button class="btn-cj-primary" id="syncStockBtn" onclick="syncCJInventory()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Sync CJ Stock Now
+    </button>
+  </div>
+</div>
+
+<!-- 4 KPI Metrics Grid -->
+<div class="kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+  
+  <div class="ui-card" style="padding: 18px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+      <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Tracked SKUs</span>
+      <span style="font-size: 18px;">📦</span>
+    </div>
+    <div style="font-size: 26px; font-weight: 800; color: var(--text-main); font-feature-settings: 'tnum';" id="kpiTotalSkus">{{ total_skus }}</div>
+    <div style="font-size: 12px; color: #16A34A; margin-top: 4px; font-weight: 600;">100% mapped to CJ catalog</div>
+  </div>
+
+  <div class="ui-card" style="padding: 18px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+      <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Available Units</span>
+      <span style="font-size: 18px;">📊</span>
+    </div>
+    <div style="font-size: 26px; font-weight: 800; color: var(--text-main); font-feature-settings: 'tnum';" id="kpiTotalUnits">{{ "{:,}".format(total_units) }}</div>
+    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Across 5 global hubs</div>
+  </div>
+
+  <div class="ui-card" style="padding: 18px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+      <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Fulfillment Hubs</span>
+      <span style="font-size: 18px;">🌍</span>
+    </div>
+    <div style="font-size: 26px; font-weight: 800; color: var(--text-main); font-feature-settings: 'tnum';">5 Hubs</div>
+    <div style="font-size: 12px; color: #3B82F6; margin-top: 4px; font-weight: 600;">🇺🇸 US &middot; 🇪🇺 EU &middot; 🇨🇳 CN</div>
+  </div>
+
+  <div class="ui-card" style="padding: 18px 20px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+      <span style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Stock Health</span>
+      <span style="font-size: 18px;">⚠️</span>
+    </div>
+    <div style="font-size: 26px; font-weight: 800; color: {% if low_stock_count > 0 %}#DC2626{% else %}#16A34A{% endif %}; font-feature-settings: 'tnum';" id="kpiLowStock">
+      {{ low_stock_count }} Low Stock
+    </div>
+    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+      {% if low_stock_count > 0 %}Immediate reorder suggested{% else %}All inventory within safety limits{% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- Inventory Main Card -->
+<div class="ui-card">
+  
+  <!-- Search and Filter Toolbar -->
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 20px;">
+    
+    <!-- Real-time Filter Search Input -->
+    <div style="position: relative; flex: 1; max-width: 360px; min-width: 240px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="inventorySearch" placeholder="Search SKU, product title, hub..." oninput="applyFilters()" style="width: 100%; padding: 8px 12px 8px 34px; border: 1px solid var(--border-card); border-radius: var(--radius-sm); font-size: 13px; color: var(--text-main); background: #FFFFFF; outline: none; box-sizing: border-box;">
+    </div>
+
+    <!-- Filter Pills Group -->
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+      <!-- Region Pills -->
+      <div class="filter-pills-bar" style="margin: 0;">
+        <button class="filter-pill active" id="pillRegAll" onclick="setRegionFilter('ALL')">All Regions</button>
+        <button class="filter-pill" id="pillRegUS" onclick="setRegionFilter('US')">🇺🇸 US</button>
+        <button class="filter-pill" id="pillRegEU" onclick="setRegionFilter('EU')">🇪🇺 EU</button>
+        <button class="filter-pill" id="pillRegCN" onclick="setRegionFilter('CN')">🇨🇳 CN</button>
+      </div>
+
+      <!-- Status Pills -->
+      <div class="filter-pills-bar" style="margin: 0;">
+        <button class="filter-pill active" id="pillStatAll" onclick="setStatusFilter('ALL')">All Health</button>
+        <button class="filter-pill" id="pillStatLow" onclick="setStatusFilter('Low Stock')">Low Stock</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="table-responsive">
+    <table class="cj-table" id="inventoryTable">
+      <thead>
+        <tr>
+          <th>Product &amp; SKU</th>
+          <th>Fulfillment Hub</th>
+          <th>Available Stock</th>
+          <th>Safety Threshold</th>
+          <th>Health Status</th>
+          <th>Last Synced</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for it in inventory_items %}
+        <tr class="inv-row" 
+            id="row-item-{{ it.id }}"
+            data-id="{{ it.id }}" 
+            data-sku="{{ it.sku|lower }}" 
+            data-title="{{ it.product_name|lower }}" 
+            data-region="{{ it.warehouse_region }}" 
+            data-status="{{ it.status }}"
+            data-units="{{ it.available_units }}"
+            data-thresh="{{ it.safety_threshold }}">
+          
+          <td>
+            <div style="font-weight: 600; font-size: 13.5px; color: var(--text-main); margin-bottom: 3px;">
+              {{ it.product_name }}
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <code class="code-tag" style="font-size: 11.5px;">{{ it.sku }}</code>
+              <span style="font-size: 11.5px; color: var(--text-muted);">{{ it.variant_name }}</span>
+              <button onclick="copySkuText('{{ it.sku }}')" title="Copy SKU" style="background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 0 2px; font-size: 12px;">📋</button>
+            </div>
+          </td>
+
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 16px;">
+                {% if it.warehouse_region == 'US' %}🇺🇸
+                {% elif it.warehouse_region == 'EU' %}🇪🇺
+                {% elif it.warehouse_region == 'CN' %}🇨🇳
+                {% else %}🌐{% endif %}
+              </span>
+              <div>
+                <div style="font-weight: 600; font-size: 12.5px; color: var(--text-main);">{{ it.warehouse_name }}</div>
+                <span class="badge-pill blue" style="font-size: 10px; padding: 1px 6px;">{{ it.warehouse_code }}</span>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <strong style="font-size: 14px; color: var(--text-main);" class="inv-units-display">{{ "{:,}".format(it.available_units) }} units</strong>
+            </div>
+            <div style="width: 100px; height: 5px; background: #E5E7EB; border-radius: 999px; margin-top: 4px; overflow: hidden;">
+              {% set pct = (it.available_units / (it.safety_threshold * 4 or 200)) * 100 %}
+              <div class="inv-bar-fill" style="width: {{ [pct, 100]|min }}%; height: 100%; background: {% if it.status == 'Low Stock' %}#EF4444{% elif it.status == 'Moderate' %}#F59E0B{% else %}#10B981{% endif %}; border-radius: 999px;"></div>
+            </div>
+          </td>
+
+          <td>
+            <span style="font-size: 12.5px; color: var(--text-secondary);" class="inv-thresh-display">Min {{ it.safety_threshold }} units</span>
+          </td>
+
+          <td>
+            <span class="inv-status-container">
+              {% if it.status == 'High Stock' %}
+              <span class="badge-pill green inv-status-badge">● High Stock</span>
+              {% elif it.status == 'Moderate' %}
+              <span class="badge-pill amber inv-status-badge">● Moderate</span>
+              {% else %}
+              <span class="badge-pill inv-status-badge" style="background: #FEE2E2; color: #DC2626;">● Low Stock</span>
+              {% endif %}
+            </span>
+          </td>
+
+          <td style="font-size: 12px; color: var(--text-muted);" class="inv-sync-time">
+            {{ it.last_synced_at[:16] if it.last_synced_at else 'Just now' }}
+          </td>
+
+          <td style="text-align: right;">
+            <button class="btn-cj-outline" style="padding: 5px 12px; font-size: 12px;" onclick="openAdjustModal({{ it.id }}, '{{ it.sku }}', '{{ it.product_name|replace("'", "\\'") }}', '{{ it.warehouse_name|replace("'", "\\'") }}', {{ it.available_units }}, {{ it.safety_threshold }})">
+              Adjust
+            </button>
+          </td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div id="noInventoryMessage" style="display: none; text-align: center; padding: 40px 20px; color: var(--text-muted);">
+    <div style="font-size: 28px; margin-bottom: 8px;">🔍</div>
+    <div style="font-weight: 600; font-size: 14px;">No matching inventory items found</div>
+    <div style="font-size: 12.5px; margin-top: 4px;">Try clearing your search query or selecting 'All Regions'.</div>
+  </div>
+
+</div>
+
+<!-- Stock Adjustment Modal -->
+<div id="adjustStockModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); z-index: 9999; overflow-y: auto;">
+  <div style="max-width: 440px; margin: 80px auto; background: #FFFFFF; border-radius: var(--radius-lg); padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); position: relative;">
+    <button onclick="closeAdjustModal()" style="position: absolute; top: 18px; right: 18px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+    
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+      <div style="width: 38px; height: 38px; border-radius: 50%; background: #EFF6FF; display: flex; align-items: center; justify-content: center; color: #2563EB; font-size: 18px;">
+        📦
+      </div>
+      <div>
+        <h2 style="font-size: 16px; font-weight: 700; margin: 0;">Adjust Inventory Stock</h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin: 2px 0 0;" id="adjustModalWarehouse">Warehouse Hub</p>
+      </div>
+    </div>
+
+    <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 16px;">
+      <div style="font-size: 13px; font-weight: 600; color: var(--text-main);" id="adjustModalProductName">Product Title</div>
+      <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;" id="adjustModalSku">SKU: CJ-XXX</div>
+    </div>
+
+    <form id="adjustStockForm" onsubmit="event.preventDefault(); submitStockAdjustment();">
+      <input type="hidden" id="adjustItemId" value="">
+
+      <div style="margin-bottom: 14px;">
+        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px;">Available Physical Units</label>
+        <input type="number" id="adjustUnitsInput" min="0" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-card); border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600; box-sizing: border-box;">
+        <span style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px; display: block;">Units currently verified in warehouse shelves.</span>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px;">Safety Stock Threshold</label>
+        <input type="number" id="adjustThresholdInput" min="1" required style="width: 100%; padding: 8px 12px; border: 1px solid var(--border-card); border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 600; box-sizing: border-box;">
+        <span style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px; display: block;">Triggers a Low Stock warning when inventory dips at or below this value.</span>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" class="btn-secondary" onclick="closeAdjustModal()" style="padding: 8px 16px; font-size: 13px;">Cancel</button>
+        <button type="submit" class="btn-cj-primary" id="saveAdjustBtn" style="padding: 8px 18px; font-size: 13px;">Save Adjustment</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let activeRegion = 'ALL';
+  let activeStatus = 'ALL';
+
+  function copySkuText(sku) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(sku).then(() => {
+        showToast('SKU copied to clipboard: ' + sku, 'success', 'Copied');
+      });
+    } else {
+      showToast('SKU: ' + sku, 'info', 'SKU Info');
+    }
+  }
+
+  function setRegionFilter(reg) {
+    activeRegion = reg;
+    document.querySelectorAll('[id^="pillReg"]').forEach(el => el.classList.remove('active'));
+    if (reg === 'ALL') document.getElementById('pillRegAll').classList.add('active');
+    else if (reg === 'US') document.getElementById('pillRegUS').classList.add('active');
+    else if (reg === 'EU') document.getElementById('pillRegEU').classList.add('active');
+    else if (reg === 'CN') document.getElementById('pillRegCN').classList.add('active');
+    applyFilters();
+  }
+
+  function setStatusFilter(stat) {
+    activeStatus = stat;
+    document.querySelectorAll('[id^="pillStat"]').forEach(el => el.classList.remove('active'));
+    if (stat === 'ALL') document.getElementById('pillStatAll').classList.add('active');
+    else if (stat === 'Low Stock') document.getElementById('pillStatLow').classList.add('active');
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const q = (document.getElementById('inventorySearch').value || '').trim().toLowerCase();
+    const rows = document.querySelectorAll('.inv-row');
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+      const sku = row.getAttribute('data-sku') || '';
+      const title = row.getAttribute('data-title') || '';
+      const reg = row.getAttribute('data-region') || '';
+      const stat = row.getAttribute('data-status') || '';
+
+      const matchesSearch = !q || sku.includes(q) || title.includes(q);
+      const matchesRegion = (activeRegion === 'ALL') || (reg === activeRegion);
+      const matchesStatus = (activeStatus === 'ALL') || (stat === activeStatus);
+
+      if (matchesSearch && matchesRegion && matchesStatus) {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    const noMsg = document.getElementById('noInventoryMessage');
+    const table = document.getElementById('inventoryTable');
+    if (visibleCount === 0) {
+      noMsg.style.display = 'block';
+      table.style.display = 'none';
+    } else {
+      noMsg.style.display = 'none';
+      table.style.display = '';
+    }
+  }
+
+  function openAdjustModal(id, sku, title, warehouse, units, threshold) {
+    document.getElementById('adjustItemId').value = id;
+    document.getElementById('adjustModalSku').innerText = 'SKU: ' + sku;
+    document.getElementById('adjustModalProductName').innerText = title;
+    document.getElementById('adjustModalWarehouse').innerText = warehouse;
+    document.getElementById('adjustUnitsInput').value = units;
+    document.getElementById('adjustThresholdInput').value = threshold;
+    document.getElementById('adjustStockModal').style.display = 'block';
+  }
+
+  function closeAdjustModal() {
+    document.getElementById('adjustStockModal').style.display = 'none';
+  }
+
+  async function submitStockAdjustment() {
+    const itemId = parseInt(document.getElementById('adjustItemId').value);
+    const units = parseInt(document.getElementById('adjustUnitsInput').value);
+    const threshold = parseInt(document.getElementById('adjustThresholdInput').value);
+    const saveBtn = document.getElementById('saveAdjustBtn');
+
+    if (isNaN(units) || units < 0) {
+      showToast('Please enter a valid non-negative number of units.', 'warning', 'Invalid Input');
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.innerText = 'Saving...';
+
+    try {
+      const res = await fetch('/api/inventory/adjust', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company_id: '{{ company_id }}',
+          item_id: itemId,
+          available_units: units,
+          safety_threshold: threshold
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.status !== 'success') {
+        throw new Error(data.detail || 'Failed to update inventory');
+      }
+
+      const item = data.item;
+      // Update DOM table row
+      const row = document.getElementById('row-item-' + itemId);
+      if (row) {
+        row.setAttribute('data-units', item.available_units);
+        row.setAttribute('data-thresh', item.safety_threshold);
+        row.setAttribute('data-status', item.status);
+
+        row.querySelector('.inv-units-display').innerText = Number(item.available_units).toLocaleString() + ' units';
+        row.querySelector('.inv-thresh-display').innerText = 'Min ' + item.safety_threshold + ' units';
+        
+        // Update status badge
+        const badgeContainer = row.querySelector('.inv-status-container');
+        if (item.status === 'High Stock') {
+          badgeContainer.innerHTML = '<span class="badge-pill green inv-status-badge">● High Stock</span>';
+        } else if (item.status === 'Moderate') {
+          badgeContainer.innerHTML = '<span class="badge-pill amber inv-status-badge">● Moderate</span>';
+        } else {
+          badgeContainer.innerHTML = '<span class="badge-pill inv-status-badge" style="background: #FEE2E2; color: #DC2626;">● Low Stock</span>';
+        }
+
+        // Update progress bar
+        const pct = Math.min(100, Math.round((item.available_units / (item.safety_threshold * 4 || 200)) * 100));
+        const barFill = row.querySelector('.inv-bar-fill');
+        if (barFill) {
+          barFill.style.width = pct + '%';
+          barFill.style.background = (item.status === 'Low Stock') ? '#EF4444' : (item.status === 'Moderate' ? '#F59E0B' : '#10B981');
+        }
+      }
+
+      // Recalculate totals in DOM
+      recalcTotals();
+
+      closeAdjustModal();
+      showToast('Inventory for SKU ' + item.sku + ' updated to ' + item.available_units + ' units.', 'success', 'Stock Updated');
+    } catch (err) {
+      console.error(err);
+      showToast('Error adjusting stock: ' + err.message, 'warning', 'Error');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.innerText = 'Save Adjustment';
+    }
+  }
+
+  function recalcTotals() {
+    let sumUnits = 0;
+    let lowCount = 0;
+    document.querySelectorAll('.inv-row').forEach(r => {
+      const u = parseInt(r.getAttribute('data-units') || 0);
+      const t = parseInt(r.getAttribute('data-thresh') || 50);
+      sumUnits += u;
+      if (u <= t) lowCount++;
+    });
+    const elUnits = document.getElementById('kpiTotalUnits');
+    if (elUnits) elUnits.innerText = sumUnits.toLocaleString();
+    const elLow = document.getElementById('kpiLowStock');
+    if (elLow) {
+      elLow.innerText = lowCount + ' Low Stock';
+      elLow.style.color = (lowCount > 0) ? '#DC2626' : '#16A34A';
+    }
+  }
+
+  async function syncCJInventory() {
+    const btn = document.getElementById('syncStockBtn');
+    btn.disabled = true;
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = 'Syncing...';
+
+    try {
+      const res = await fetch('/api/inventory/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ company_id: '{{ company_id }}' })
+      });
+      const data = await res.json();
+      if (!res.ok || data.status !== 'success') {
+        throw new Error(data.detail || 'Sync failed');
+      }
+
+      document.querySelectorAll('.inv-sync-time').forEach(td => td.innerText = 'Just now');
+      showToast(data.message || 'Successfully synchronized inventory with CJ Dropshipping.', 'success', 'Inventory Synced');
+    } catch (err) {
+      console.error(err);
+      showToast('Sync failed: ' + err.message, 'warning', 'Sync Error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = oldHtml;
+    }
+  }
+
+  function exportInventoryCsv() {
+    const rows = [];
+    rows.push(['SKU', 'Product Name', 'Warehouse', 'Code', 'Region', 'Available Units', 'Threshold', 'Status']);
+
+    document.querySelectorAll('.inv-row').forEach(r => {
+      const sku = r.querySelector('.code-tag').innerText.trim();
+      const name = r.querySelector('td:first-child div:first-child').innerText.trim();
+      const region = r.getAttribute('data-region') || '';
+      const units = r.getAttribute('data-units') || '';
+      const thresh = r.getAttribute('data-thresh') || '';
+      const status = r.getAttribute('data-status') || '';
+      rows.push([sku, '"' + name + '"', '', '', region, units, thresh, status]);
+    });
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'cj_whop_inventory_' + new Date().toISOString().slice(0, 10) + '.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    showToast('Inventory report downloaded as CSV.', 'success', 'Export Complete');
+  }
+</script>
+{% endblock %}

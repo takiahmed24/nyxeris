@@ -6,7 +6,7 @@ Strict requirement: Zero Whop or third-party payment gateway branding is shown t
 import os
 import datetime
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors

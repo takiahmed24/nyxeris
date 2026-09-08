@@ -34,7 +34,7 @@
         </div>
         <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">Sep 5, 2026 &middot; 10:24 AM</div>
       </div>
-      <button class="btn-cj-outline" style="padding: 6px 12px; font-size: 12px;" onclick="navigator.clipboard.writeText('1ZC920491029348F2'); alert('Tracking number copied to clipboard!')">
+      <button class="btn-cj-outline" style="padding: 6px 12px; font-size: 12px;" onclick="navigator.clipboard.writeText('1ZC920491029348F2'); showToast('Tracking number 1ZC920491029348F2 copied to clipboard!', 'success', 'Tracking Copied')">
         Share Link
       </button>
     </div>
@@ -203,11 +203,11 @@
     try {
       const res = await fetch('/api/sync/tracking?company_id={{ company_id }}', { method: 'POST' });
       const data = await res.json();
-      alert('Tracking synchronization complete! ' + (data.message || 'Tracking numbers updated.'));
-      window.location.reload();
+      showToast('Tracking synchronization complete! ' + (data.message || 'Tracking numbers updated.'), 'success', 'Tracking Synced');
+      setTimeout(() => window.location.reload(), 1400);
     } catch (e) {
-      alert('Tracking sync triggered.');
-      window.location.reload();
+      showToast('Tracking sync triggered.', 'info', 'Tracking Synced');
+      setTimeout(() => window.location.reload(), 1400);
     }
   }
 
@@ -215,11 +215,11 @@
     try {
       const res = await fetch('/api/test/simulate-order?company_id={{ company_id }}', { method: 'POST' });
       const data = await res.json();
-      alert('Simulated test order received and processed!');
-      window.location.reload();
+      showToast('Simulated test order received and processed!', 'success', 'Test Order');
+      setTimeout(() => window.location.reload(), 1400);
     } catch (e) {
-      alert('Order simulated.');
-      window.location.reload();
+      showToast('Test order simulated.', 'info', 'Test Order');
+      setTimeout(() => window.location.reload(), 1400);
     }
   }
 </script>

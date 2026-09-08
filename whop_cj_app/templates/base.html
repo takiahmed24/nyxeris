@@ -233,7 +233,7 @@
 
       <div id="notifsContainer" style="flex: 1; overflow-y: auto;">
         <!-- Loaded dynamically or rendered from seed -->
-        <div class="notif-item unread" data-type="orders">
+        <div class="notif-item unread" data-type="orders" style="cursor: pointer;" onclick="window.location.href='/orders?company_id={{ company_id }}&q=100245'">
           <div class="notif-icon-circle" style="background-color: #ECFDF5; color: #10B981;">📦</div>
           <div style="flex: 1;">
             <div class="notif-title-row">
@@ -244,7 +244,7 @@
           </div>
         </div>
 
-        <div class="notif-item unread" data-type="orders">
+        <div class="notif-item unread" data-type="orders" style="cursor: pointer;" onclick="window.location.href='/orders?company_id={{ company_id }}&q=100246'">
           <div class="notif-icon-circle" style="background-color: #EFF6FF; color: #3B82F6;">🛒</div>
           <div style="flex: 1;">
             <div class="notif-title-row">
@@ -255,7 +255,7 @@
           </div>
         </div>
 
-        <div class="notif-item unread" data-type="products">
+        <div class="notif-item unread" data-type="products" style="cursor: pointer;" onclick="window.location.href='/inventory?company_id={{ company_id }}&q=Earbuds'">
           <div class="notif-icon-circle" style="background-color: #FFFBEB; color: #F59E0B;">⚠️</div>
           <div style="flex: 1;">
             <div class="notif-title-row">
@@ -266,7 +266,7 @@
           </div>
         </div>
 
-        <div class="notif-item" data-type="system">
+        <div class="notif-item" data-type="system" style="cursor: pointer;" onclick="window.location.href='/products?company_id={{ company_id }}'">
           <div class="notif-icon-circle" style="background-color: #F0FDF4; color: #16A34A;">🔄</div>
           <div style="flex: 1;">
             <div class="notif-title-row">
@@ -277,7 +277,7 @@
           </div>
         </div>
 
-        <div class="notif-item" data-type="system">
+        <div class="notif-item" data-type="system" style="cursor: pointer;" onclick="window.location.href='/billing?company_id={{ company_id }}'">
           <div class="notif-icon-circle" style="background-color: #F3E8FF; color: #8B5CF6;">💳</div>
           <div style="flex: 1;">
             <div class="notif-title-row">
@@ -358,10 +358,13 @@
         <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 16px;">
           <div style="font-weight: 600; font-size: 13px; color: var(--text-main); margin-bottom: 6px;">Direct Support Channel</div>
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
-            <span style="font-size: 14px; font-weight: 700; color: var(--cj-orange);">support@nyxeris.com</span>
-            <a href="mailto:support@nyxeris.com?subject=Whop%20CJ%20Support%20Request%20-%20{{ company_id }}" class="btn-cj-primary" style="padding: 6px 14px; font-size: 12.5px; text-decoration: none;">
-              Email Support
-            </a>
+            <span style="font-size: 14px; font-weight: 700; color: var(--cj-orange); cursor: pointer;" onclick="copySupportEmail()" title="Click to copy">support@nyxeris.com</span>
+            <div style="display: flex; gap: 8px;">
+              <button onclick="copySupportEmail()" class="btn-cj-outline" style="padding: 6px 12px; font-size: 12px; cursor: pointer;">Copy</button>
+              <a href="mailto:support@nyxeris.com?subject=Whop%20CJ%20Support%20Request%20-%20{{ company_id }}" class="btn-cj-primary" style="padding: 6px 14px; font-size: 12.5px; text-decoration: none;">
+                Email Support
+              </a>
+            </div>
           </div>
           <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 6px;">Average response time: &lt; 15 minutes</div>
         </div>
@@ -386,7 +389,86 @@
     </div>
   </div>
 
+  <!-- Global In-App Toast Container (Replaces intrusive browser alerts) -->
+  <div id="cjWhopToastContainer" style="position: fixed; top: 20px; right: 24px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;"></div>
+
   <script>
+    // Global In-App Toast Notification System
+    function showToast(message, type = 'success', title = null) {
+      const container = document.getElementById('cjWhopToastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = 'in-app-toast toast-' + type;
+
+      const isSuccess = type === 'success';
+      const isError = type === 'error';
+      const isWarning = type === 'warning';
+
+      const borderAccent = isSuccess ? '#10B981' : isError ? '#EF4444' : isWarning ? '#F59E0B' : '#FF6243';
+      const iconEmoji = isSuccess ? '✓' : isError ? '✕' : isWarning ? '⚠️' : 'ℹ️';
+      const iconBg = isSuccess ? '#ECFDF5' : isError ? '#FEF2F2' : isWarning ? '#FFFBEB' : '#FFF4ED';
+      const iconColor = isSuccess ? '#059669' : isError ? '#DC2626' : isWarning ? '#D97706' : '#FF6243';
+      const defaultTitle = title || (isSuccess ? 'Success' : isError ? 'Error' : isWarning ? 'Notice' : 'Notification');
+
+      toast.style.cssText = `
+        background: #FFFFFF;
+        color: #1F1919;
+        border: 1px solid #E5E7EB;
+        border-left: 4px solid ${borderAccent};
+        border-radius: 8px;
+        padding: 12px 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        max-width: 420px;
+        min-width: 290px;
+        pointer-events: auto;
+        font-family: inherit;
+        opacity: 0;
+        transform: translateY(-12px);
+        transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      `;
+
+      toast.innerHTML = `
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: ${iconBg}; color: ${iconColor}; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13.5px; flex-shrink: 0; margin-top: 1px;">
+          ${iconEmoji}
+        </div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: 13.5px; font-weight: 700; color: #111827; margin-bottom: 2px;">${defaultTitle}</div>
+          <div style="font-size: 12.5px; color: #4B5563; line-height: 1.45; white-space: pre-line; word-break: break-word;">${message}</div>
+        </div>
+        <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 18px; color: #9CA3AF; cursor: pointer; padding: 0 2px; line-height: 1; margin-left: 4px;">&times;</button>
+      `;
+
+      container.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+      });
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        setTimeout(() => toast.remove(), 260);
+      }, 4500);
+    }
+
+    // Bulletproof: Override native window.alert so no iframe browser warning popups appear
+    window.alert = function(msg) {
+      showToast(String(msg), 'info', 'Notice');
+    };
+
+    function copySupportEmail() {
+      navigator.clipboard.writeText('support@nyxeris.com').then(() => {
+        showToast('support@nyxeris.com copied to clipboard!', 'success', 'Support Contact');
+      }).catch(() => {
+        showToast('Support email: support@nyxeris.com', 'info', 'Support Contact');
+      });
+    }
+
     function openSupportModal() {
       document.getElementById('supportModal').style.display = 'block';
     }

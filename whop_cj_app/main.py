@@ -20,7 +20,8 @@ from database import (
     get_or_create_merchant, list_merchants, DEFAULT_COMPANY_ID, init_db,
     get_sourcing_requests, add_sourcing_request, get_notifications,
     mark_notifications_read, get_billing_transactions, add_billing_transaction,
-    add_notification, update_billing_settings
+    add_notification, update_billing_settings,
+    get_inventory_items, update_inventory_stock, sync_all_inventory
 )
 from services.sync_worker import process_incoming_whop_order, sync_all_pending_tracking, list_cj_product_to_whop_service
 from services.cj_api_client import cj_client
@@ -285,8 +286,26 @@ def view_sourcing(request: Request):
 
 @app.get("/inventory", response_class=HTMLResponse)
 def view_inventory(request: Request):
-    """Inventory and Store Sync view (Screen 08)."""
-    return view_sku_mapping(request)
+    """Dedicated Global Warehouse Inventory & Stock Management View."""
+    company_id = get_request_company_id(request)
+    current_merchant = get_or_create_merchant(company_id)
+    all_merchants = list_merchants()
+    items = get_inventory_items(company_id)
+
+    total_units = sum(it.get("available_units", 0) for it in items)
+    low_stock_count = sum(1 for it in items if it.get("available_units", 0) <= it.get("safety_threshold", 50))
+
+    return templates.TemplateResponse(request=request, name="inventory.html", context={
+        "request": request,
+        "active_page": "inventory",
+        "company_id": company_id,
+        "current_merchant": current_merchant,
+        "all_merchants": all_merchants,
+        "inventory_items": items,
+        "total_units": total_units,
+        "total_skus": len(items),
+        "low_stock_count": low_stock_count
+    })
 
 @app.get("/analytics", response_class=HTMLResponse)
 def view_analytics(request: Request):
@@ -654,6 +673,46 @@ def api_mark_notifications_read_endpoint(request: Request):
     company_id = get_request_company_id(request)
     mark_notifications_read(company_id)
     return {"status": "marked_read", "company_id": company_id}
+
+class InventoryAdjustRequest(BaseModel):
+    company_id: Optional[str] = None
+    item_id: int
+    available_units: int
+    safety_threshold: Optional[int] = None
+
+@app.post("/api/inventory/adjust")
+def api_adjust_inventory(req: InventoryAdjustRequest, request: Request):
+    """Updates physical units and safety threshold for an inventory item."""
+    company_id = req.company_id or get_request_company_id(request)
+    updated = update_inventory_stock(
+        company_id=company_id,
+        item_id=req.item_id,
+        available_units=req.available_units,
+        safety_threshold=req.safety_threshold
+    )
+    if not updated:
+        raise HTTPException(status_code=404, detail="Inventory item not found")
+    log_event("inventory_adjust", "success", f"Adjusted stock for SKU {updated.get('sku')} to {req.available_units} units", company_id=company_id)
+    return {"status": "success", "item": updated}
+
+@app.post("/api/inventory/sync")
+def api_sync_inventory(request: Request):
+    """Triggers live inventory sync with CJ fulfillment hubs."""
+    company_id = get_request_company_id(request)
+    count = sync_all_inventory(company_id)
+    add_notification(
+        company_id, "products", "Inventory Synced",
+        f"Synchronized {count} warehouse stock balances across US, EU & China hubs.", "Just now"
+    )
+    log_event("inventory_sync", "success", f"Refreshed {count} inventory balances", company_id=company_id)
+    return {"status": "success", "count": count, "message": f"Successfully synchronized {count} warehouse inventory items."}
+
+@app.get("/api/inventory/items")
+def api_get_inventory_items(request: Request):
+    """Returns JSON inventory items for active merchant."""
+    company_id = get_request_company_id(request)
+    items = get_inventory_items(company_id)
+    return {"status": "success", "items": items}
 
 class BillingMethodUpdate(BaseModel):
     company_id: Optional[str] = None

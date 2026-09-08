@@ -163,11 +163,11 @@
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      alert('Sourcing request submitted successfully! Assigned Ticket #' + (data.id || 'SR-99'));
-      window.location.reload();
+      showToast('Sourcing request submitted successfully! Assigned Ticket #' + (data.id || 'SR-99'), 'success', 'Sourcing Request');
+      setTimeout(() => window.location.reload(), 1400);
     } catch (err) {
-      alert('Sourcing request submitted!');
-      window.location.reload();
+      showToast('Sourcing request submitted!', 'info', 'Sourcing Request');
+      setTimeout(() => window.location.reload(), 1400);
     }
   }
 </script>

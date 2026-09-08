@@ -111,7 +111,7 @@
       <label class="form-label">Whop Webhook Endpoint URL</label>
       <div style="display: flex; gap: 8px;">
         <input type="text" class="form-control" value="{{ webhook_url }}" readonly style="background: var(--bg-card-subtle);">
-        <button type="button" class="btn-cj-outline" onclick="navigator.clipboard.writeText('{{ webhook_url }}'); alert('Webhook URL copied to clipboard!')">Copy</button>
+        <button type="button" class="btn-cj-outline" onclick="navigator.clipboard.writeText('{{ webhook_url }}'); showToast('Webhook URL copied to clipboard!', 'success', 'Webhook Copied')">Copy</button>
       </div>
     </div>
 
@@ -150,11 +150,11 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      alert('Settings and credentials saved successfully!');
-      window.location.reload();
+      showToast('Settings and credentials saved successfully!', 'success', 'Settings Saved');
+      setTimeout(() => window.location.reload(), 1400);
     } catch (e) {
-      alert('Settings updated.');
-      window.location.reload();
+      showToast('Settings updated.', 'info', 'Settings');
+      setTimeout(() => window.location.reload(), 1400);
     }
   }
 </script>

@@ -27,7 +27,7 @@
 <div class="ui-card" style="padding: 0; overflow: hidden;">
   <div class="notif-feed-list" id="mainNotifFeed">
     {% for n in notifications %}
-    <div class="notif-item {% if not n.is_read %}unread{% endif %}" data-type="{{ n.type }}">
+    <div class="notif-item {% if not n.is_read %}unread{% endif %}" data-type="{{ n.type }}" style="cursor: pointer;" onclick="{% if n.type == 'orders' %}window.location.href='/orders?company_id={{ company_id }}'{% elif n.type == 'products' %}window.location.href='/inventory?company_id={{ company_id }}'{% else %}window.location.href='/billing?company_id={{ company_id }}'{% endif %}">
       <div class="notif-icon-circle" style="
         {% if n.type == 'orders' %}background-color: #ECFDF5; color: #10B981;
         {% elif n.type == 'products' %}background-color: #FFFBEB; color: #F59E0B;
@@ -73,9 +73,9 @@
     try {
       await fetch('/api/notifications/read?company_id={{ company_id }}', { method: 'POST' });
       document.querySelectorAll('#mainNotifFeed .unread').forEach(el => el.classList.remove('unread'));
-      alert('All notifications marked as read.');
+      showToast('All notifications marked as read.', 'success', 'Notifications');
     } catch (e) {
-      alert('Notifications updated.');
+      showToast('Notifications marked as read.', 'info', 'Notifications');
     }
   }
 </script>

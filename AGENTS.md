@@ -20,6 +20,17 @@
      - Vision/OCR: `qwen2.5vl:3b` (3.8B Vision)
      - Vector Embeddings: `nomic-embed-text:latest`
    - Reserve cloud subscription quotas strictly for tasks that require cloud Gemini capabilities.
+5. **Browser Tab Concurrency & Tab Skipping Mandate**:
+   - When an agent is going to work on the browser, never hijack or navigate inside an existing tab in use.
+   - If one is working on a tab, skip that tab and move to the next to work.
+   - If there is no free/available tab, open another new tab (`context.new_page()` or `/json/new`) and work on that.
+6. **Dedicated Nyxeris Whop Tab**:
+   - Nyxeris agents must strictly use their own Nyxeris Whop tab (`biz_ea3gy6pg50A7px` / `https://whop.com/nyxeris/`).
+   - Never use or hijack AgentWhop's tab (`biz_KcgRQpPdYKEPdz`) or any other Whop tab. If Nyxeris tab is not open, open a dedicated new tab for Nyxeris.
+7. **Mandatory Creative & Planning Platform Routing**:
+   - **Video Generation**: **ALWAYS USE FLOW** (`flow.google.com`) using authorized accounts: `muhtakiahmed2004@gmail.com`, `muhammadtakiahmed@gmail.com`, `vivekpoluru1p@gmail.com` (Omni mode).
+   - **Pictures, Multi-Video Planning, Web Gen & Logos**: **USE CHATGPT** (App or Web) via `vivekpoluru1p@gmail.com` (ChatGPT GO).
+   - **Deep Planning**: **USE CLAUDE SOMETIMES FOR PLAN** via `vivekpoluru1p@gmail.com`.
 
 ---
 

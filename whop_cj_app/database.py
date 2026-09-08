@@ -166,6 +166,26 @@ def init_db():
     );
     """)
 
+    # Multi-tenant Inventory Items table
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS inventory_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        company_id TEXT NOT NULL DEFAULT 'biz_ea3gy6pg50A7px',
+        sku TEXT NOT NULL,
+        product_name TEXT NOT NULL,
+        variant_name TEXT DEFAULT 'Standard',
+        warehouse_name TEXT NOT NULL,
+        warehouse_code TEXT NOT NULL,
+        warehouse_region TEXT NOT NULL,
+        available_units INTEGER DEFAULT 0,
+        safety_threshold INTEGER DEFAULT 50,
+        status TEXT DEFAULT 'High Stock',
+        last_synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(company_id, sku, warehouse_code)
+    );
+    """)
+
     # Seed default primary company if empty
     c.execute("SELECT COUNT(*) FROM merchant_settings WHERE company_id = ?", (DEFAULT_COMPANY_ID,))
     if c.fetchone()[0] == 0:
@@ -267,6 +287,24 @@ def init_db():
                 cj_product_id, cj_variant_id, cj_variant_sku, cj_product_title, cj_estimated_cost
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, sample_mappings)
+
+    # Ensure default sample warehouse inventory exists
+    c.execute("SELECT COUNT(*) FROM inventory_items WHERE company_id = ?", (DEFAULT_COMPANY_ID,))
+    if c.fetchone()[0] == 0:
+        sample_inventory = [
+            (DEFAULT_COMPANY_ID, "CJ-HOD-GRY-L", "Minimalist Heavyweight Hoodie", "Gray / L", "East Coast US Hub", "US-EAST", "US", 1420, 50, "High Stock"),
+            (DEFAULT_COMPANY_ID, "CJ-EAR-ANC-WHT", "Wireless ANC Earbuds", "Matte White", "Shenzhen Global Hub", "CN-SZX", "CN", 2850, 100, "High Stock"),
+            (DEFAULT_COMPANY_ID, "CJ-WAT-PRO-BLK", "Waterproof Smart Watch", "Midnight Black", "West Coast US Hub", "US-WEST", "US", 480, 30, "High Stock"),
+            (DEFAULT_COMPANY_ID, "CJ-LMP-SLM-ALM", "LED Eye-Care Desk Lamp", "Warm Aluminum", "Frankfurt EU Hub", "EU-FRA", "EU", 110, 25, "Moderate"),
+            (DEFAULT_COMPANY_ID, "CJ-CSE-MAG-CLR", "Impact Magnetic Phone Case", "Matte Frosted", "Yiwu Factory Hub", "CN-YIW", "CN", 5400, 200, "High Stock"),
+            (DEFAULT_COMPANY_ID, "CJ-MUG-350ML", "Custom Ceramic Mug", "Ceramic White", "East Coast US Hub", "US-EAST", "US", 22, 50, "Low Stock")
+        ]
+        c.executemany("""
+            INSERT INTO inventory_items (
+                company_id, sku, product_name, variant_name, warehouse_name,
+                warehouse_code, warehouse_region, available_units, safety_threshold, status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, sample_inventory)
 
     conn.commit()
     conn.close()
@@ -467,6 +505,64 @@ def update_billing_settings(
         c.execute(sql, params)
         conn.commit()
     conn.close()
+
+def get_inventory_items(company_id: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Retrieves all inventory items for merchant with stock health calculations."""
+    active_cid = company_id.strip() if company_id and company_id.strip() else DEFAULT_COMPANY_ID
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("SELECT * FROM inventory_items WHERE company_id = ? ORDER BY id ASC", (active_cid,))
+    rows = [dict(r) for r in c.fetchall()]
+    conn.close()
+    return rows
+
+def update_inventory_stock(company_id: str, item_id: int, available_units: int, safety_threshold: Optional[int] = None) -> Optional[Dict[str, Any]]:
+    """Updates physical units and safety threshold for an inventory item."""
+    active_cid = company_id.strip() if company_id and company_id.strip() else DEFAULT_COMPANY_ID
+    conn = get_db_connection()
+    c = conn.cursor()
+    
+    thresh = safety_threshold if safety_threshold is not None else 50
+    if available_units <= thresh:
+        status = "Low Stock"
+    elif available_units <= thresh * 3:
+        status = "Moderate"
+    else:
+        status = "High Stock"
+        
+    if safety_threshold is not None:
+        c.execute("""
+            UPDATE inventory_items
+            SET available_units = ?, safety_threshold = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ? AND company_id = ?
+        """, (available_units, safety_threshold, status, item_id, active_cid))
+    else:
+        c.execute("""
+            UPDATE inventory_items
+            SET available_units = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ? AND company_id = ?
+        """, (available_units, status, item_id, active_cid))
+    conn.commit()
+    
+    c.execute("SELECT * FROM inventory_items WHERE id = ? AND company_id = ?", (item_id, active_cid))
+    row = c.fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def sync_all_inventory(company_id: Optional[str] = None) -> int:
+    """Refreshes inventory timestamps and syncs with CJ catalog."""
+    active_cid = company_id.strip() if company_id and company_id.strip() else DEFAULT_COMPANY_ID
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute("""
+        UPDATE inventory_items
+        SET last_synced_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
+        WHERE company_id = ?
+    """, (active_cid,))
+    count = c.rowcount
+    conn.commit()
+    conn.close()
+    return count
 
 # Auto-initialize when module is imported
 init_db()

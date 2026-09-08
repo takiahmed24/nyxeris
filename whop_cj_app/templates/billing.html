@@ -126,10 +126,10 @@
         <h2 style="font-size: 17px; font-weight: 700;">Compare Plans</h2>
         
         <div style="display: flex; align-items: center; gap: 10px; font-size: 12.5px;">
-          <span style="color: var(--cj-orange); font-weight: 600;">Save 20%</span>
-          <div style="background: var(--bg-app); border: 1px solid var(--border-card); border-radius: var(--radius-pill); padding: 3px; display: flex;">
-            <button style="background: var(--cj-orange); color: #FFFFFF; border: none; border-radius: var(--radius-pill); padding: 4px 12px; font-size: 12px; font-weight: 600;">Monthly</button>
-            <button style="background: transparent; color: var(--text-muted); border: none; border-radius: var(--radius-pill); padding: 4px 12px; font-size: 12px; font-weight: 500;">Yearly</button>
+          <span style="color: var(--cj-orange); font-weight: 700;">Save up to 20%</span>
+          <div style="background: var(--bg-app); border: 1px solid var(--border-card); border-radius: var(--radius-pill); padding: 3px; display: flex; gap: 2px;">
+            <button id="toggleMonthlyBtn" onclick="setBillingCycle('monthly')" style="background: var(--cj-orange); color: #FFFFFF; border: none; border-radius: var(--radius-pill); padding: 4px 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Monthly</button>
+            <button id="toggleYearlyBtn" onclick="setBillingCycle('yearly')" style="background: transparent; color: var(--text-muted); border: none; border-radius: var(--radius-pill); padding: 4px 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">Yearly <span style="background: #DCFCE7; color: #16A34A; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; margin-left: 2px;">-20%</span></button>
           </div>
         </div>
       </div>
@@ -140,7 +140,7 @@
         <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column;">
           <div style="font-weight: 700; font-size: 15px; color: var(--text-main);">Starter</div>
           <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">For trying out</div>
-          <div style="font-size: 26px; font-weight: 800; margin-bottom: 16px;">$0 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ month</span></div>
+          <div style="font-size: 26px; font-weight: 800; margin-bottom: 16px;" id="displayPriceStarter">$0 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);" id="displayIntervalStarter">/ month</span></div>
 
           <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: var(--text-secondary); margin-bottom: 24px; flex: 1;">
             <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Up to 50 orders/month</div>
@@ -152,7 +152,7 @@
           {% if plan_tier == 'Starter' %}
           <button class="btn-cj-outline" style="width: 100%; background: #FFF4ED; border-color: #FED7AA; color: var(--cj-orange); font-size: 13px; font-weight: 600; cursor: default;">Current Plan</button>
           {% else %}
-          <button class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="openUpgradeModal('Starter', 'monthly', 0.00)">Downgrade to Starter</button>
+          <button id="btnUpgradeStarter" class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="openUpgradeModal('Starter', currentBillingCycle, 0.00)">Downgrade to Starter</button>
           {% endif %}
         </div>
 
@@ -164,7 +164,7 @@
 
           <div style="font-weight: 700; font-size: 15px; color: var(--text-main);">Creator</div>
           <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">For growing stores</div>
-          <div style="font-size: 26px; font-weight: 800; color: var(--cj-orange); margin-bottom: 16px;">$5 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ month</span></div>
+          <div style="font-size: 26px; font-weight: 800; color: var(--cj-orange); margin-bottom: 16px;" id="displayPriceCreator">$5 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);" id="displayIntervalCreator">/ month</span></div>
 
           <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: var(--text-secondary); margin-bottom: 24px; flex: 1;">
             <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Up to 1,000 orders/month</div>
@@ -176,7 +176,7 @@
           {% if plan_tier == 'Creator' %}
           <button class="btn-cj-outline" style="width: 100%; background: #FFF4ED; border-color: #FED7AA; color: var(--cj-orange); font-size: 13px; font-weight: 600; cursor: default;">Current Plan</button>
           {% else %}
-          <button class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="openUpgradeModal('Creator', 'monthly', 5.00)">Switch to Creator</button>
+          <button id="btnUpgradeCreator" class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="openUpgradeModal('Creator', currentBillingCycle, currentBillingCycle === 'yearly' ? 48.00 : 5.00)">Switch to Creator</button>
           {% endif %}
         </div>
 
@@ -184,7 +184,7 @@
         <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column;">
           <div style="font-weight: 700; font-size: 15px; color: var(--text-main);">Pro</div>
           <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">For high-volume sellers</div>
-          <div style="font-size: 26px; font-weight: 800; margin-bottom: 16px;">$29 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ month</span></div>
+          <div style="font-size: 26px; font-weight: 800; margin-bottom: 16px;" id="displayPricePro">$29 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);" id="displayIntervalPro">/ month</span></div>
 
           <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: var(--text-secondary); margin-bottom: 24px; flex: 1;">
             <div><span style="color: var(--cj-orange); font-weight: bold;">✓</span> Unlimited orders</div>
@@ -196,7 +196,7 @@
           {% if plan_tier == 'Pro' %}
           <button class="btn-cj-outline" style="width: 100%; background: #FFF4ED; border-color: #FED7AA; color: var(--cj-orange); font-size: 13px; font-weight: 600; cursor: default;">Current Plan</button>
           {% else %}
-          <button class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="openUpgradeModal('Pro', 'monthly', 29.00)">Upgrade to Pro</button>
+          <button id="btnUpgradePro" class="btn-cj-outline" style="width: 100%; font-size: 13px;" onclick="openUpgradeModal('Pro', currentBillingCycle, currentBillingCycle === 'yearly' ? 279.00 : 29.00)">Upgrade to Pro</button>
           {% endif %}
         </div>
 
@@ -215,7 +215,7 @@
         <div style="font-weight: 700; font-size: 14.5px; color: var(--text-main);">Upgrade to Pro</div>
       </div>
       <p style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 14px;">Lower fees, higher limits, priority custom sourcing support.</p>
-      <a href="javascript:void(0)" onclick="openUpgradeModal('Pro', 'monthly', 29.00)" style="font-size: 13px; font-weight: 600; color: var(--cj-orange);">View Pro Plans &rarr;</a>
+      <a href="javascript:void(0)" onclick="openUpgradeModal('Pro', currentBillingCycle, currentBillingCycle === 'yearly' ? 279.00 : 29.00)" style="font-size: 13px; font-weight: 600; color: var(--cj-orange);">View Pro Plans &rarr;</a>
     </div>
 
     <!-- Payment Method Card (Screen Exact with Whop Balance Option) -->
@@ -255,7 +255,7 @@
     </div>
 
     <!-- Billing Settings Link Card -->
-    <div class="ui-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="alert('VAT and company invoicing are automatically synced via Whop Platform.')">
+    <div class="ui-card" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="showToast('VAT and invoicing details are automatically synchronized with Whop.', 'info', 'Billing Settings')">
       <div style="display: flex; align-items: center; gap: 10px;">
         <span style="font-size: 16px;">⚙️</span>
         <div>
@@ -270,7 +270,7 @@
     <div class="ui-card">
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
         <h3 style="font-size: 14px; font-weight: 700;">Recent Invoices</h3>
-        <a href="javascript:void(0)" onclick="alert('All invoices are synchronized with your Whop Customer Account.')" style="font-size: 12px; color: var(--cj-orange); font-weight: 600;">View All</a>
+        <a href="javascript:void(0)" onclick="window.open('{{ whop_portal_url }}', '_blank')" style="font-size: 12px; color: var(--cj-orange); font-weight: 600;">View All &rarr;</a>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 10px;" id="invoicesListWrap">
@@ -310,7 +310,7 @@
       <div>
         <div style="font-weight: 700; font-size: 13px;">Need help with billing?</div>
         <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Our support team is here 24/7.</div>
-        <a href="javascript:void(0)" onclick="alert('Support channel open: support@nyxeris.com or via Whop Discord')" style="font-size: 12px; font-weight: 600; color: var(--cj-orange);">Contact Support &rarr;</a>
+        <a href="javascript:void(0)" onclick="openSupportModal()" style="font-size: 12px; font-weight: 600; color: var(--cj-orange);">Contact Support &rarr;</a>
       </div>
     </div>
 
@@ -356,7 +356,7 @@
       </button>
       
       <button class="btn-cj-outline" style="width: 100%; justify-content: center; padding: 11px;" onclick="window.open('{{ whop_portal_url }}', '_blank')">
-        ↗ Open Whop Customer Portal (Hub)
+        ↗ Manage Orders & Subscriptions on Whop
       </button>
 
       <button class="btn-cj-outline" style="width: 100%; justify-content: center; padding: 10px; color: var(--text-muted); border-color: var(--border-subtle);" onclick="closeManageSubscriptionModal()">
@@ -434,9 +434,64 @@
 
 {% block extra_scripts %}
 <script>
+  let currentBillingCycle = 'monthly';
   let targetUpgradeTier = 'Creator';
   let targetUpgradeInterval = 'monthly';
   let targetUpgradePrice = 5.00;
+
+  function setBillingCycle(cycle) {
+    currentBillingCycle = cycle;
+    const btnMonthly = document.getElementById('toggleMonthlyBtn');
+    const btnYearly = document.getElementById('toggleYearlyBtn');
+
+    if (cycle === 'yearly') {
+      btnYearly.style.background = 'var(--cj-orange)';
+      btnYearly.style.color = '#FFFFFF';
+      btnMonthly.style.background = 'transparent';
+      btnMonthly.style.color = 'var(--text-muted)';
+
+      // Update displayed prices for Yearly
+      document.getElementById('displayPriceStarter').innerHTML = '$0 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ year ($0/mo)</span>';
+      document.getElementById('displayPriceCreator').innerHTML = '$48 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ year ($4.00/mo - Save 20%)</span>';
+      document.getElementById('displayPricePro').innerHTML = '$279 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ year ($23.25/mo - Save 20%)</span>';
+
+      const btnCreator = document.getElementById('btnUpgradeCreator');
+      if (btnCreator) {
+        btnCreator.setAttribute('onclick', "openUpgradeModal('Creator', 'yearly', 48.00)");
+      }
+      const btnPro = document.getElementById('btnUpgradePro');
+      if (btnPro) {
+        btnPro.setAttribute('onclick', "openUpgradeModal('Pro', 'yearly', 279.00)");
+      }
+      const btnStarter = document.getElementById('btnUpgradeStarter');
+      if (btnStarter) {
+        btnStarter.setAttribute('onclick', "openUpgradeModal('Starter', 'yearly', 0.00)");
+      }
+    } else {
+      btnMonthly.style.background = 'var(--cj-orange)';
+      btnMonthly.style.color = '#FFFFFF';
+      btnYearly.style.background = 'transparent';
+      btnYearly.style.color = 'var(--text-muted)';
+
+      // Update displayed prices for Monthly
+      document.getElementById('displayPriceStarter').innerHTML = '$0 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ month</span>';
+      document.getElementById('displayPriceCreator').innerHTML = '$5 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ month</span>';
+      document.getElementById('displayPricePro').innerHTML = '$29 <span style="font-size: 13px; font-weight: 400; color: var(--text-muted);">/ month</span>';
+
+      const btnCreator = document.getElementById('btnUpgradeCreator');
+      if (btnCreator) {
+        btnCreator.setAttribute('onclick', "openUpgradeModal('Creator', 'monthly', 5.00)");
+      }
+      const btnPro = document.getElementById('btnUpgradePro');
+      if (btnPro) {
+        btnPro.setAttribute('onclick', "openUpgradeModal('Pro', 'monthly', 29.00)");
+      }
+      const btnStarter = document.getElementById('btnUpgradeStarter');
+      if (btnStarter) {
+        btnStarter.setAttribute('onclick', "openUpgradeModal('Starter', 'monthly', 0.00)");
+      }
+    }
+  }
 
   function switchBillingTab(tab) {
     document.querySelectorAll('.filter-pills-bar .filter-pill').forEach(b => {
@@ -464,9 +519,19 @@
     targetUpgradePrice = price;
 
     document.getElementById('upgradeModalTitle').innerText = 'Switch to ' + tier + ' Plan';
-    document.getElementById('upgradeModalPlanName').innerText = tier + ' Plan (' + interval.charAt(0).toUpperCase() + interval.slice(1) + ')';
+    document.getElementById('upgradeModalPlanName').innerText = tier + ' Plan (' + (interval === 'yearly' ? 'Yearly - Save 20%' : 'Monthly') + ')';
     document.getElementById('upgradeModalPrice').innerText = '$' + price.toFixed(2);
     document.getElementById('upgradeModalInterval').innerText = '/ ' + (interval === 'yearly' ? 'year' : 'month');
+
+    const descEl = document.getElementById('upgradeModalDescription');
+    if (tier === 'Pro') {
+      descEl.innerText = 'Unlimited orders, lowest product factory costs, dedicated VIP account manager, and priority sourcing.';
+    } else if (tier === 'Creator') {
+      descEl.innerText = 'Includes full CJ dropshipping automation, 400k+ catalog, and live order sync up to 1,000 orders/month.';
+    } else {
+      descEl.innerText = 'Basic access up to 50 orders/month and standard shipping fulfillment.';
+    }
+
     document.getElementById('upgradePlanModal').style.display = 'block';
   }
 
@@ -503,9 +568,9 @@
         modalSource.innerText = isBal ? 'Whop Creator Balance ($432.00)' : 'VISA •••• 4242';
       }
 
-      alert('Payment preference successfully updated to: ' + data.label);
+      showToast('Payment preference successfully set to ' + (data.label || method), 'success', 'Payment Method');
     } catch (e) {
-      alert('Updated payment method.');
+      showToast('Updated payment method preference.', 'info', 'Payment Method');
     }
   }
 
@@ -524,14 +589,14 @@
       });
       const data = await res.json();
       if (res.ok) {
-        alert('Payment Succeeded!\n' + data.message);
-        window.location.reload();
+        showToast('Payment Succeeded!\n' + (data.message || 'Paid using Whop Balance.'), 'success', 'Payment Succeeded');
+        setTimeout(() => window.location.reload(), 1400);
       } else {
-        alert(data.detail || 'Payment failed.');
+        showToast(data.detail || 'Payment failed.', 'error', 'Payment Failed');
       }
     } catch (e) {
-      alert('Subscription paid via Whop Balance.');
-      window.location.reload();
+      showToast('Subscription payment processed via Whop Balance.', 'success', 'Payment Succeeded');
+      setTimeout(() => window.location.reload(), 1400);
     }
   }
 
@@ -555,19 +620,21 @@
       const data = await res.json();
       
       if (data.status === 'redirect') {
-        alert(data.message);
+        showToast(data.message || 'Redirecting to Whop Checkout...', 'info', 'Whop Checkout');
         window.open(data.checkout_url, '_blank');
         closeUpgradeModal();
       } else if (data.status === 'success') {
-        alert('Plan Upgrade Successful!\n' + data.message);
-        window.location.reload();
+        closeUpgradeModal();
+        showToast('Plan Upgrade Succeeded!\n' + (data.message || 'Your store is now active on the ' + targetUpgradeTier + ' Plan.'), 'success', 'Plan Activated');
+        setTimeout(() => window.location.reload(), 1400);
       } else {
-        alert(data.detail || 'Upgrade processed.');
-        window.location.reload();
+        showToast(data.detail || 'Upgrade processed.', 'error', 'Upgrade Status');
+        setTimeout(() => window.location.reload(), 1400);
       }
     } catch (e) {
-      alert('Plan upgraded successfully.');
-      window.location.reload();
+      closeUpgradeModal();
+      showToast('Plan upgraded successfully to ' + targetUpgradeTier + '.', 'success', 'Plan Activated');
+      setTimeout(() => window.location.reload(), 1400);
     } finally {
       btn.innerText = 'Confirm & Pay →';
       btn.disabled = false;
@@ -583,6 +650,7 @@
     a.download = `Invoice-${ref}.txt`;
     a.click();
     URL.revokeObjectURL(url);
+    showToast('Invoice receipt ' + ref + ' downloaded.', 'success', 'Invoice Download');
   }
 </script>
 {% endblock %}

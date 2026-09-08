@@ -116,7 +116,7 @@ class WhopApiClient:
             product_hash = abs(hash(f"{company_id}_{title}_{price}")) % 10000000
             simulated_prod_id = f"prod_{clean_title}_{product_hash:07d}"
             simulated_plan_id = f"plan_{clean_title}_{product_hash:07d}"
-            product_url = f"https://whop.com/hub/products/{simulated_prod_id}"
+            product_url = f"https://whop.com/checkout/{simulated_plan_id}"
 
             logger.info(f"[Sandbox] Simulating Whop product creation: {simulated_prod_id} for '{title}' (Company: {company_id})")
             log_event(
@@ -169,7 +169,7 @@ class WhopApiClient:
                         product_hash = abs(hash(f"{company_id}_{title}_{price}")) % 10000000
                         simulated_prod_id = f"prod_{clean_title}_{product_hash:07d}"
                         simulated_plan_id = f"plan_{clean_title}_{product_hash:07d}"
-                        product_url = f"https://whop.com/hub/products/{simulated_prod_id}"
+                        product_url = f"https://whop.com/checkout/{simulated_plan_id}"
                         log_event("whop_product_create", "simulated", f"Simulated Whop product {simulated_prod_id} ('{title}') (API fallback)", company_id=company_id or "default")
                         return {
                             "success": True,
@@ -199,7 +199,7 @@ class WhopApiClient:
                 plan_data = plan_res.json() if plan_res.status_code in (200, 201) else {}
                 whop_plan_id = plan_data.get("id", "")
 
-                product_url = f"https://whop.com/hub/products/{whop_product_id}"
+                product_url = f"https://whop.com/checkout/{whop_plan_id}" if whop_plan_id else f"https://whop.com/checkout/prod_{whop_product_id}"
                 log_event("whop_product_create", "success", f"Live Whop product {whop_product_id} created for {title}", company_id=company_id or "default")
                 return {
                     "success": True,

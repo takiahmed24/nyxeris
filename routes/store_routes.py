@@ -473,3 +473,58 @@ def submit_product_review(product_id: str, req: ReviewSubmitSchema):
         "is_verified_buyer": bool(is_verified)
     }
 
+
+@router.get("/robots.txt", response_class=HTMLResponse)
+def get_robots_txt():
+    """Returns robots.txt for search engine crawlers."""
+    robots_content = """User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/admin/
+Sitemap: https://whop.com/nyxeris/sitemap.xml
+"""
+    return HTMLResponse(content=robots_content, media_type="text/plain")
+
+
+@router.get("/sitemap.xml", response_class=HTMLResponse)
+def get_sitemap_xml(request: Request):
+    """Dynamic XML sitemap indexing storefront pages and products for Google, Bing, and search crawlers."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT slug, created_at FROM products WHERE stock_quantity > 0 ORDER BY featured_order ASC")
+    products = cursor.fetchall()
+    conn.close()
+
+    base_url = str(request.base_url).rstrip("/")
+    now_str = datetime.datetime.utcnow().strftime("%Y-%m-%d")
+
+    xml_lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+        '  <url>',
+        f'    <loc>{base_url}/</loc>',
+        f'    <lastmod>{now_str}</lastmod>',
+        '    <changefreq>daily</changefreq>',
+        '    <priority>1.0</priority>',
+        '  </url>',
+        '  <url>',
+        f'    <loc>{base_url}/catalog</loc>',
+        f'    <lastmod>{now_str}</lastmod>',
+        '    <changefreq>daily</changefreq>',
+        '    <priority>0.9</priority>',
+        '  </url>'
+    ]
+
+    for p in products:
+        slug = p["slug"]
+        xml_lines.append('  <url>')
+        xml_lines.append(f'    <loc>{base_url}/product/{slug}</loc>')
+        xml_lines.append(f'    <lastmod>{now_str}</lastmod>')
+        xml_lines.append('    <changefreq>weekly</changefreq>')
+        xml_lines.append('    <priority>0.8</priority>')
+        xml_lines.append('  </url>')
+
+    xml_lines.append('</urlset>')
+    return HTMLResponse(content="\n".join(xml_lines), media_type="application/xml")
+
+

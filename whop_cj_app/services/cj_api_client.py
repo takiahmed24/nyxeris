@@ -33,12 +33,10 @@ class CJApiClient:
         if current_token and not force_refresh:
             return current_token
 
-        # Request new access token from CJ API 2.0
+        # Request new access token from CJ API 2.0 (Official apiKey mode)
         payload = {
             "apiKey": api_key
         }
-        if email:
-            payload["email"] = email
 
         try:
             async with httpx.AsyncClient(timeout=15.0) as client:

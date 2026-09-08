@@ -279,9 +279,71 @@ def test_pipeline():
     print("       Listing Alias GET '/listing' -> 200 OK")
 
     print("=" * 70)
-    print(" ALL 8 MULTI-TENANT VERIFICATION SUITES PASSED FLAWLESSLY!")
+    print(" [9/9] Testing Global Warehouse Inventory & Billing Upgrades ...")
+    
+    # 1. Test GET /inventory
+    res_inv = client.get(f"/inventory?company_id={alpha_id}")
+    assert res_inv.status_code == 200
+    assert "Global Warehouse Inventory" in res_inv.text
+    assert "Tracked SKUs" in res_inv.text
+    assert "Sync CJ Stock Now" in res_inv.text
+    print("       Inventory UI GET '/inventory' -> 200 OK")
+
+    # 2. Test GET /api/inventory/items
+    res_inv_items = client.get(f"/api/inventory/items?company_id={DEFAULT_COMPANY_ID}")
+    assert res_inv_items.status_code == 200
+    inv_data = res_inv_items.json()
+    assert inv_data["status"] == "success"
+    assert len(inv_data["items"]) >= 1
+    target_item = inv_data["items"][0]
+    print(f"       Inventory API: Found {len(inv_data['items'])} items. First SKU: {target_item['sku']} ({target_item['available_units']} units)")
+
+    # 3. Test POST /api/inventory/adjust
+    res_adjust = client.post("/api/inventory/adjust", json={
+        "company_id": DEFAULT_COMPANY_ID,
+        "item_id": target_item["id"],
+        "available_units": 1500,
+        "safety_threshold": 60
+    })
+    assert res_adjust.status_code == 200
+    adj_data = res_adjust.json()
+    assert adj_data["status"] == "success"
+    assert adj_data["item"]["available_units"] == 1500
+    assert adj_data["item"]["safety_threshold"] == 60
+    assert adj_data["item"]["status"] == "High Stock"
+    print(f"       Stock Adjust API: Updated SKU {target_item['sku']} to 1,500 units (Status: {adj_data['item']['status']})")
+
+    # 4. Test POST /api/inventory/sync
+    res_sync = client.post(f"/api/inventory/sync?company_id={DEFAULT_COMPANY_ID}")
+    assert res_sync.status_code == 200
+    assert res_sync.json()["status"] == "success"
+    print(f"       Inventory Sync API: Refreshed {res_sync.json()['count']} items")
+
+    # 5. Test GET /billing Customer Portal URL and Toggle
+    res_billing = client.get(f"/billing?company_id={alpha_id}")
+    assert res_billing.status_code == 200
+    assert "https://whop.com/orders/" in res_billing.text
+    assert "toggleMonthlyBtn" in res_billing.text and "toggleYearlyBtn" in res_billing.text
+    assert "whop_balance" in res_billing.text
+    print("       Billing UI: Verified customer portal 'whop.com/orders/', yearly toggle, and Whop Balance payment support.")
+
+    # 6. Verify Zero alert() calls across all HTML templates
+    template_dir = BASE_DIR / "templates"
+    for tmpl in template_dir.glob("*.html"):
+        content = tmpl.read_text(encoding="utf-8")
+        # Ensure raw alert( isn't called, except window.alert override definition in base.html
+        if tmpl.name == "base.html":
+            non_override_alerts = [line for line in content.splitlines() if "alert(" in line and "window.alert = function" not in line]
+            assert len(non_override_alerts) == 0, f"Found raw alert() in base.html: {non_override_alerts}"
+        else:
+            assert "alert(" not in content, f"VIOLATION: Found raw alert() in template {tmpl.name}"
+    print("       Zero-Alert Audit: 100% of HTML templates use in-app toasts. Zero browser alert() dialogs.")
+
+    print("=" * 70)
+    print(" ALL 9 MULTI-TENANT VERIFICATION SUITES PASSED FLAWLESSLY!")
     print("=" * 70)
 
 if __name__ == "__main__":
     test_pipeline()
+
 
