@@ -40,9 +40,9 @@ async def add_security_and_performance_headers(request: Request, call_next):
     # HSTS & Content-Type options for SEO security audit
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     response.headers["X-Content-Type-Options"] = "nosniff"
-    # Static asset caching for Core Web Vitals
+    # Static asset caching for Core Web Vitals with cache revalidation
     if request.url.path.startswith("/static/"):
-        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        response.headers["Cache-Control"] = "public, max-age=3600, must-revalidate"
     # Allow embedding in creator frames
     response.headers["Content-Security-Policy"] = "frame-ancestors 'self' https://whop.com https://*.whop.com https://*.sslip.io http://localhost:*;"
     if "X-Frame-Options" in response.headers:
