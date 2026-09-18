@@ -8,7 +8,7 @@ import datetime
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, PlainTextResponse, Response
+from fastapi.responses import HTMLResponse, PlainTextResponse, Response, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings, STATIC_DIR, TEMPLATES_DIR, DATA_DIR
@@ -235,6 +235,15 @@ def root_llms_full_txt():
     if llms_path.exists():
         return PlainTextResponse(llms_path.read_text(encoding="utf-8"))
     return PlainTextResponse("# Nyxeris\nhttps://nyxeris.store\n")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    """Serves Nyxeris favicon icon to prevent 404 logs."""
+    logo_path = STATIC_DIR / "images" / "logo.png"
+    if logo_path.exists():
+        return FileResponse(logo_path, media_type="image/png")
+    return Response(status_code=204)
 
 
 @app.api_route("/api/wc-ajax", methods=["GET", "POST"])
