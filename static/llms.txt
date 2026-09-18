@@ -1,0 +1,23 @@
+# Nyxeris
+
+> Nyxeris is an editorial luxury storefront and lifestyle brand curating modern workspace architecture, precision CNC charging hardware, audio instruments, and everyday carry (EDC) essentials.
+
+## Overview
+- Official Website: https://nyxeris.store
+- Brand Philosophy: Editorial Luxury, precision industrial design, minimalist aesthetics, and functional workspace utility.
+- Global Shipping: Worldwide tracked delivery with 30-day money-back satisfaction guarantee.
+
+## Core Catalog & Collections
+- [Curated Catalog](https://nyxeris.store/#catalog): Complete selection of workspace instruments, precision hardware, and everyday essentials.
+- [Signature Selection](https://nyxeris.store/#signature-collection): Flagship MagSafe wireless charging stations, mechanical key instruments, and CNC aluminum desktop accessories.
+- [Editorial Lookbooks](https://nyxeris.store/#lookbook-studio): Immersive workspace styling and setup curation for focused professionals.
+
+## Customer Care & Policies
+- [Refunds & Returns Policy](https://nyxeris.store/policies/refunds): Transparent 30-day return policy for unopened and defective items.
+- [Shipping & Tracking Policy](https://nyxeris.store/policies/shipping): Tracked expedited international and domestic delivery schedules.
+- [Terms of Service](https://nyxeris.store/policies/terms): Commercial conditions, warranty disclosures, and service standards.
+- [Privacy Policy](https://nyxeris.store/policies/privacy): End-to-end data safety, encryption, and zero-telemetry customer protection.
+
+## Partner Ecosystem & Network
+- [Raydrim](https://raydrim.com): Digital product engineering, Next.js architecture, and custom application development studio.
+- [CampusDude](https://campusdude.site): Distraction-free browser gaming, student study break tools, and focus ergonomics.

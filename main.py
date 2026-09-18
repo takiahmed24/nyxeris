@@ -8,7 +8,7 @@ import datetime
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings, STATIC_DIR, TEMPLATES_DIR, DATA_DIR
@@ -33,11 +33,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Whop Iframe & Website Section Security Middleware
+# Security & Performance Middleware (HTTPS / HSTS / Static Caching)
 @app.middleware("http")
-async def add_whop_embed_security_headers(request: Request, call_next):
+async def add_security_and_performance_headers(request: Request, call_next):
     response = await call_next(request)
-    # Allow embedding in Whop Hubs, Whop Website App, and creator iframe dashboards
+    # HSTS & Content-Type options for SEO security audit
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    # Static asset caching for Core Web Vitals
+    if request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    # Allow embedding in creator frames
     response.headers["Content-Security-Policy"] = "frame-ancestors 'self' https://whop.com https://*.whop.com https://*.sslip.io http://localhost:*;"
     if "X-Frame-Options" in response.headers:
         del response.headers["X-Frame-Options"]
@@ -134,28 +140,29 @@ async def nyxeris_original_storefront(request: Request):
     )
 
 
-@app.get("/robots.txt", response_class=HTMLResponse)
+@app.get("/robots.txt", response_class=PlainTextResponse)
 def root_robots_txt():
-    """Serves robots.txt for search engine crawlers."""
+    """Serves robots.txt for search engine crawlers with canonical sitemap."""
     content = """User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/admin/
-Sitemap: https://whop.com/nyxeris/sitemap.xml
+
+Sitemap: https://nyxeris.store/sitemap.xml
 """
-    return HTMLResponse(content=content, media_type="text/plain")
+    return PlainTextResponse(content=content)
 
 
-@app.get("/sitemap.xml", response_class=HTMLResponse)
+@app.get("/sitemap.xml", response_class=Response)
 def root_sitemap_xml(request: Request):
-    """Dynamic XML sitemap indexing storefront pages and products for Google, Bing, and search crawlers."""
+    """Dynamic XML sitemap indexing storefront pages, policies, and products for Google, Bing, and search crawlers."""
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT slug, created_at FROM products WHERE stock_quantity > 0 ORDER BY featured_order ASC")
     products = cursor.fetchall()
     conn.close()
 
-    base_url = str(request.base_url).rstrip("/")
+    base_url = "https://nyxeris.store"
     now_str = datetime.datetime.utcnow().strftime("%Y-%m-%d")
 
     xml_lines = [
@@ -172,6 +179,30 @@ def root_sitemap_xml(request: Request):
         f'    <lastmod>{now_str}</lastmod>',
         '    <changefreq>daily</changefreq>',
         '    <priority>0.9</priority>',
+        '  </url>',
+        '  <url>',
+        f'    <loc>{base_url}/policies/refunds</loc>',
+        f'    <lastmod>{now_str}</lastmod>',
+        '    <changefreq>monthly</changefreq>',
+        '    <priority>0.5</priority>',
+        '  </url>',
+        '  <url>',
+        f'    <loc>{base_url}/policies/shipping</loc>',
+        f'    <lastmod>{now_str}</lastmod>',
+        '    <changefreq>monthly</changefreq>',
+        '    <priority>0.5</priority>',
+        '  </url>',
+        '  <url>',
+        f'    <loc>{base_url}/policies/terms</loc>',
+        f'    <lastmod>{now_str}</lastmod>',
+        '    <changefreq>monthly</changefreq>',
+        '    <priority>0.5</priority>',
+        '  </url>',
+        '  <url>',
+        f'    <loc>{base_url}/policies/privacy</loc>',
+        f'    <lastmod>{now_str}</lastmod>',
+        '    <changefreq>monthly</changefreq>',
+        '    <priority>0.5</priority>',
         '  </url>'
     ]
 
@@ -185,7 +216,25 @@ def root_sitemap_xml(request: Request):
         xml_lines.append('  </url>')
 
     xml_lines.append('</urlset>')
-    return HTMLResponse(content="\n".join(xml_lines), media_type="application/xml")
+    return Response(content="\n".join(xml_lines), media_type="application/xml")
+
+
+@app.get("/llms.txt", response_class=PlainTextResponse)
+def root_llms_txt():
+    """Serves llms.txt standard manifest for AI web crawlers and LLM indexing."""
+    llms_path = STATIC_DIR / "llms.txt"
+    if llms_path.exists():
+        return PlainTextResponse(llms_path.read_text(encoding="utf-8"))
+    return PlainTextResponse("# Nyxeris\nhttps://nyxeris.store\n")
+
+
+@app.get("/llms-full.txt", response_class=PlainTextResponse)
+def root_llms_full_txt():
+    """Serves extended llms-full.txt documentation for LLM indexing."""
+    llms_path = STATIC_DIR / "llms-full.txt"
+    if llms_path.exists():
+        return PlainTextResponse(llms_path.read_text(encoding="utf-8"))
+    return PlainTextResponse("# Nyxeris\nhttps://nyxeris.store\n")
 
 
 @app.api_route("/api/wc-ajax", methods=["GET", "POST"])
