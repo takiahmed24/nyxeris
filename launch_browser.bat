@@ -23,7 +23,7 @@ if not exist %CHROME_PATH% (
 )
 
 echo [*] Launching genuine browser with Remote Debugging on Port 9222...
-echo [*] Login to Whop, CJ Dropshipping, or Gmail inside this browser.
+echo [*] Launching CJ Dropshipping and Nyxeris Storefront...
 echo [*] Your logins and cookies will be saved permanently in C:\Nyxeris\browser_profile
 echo.
 
@@ -33,7 +33,7 @@ start "" %CHROME_PATH% ^
   --disable-blink-features=AutomationControlled ^
   --no-first-run ^
   --no-default-browser-check ^
-  "https://whop.com" "https://cjdropshipping.com" "http://localhost:8000"
+  "https://cjdropshipping.com" "https://nyxeris.store" "http://localhost:8000"
 
 echo [SUCCESS] Real browser launched! You can now log into your accounts.
 timeout /t 5

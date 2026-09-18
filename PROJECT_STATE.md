@@ -53,7 +53,7 @@
     * Re-skinned `templates/payment_gateway.html` and `templates/order_confirmation.html` to Shopify Pipeline Editorial Luxury (pristine `#ffffff` canvas, deep `#1f1919` text, `#f7f5f4` surfaces, emerald check badge `#2e7d32`, Forest Olive buttons).
     * Upgraded `services/receipt_service.py` PDF generation to deep charcoal and Forest Olive accents.
     * Upgraded `services/receipt_service.py` customer HTML receipt email to luxury editorial styling with zero third-party branding.
-    * Executed live test purchase for customer "Muhammad Taki Ahmed" (Order `NYX-2026-5C319F`, $82.77) on AWS Lightsail production server (`http://54.251.148.171`).
+    * Executed live test purchase for customer "Test Customer" (Order `NYX-2026-5C319F`, $82.77) on AWS Lightsail production server (`http://54.251.148.171`).
     * Verified and captured screenshots of:
       1. Properly arranged catalog grid without forklifts (`05_catalog_products_grid.png`, `06_catalog_products_row2.png`).
       2. Clean checkout payment gateway (`02_payment_gateway.png`).
@@ -194,5 +194,13 @@
 - [x] Published Whop Community Posts (Nyxeris & Raydrim):
   * **Nyxeris Community** (`https://whop.com/nyxeris/`): Published *"THE LUXURY CHRONOGRAPH DROP IS LIVE"* announcing automated global fulfillment, detailing the Nyxeris Chronos Automatic specifications, and linking directly to Whop 1-Tap Checkout. Verified live with success toast.
   * **Raydrim Community** (`https://whop.com/raydrim/`): Published *"⚡ ENTERPRISE INFRASTRUCTURE DISPATCH: HIGH-THROUGHPUT DROPSHIPPING & AUTOMATED FULFILLMENT BRIDGES"* highlighting the multi-tenant architecture, automated tracking cron, and linking to `https://raydrim.com/vault`. Verified live with success toast.
-- [ ] Monitor Whop app review process (2-3 business days) and public release.
-
+* **[2026-09-18] Nyxeris Live Storefront Discovery & Domain Configuration**:
+- [x] **[2026-09-18] Nyxeris Live Storefront Discovery & Domain Configuration**:
+  * **VPN Clarification**: Confirmed WireGuard VPN (`USA-WireGuard-VPN`, instance `i-0d63cfd80255e2263`, Elastic IP `44.221.35.203`) is completely intact, active, and strictly isolated. No modifications were made to it.
+  * **Live Nyxeris Location**: Verified that the live, working Nyxeris luxury flagship storefront is deployed and active on Render at `https://nyxeris.onrender.com/` (HTTP 200 OK, full Pipeline editorial design).
+  * **Custom Domain Registration on Render**: Added `nyxeris.store` and `www.nyxeris.store` to the Render web service (`srv-daddka8n74is73eb56lg`).
+  * **Root Cause of `ERR_CONNECTION_TIMED_OUT`**: In Namecheap DNS, `nyxeris.store` was pointing to `44.221.35.203` (the VPN IP, which drops web traffic).
+  * **Resolution**: Updating Namecheap DNS A record to Render's IP `216.24.57.1` and CNAME for `www` to `nyxeris.onrender.com` connects the domain immediately with automatic SSL.
+- [x] Update Namecheap DNS records for `nyxeris.store` to point to `216.24.57.1` (A) and `nyxeris.onrender.com` (CNAME).
+- [x] Eliminate Whop from browser launch script (`launch_browser.bat`) and close all Whop tabs.
+- [x] Verified `https://nyxeris.store/` and `https://www.nyxeris.store/` load 100% live with valid SSL and zero connection errors.
