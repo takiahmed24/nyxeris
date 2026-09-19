@@ -15,6 +15,22 @@
 
 ## 📋 Recent Changes & Architectural Log
 
+* **[2026-09-19] Raydrim Google AdSense "Low Value Content" Resolution & 7 New In-Depth Technical Articles**:
+  * **AdSense Policy Compliance**: Fixed Google AdSense "Low value content" policy violation on `https://raydrim.com` (repo `C:\WEBSITE`, AWS Amplify). Google requires substantial unique editorial value, sustained publishing cadence, and active technical curation.
+  * **7 New Comprehensive Technical Articles Added**:
+    1. *AWS Amplify vs Vercel vs Render: Where to Deploy Your Next.js App in 2026* (~1,850 words, Cloud & DevOps)
+    2. *Setting Up Transactional Email with Node.js, SMTP, and PDF Attachments* (~2,380 words, Backend & Database)
+    3. *A Non-US Founder's Guide to Accepting International Payments Online* (~2,500 words, E-Commerce — detailed breakdown of Stripe/US LLC/Wyoming/EIN without SSN/Mercury from Dhaka)
+    4. *Image Compression for Core Web Vitals: A Practical Checklist* (~2,700 words, Performance — AVIF vs WebP, Next.js Image internals, LCP preloading, Nyxeris 4.8s→1.1s case study)
+    5. *Building a White-Label Checkout Without Shopify or WooCommerce* (~2,020 words, E-Commerce — FastAPI + SQLite WAL + Jinja2 + ReportLab receipts + Stripe Elements)
+    6. *Mobile-First Responsive Patterns That Actually Work for Product Pages* (~2,110 words, UI/UX Design — CSS scroll-snap galleries, sticky CTA bars, fluid clamp typography)
+    7. *How I Automated CJ Dropshipping Order Fulfillment with a Python Script* (~2,490 words, Backend & Database — CJ Open API 2.0 auth, SQLite SKU translation bridge, tracking sync daemon)
+  * **Content Scale**: Blog expanded from 3 articles to **10 articles** and from ~2,100 words to **>18,200 words** of original engineering content.
+  * **PWA Manifest Fixed**: Created `public/manifest.json` resolving a 404 error declared in `src/app/layout.tsx`.
+  * **Production Build Verification**: Ran `npm run build`; verified all 33 static pages (10 blog post SSG pages) generate with 0 errors.
+  * **AWS Amplify Deployment**: Committed and pushed to `takiahmed24/raydrim` (`main`, commit `534b7d3`). Auto-deploying on AWS Amplify.
+  * **Status**: Ready for user to check "I confirm I have fixed the issues" and click "Request review" on Google AdSense.
+
 * **[2026-09-08] Whop CJ Dropshipping App: Dedicated Inventory Suite, Zero-Alert Toast Migration, Customer Portal & Billing Upgrades**:
   * **Zero Browser `alert()` Warning Elimination**: Removed all 24 native browser `alert()` dialog calls across all templates. Replaced with sleek in-app toast notification system (`#cjWhopToastContainer`, `showToast(msg, type, title)`) and global `window.alert` override so external modal warnings can never pop up inside the Whop iframe.
   * **Customer Portal Routing**: Fixed Whop Customer Portal link to point to `https://whop.com/orders/` instead of legacy `/hub/` redirect loops. Updated `config.py` and `whop_api_client.py`.

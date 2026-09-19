@@ -153,6 +153,14 @@ Sitemap: https://nyxeris.store/sitemap.xml
     return PlainTextResponse(content=content)
 
 
+@app.get("/ads.txt", response_class=PlainTextResponse)
+def root_ads_txt():
+    """Serves ads.txt for Google AdSense site authorization and publisher verification."""
+    content = "google.com, pub-4263728957042690, DIRECT, f08c47fec0942fa0\n"
+    return PlainTextResponse(content=content)
+
+
+
 @app.get("/sitemap.xml", response_class=Response)
 def root_sitemap_xml(request: Request):
     """Dynamic XML sitemap indexing storefront pages, policies, and products for Google, Bing, and search crawlers."""
