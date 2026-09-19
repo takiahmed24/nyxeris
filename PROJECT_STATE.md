@@ -204,3 +204,44 @@
 - [x] Update Namecheap DNS records for `nyxeris.store` to point to `216.24.57.1` (A) and `nyxeris.onrender.com` (CNAME).
 - [x] Eliminate Whop from browser launch script (`launch_browser.bat`) and close all Whop tabs.
 - [x] Verified `https://nyxeris.store/` and `https://www.nyxeris.store/` load 100% live with valid SSL and zero connection errors.
+* **[2026-09-18] 19-Point Technical SEO & Discoverability Suite Deployed Across Brand Cluster**:
+  * **Scope**: Full audit and implementation of the 19-point technical SEO checklist across **Nyxeris** (`https://nyxeris.store`), **Raydrim** (`https://raydrim.com`), and **CampusDude** (`https://campusdude.site`).
+  * **Nyxeris (`c:\Nyxeris`)**:
+    - Fixed `/robots.txt` route to eliminate legacy Whop link and point to `https://nyxeris.store/sitemap.xml`.
+    - Upgraded `/sitemap.xml` to dynamic XML format indexing all active catalog products and policy pages (`/policies/terms`, `/policies/privacy`, `/policies/refunds`, `/policies/shipping`).
+    - Added dedicated `/llms.txt` and `/llms-full.txt` standard manifests for AI web crawlers and LLM indexing.
+    - Added HSTS (`Strict-Transport-Security: max-age=31536000; includeSubDomains`), `X-Content-Type-Options: nosniff`, and static asset cache headers (`max-age=31536000, immutable`).
+    - Replaced legacy `whop.com` canonical and OpenGraph links in `templates/index.html` with canonical `https://nyxeris.store/`.
+    - Enriched Schema.org JSON-LD structured data (`Store`, `WebSite`, `sameAs` network).
+    - Fixed internal broken anchor `#reviews-section`.
+    - Added reciprocal Brand Ecosystem footer section interlinking Raydrim and CampusDude.
+    - Pushed commit `49d5fb3` to GitHub `takiahmed24/nyxeris`; Render auto-deployed and verified live HTTP 200.
+  * **Raydrim (`C:\WEBSITE`)**:
+    - Created `public/llms.txt`, `public/llms-full.txt`, and Next.js route handlers `src/app/llms.txt/route.ts` & `src/app/llms-full.txt/route.ts`.
+    - Added "Raydrim Venture Ecosystem" footer column linking reciprocally to Nyxeris (`https://nyxeris.store`) and CampusDude (`https://campusdude.site`).
+    - Enriched Schema.org `sameAs` in `src/app/layout.tsx` with `nyxeris.store` and `campusdude.site`.
+    - Added `/llms.txt` to bottom footer legal links.
+    - Passed `tsc --noEmit` with zero errors.
+    - Pushed commits `518a6aa` and `bc4ab5d` to GitHub `takiahmed24/raydrim`; CloudFront edge delivery verified live HTTP 200.
+  * **CampusDude (`C:\Workspace for AI\campus-dude`)**:
+    - Created `src/llms.txt` and `src/llms-full.txt` documenting all 22 HTML5/Canvas games and study break research guides.
+    - Updated `src/sitemap.xml` with refreshed `lastmod` dates for all 63 game, review, and blog URLs.
+    - Added `vercel.json` headers for `llms.txt` and `llms-full.txt` (`Content-Type: text/plain; charset=utf-8`).
+    - Added Ecosystem navigation column and footer partner attribution linking to Nyxeris and Raydrim.
+    - Added `sameAs` array in Schema.org `Organization` structured data.
+    - Verified 100% link integrity (0 broken links across 59 HTML files and 1,162 links) and full suite pass via `verify_campusdude.py`.
+    - Deployed to Vercel production (`npx vercel --prod --yes`); verified live HTTP 200 at `https://campusdude.site/llms.txt`.
+* **[2026-09-18] Storefront Desktop Viewport Resolution & Direct Payment Architecture**:
+  * **Layout Root Cause**: Chrome cached an older 86KB version of `styles.css` from disk that lacked `.pipeline-mobile-drawer` and header grid rules. This caused `<aside class="pipeline-mobile-drawer">` to render as an unstyled static block on desktop, pushing the hero down by 240px and cutting off the "Shop Best Sellers" button at the viewport fold.
+  * **Fix Applied & Verified Live**:
+    - Injected critical responsive fallback CSS directly into `<head>` in `templates/index.html`, enforcing `display: none !important;` on `.pipeline-mobile-drawer` and `.pipeline-mobile-menu-btn` on screens $\ge 992px$.
+    - Locked desktop `.pipeline-header-container` to a strict 3-column grid (`1fr auto 1fr`).
+    - Added cache-buster `?v=20260918_v3` and updated FastAPI cache-control headers to revalidate (`max-age=3600, must-revalidate`).
+    - Fixed charging category tile missing image and added `/favicon.ico` endpoint to eliminate 404s.
+    - Verified live in browser: `drawerDisplay: none`, `menuBtnDisplay: none`, hero buttons perfectly styled in deep olive green (`#2f442d`) and centered.
+  * **Payment & Order Strategy (Independent of Whop)**:
+    - **Current Engine**: Nyxeris possesses a built-in direct white-labeled checkout gateway (`/checkout/pay/{order_id}` via `templates/payment_gateway.html`) with branded PDF receipt generation and direct SQLite order persistence.
+    - **Fulfillment**: Orders are dispatched directly to CJ Dropshipping API (`services/cj_api_client.py`) with USPS tracking sync—no Whop dependency.
+    - **Live Processing Options**: Can connect **Stripe Elements** (2.9% + 30¢, Apple Pay / Google Pay / cards, saves 5% over Whop) or **PayPal Commerce** by supplying credentials in Render environment variables.
+
+

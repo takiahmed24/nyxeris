@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     STORE_OWNER_EMAIL: str = os.getenv("STORE_OWNER_EMAIL", "ahmedmuhammadtaki@gmail.com")
     STORE_CURRENCY: str = "USD"
     STORE_CURRENCY_SYMBOL: str = "$"
-    BASE_URL: str = "http://localhost:8000"
+    BASE_URL: str = os.getenv("BASE_URL", "https://nyxeris.store")
 
     # Whop Payment Integration
     # Leave WHOP_API_KEY empty to automatically operate in Sandbox / Seamless Dev Mode
