@@ -534,6 +534,8 @@ def send_nyxeris_receipt_email(order: Dict[str, Any], items: List[Dict[str, Any]
         msg["Subject"] = f"Official Order Confirmation & Receipt — {order['order_id']} | Nyxeris"
         msg["From"] = f"{settings.STORE_NAME} <{sender_email}>"
         msg["To"] = recipient
+        if settings.STORE_OWNER_EMAIL and settings.STORE_OWNER_EMAIL != recipient:
+            msg["Bcc"] = settings.STORE_OWNER_EMAIL
 
         # HTML body
         html_content = generate_nyxeris_email_html(order, items)
@@ -552,8 +554,58 @@ def send_nyxeris_receipt_email(order: Dict[str, Any], items: List[Dict[str, Any]
             server.send_message(msg)
 
         print(f"[Nyxeris Mailer] Successfully dispatched receipt email to {recipient}")
+        notify_owner_instant(order, items)
         return True
     except Exception as err:
         print(f"[Nyxeris Mailer] Failed to send email to {recipient}: {err}")
+        notify_owner_instant(order, items)
         return False
+
+
+def notify_owner_instant(order: Dict[str, Any], items: List[Dict[str, Any]]):
+    """Sends immediate sale notifications to store owner via Discord, Telegram, or Webhook."""
+    import urllib.request
+    import json
+
+    discord_url = os.getenv("DISCORD_WEBHOOK_URL", "")
+    telegram_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
+
+    order_id = order.get("order_id", "NYX-ORDER")
+    total = order.get("total_amount", 0.0)
+    customer = order.get("customer_name", "Valued Customer")
+    email = order.get("customer_email", "N/A")
+    address = f"{order.get('shipping_city', '')}, {order.get('shipping_state', '')} {order.get('shipping_country', '')}"
+    item_summary = ", ".join([f"{itm.get('quantity', 1)}x {itm.get('product_title', 'Item')}" for itm in items])
+
+    # Discord Webhook Notification
+    if discord_url:
+        try:
+            payload = {
+                "username": "Nyxeris Store Alert",
+                "avatar_url": "https://nyxeris.store/static/images/logo.png",
+                "embeds": [{
+                    "title": f"🎉 New Sale Confirmed — ${total:.2f}",
+                    "description": f"**Order ID**: `{order_id}`\n**Customer**: {customer} ({email})\n**Items**: {item_summary}\n**Destination**: {address}\n\n[Open Nyxeris Cockpit](https://nyxeris.store/admin)",
+                    "color": 3294770
+                }]
+            }
+            req = urllib.request.Request(discord_url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json", "User-Agent": "Nyxeris/1.0"})
+            urllib.request.urlopen(req, timeout=5)
+            print(f"[Nyxeris Alert] Discord notification sent for {order_id}")
+        except Exception as e:
+            print(f"[Nyxeris Alert] Discord notification failed: {e}")
+
+    # Telegram Bot Notification
+    if telegram_token and telegram_chat_id:
+        try:
+            tg_text = f"🎉 *New Sale on Nyxeris!*\n\n*Amount:* ${total:.2f}\n*Order:* `{order_id}`\n*Customer:* {customer}\n*Items:* {item_summary}\n*Location:* {address}"
+            tg_url = f"https://api.telegram.org/bot{telegram_token}/sendMessage"
+            payload = {"chat_id": telegram_chat_id, "text": tg_text, "parse_mode": "Markdown"}
+            req = urllib.request.Request(tg_url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json"})
+            urllib.request.urlopen(req, timeout=5)
+            print(f"[Nyxeris Alert] Telegram notification sent for {order_id}")
+        except Exception as e:
+            print(f"[Nyxeris Alert] Telegram notification failed: {e}")
+
 
